@@ -1,76 +1,35 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // 1. Bottom Nav Active State logic (Mobile)
+    // 1. Bottom Nav Active State logic
     const navItems = document.querySelectorAll('.bottom-nav .nav-item');
     navItems.forEach(item => {
         item.addEventListener('click', function(e) {
-            // Remove active from all
+            e.preventDefault(); 
             navItems.forEach(nav => nav.classList.remove('active'));
-            // Add active to clicked one
             this.classList.add('active');
         });
     });
-    // --- 4. Mobile Top Nav: 3-Dot Menu Logic ---
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    const mobileDropdown = document.getElementById('mobileDropdown');
 
-    if (mobileMenuBtn && mobileDropdown) {
-        // Toggle popup on click
-        mobileMenuBtn.addEventListener('click', function(e) {
-            e.stopPropagation(); // Prevents click from instantly closing it
-            mobileDropdown.classList.toggle('show');
-        });
-
-        // Close popup when clicking anywhere else on the screen
-        document.addEventListener('click', function(e) {
-            if (mobileDropdown.classList.contains('show') && !e.target.closest('.mobile-nav-icons')) {
-                mobileDropdown.classList.remove('show');
-            }
-        });
-    }
-
-    // --- 5. Mobile App Download Logic (PWA) ---
-    let deferredPrompt;
-    const installAppBtn = document.getElementById('installAppBtn');
-
-    // Catches the prompt trigger in supported browsers (mainly Chrome/Android)
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-    });
-
-    if (installAppBtn) {
-        installAppBtn.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                // If Android/Supported browser: show the install popup
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    console.log('User accepted the install prompt');
-                }
-                deferredPrompt = null;
-            } else {
-                // If iOS/Unsupported browser: Show instructions
-                alert('📱 To install this app on iOS:\n\n1. Tap the "Share" icon at the bottom of Safari.\n2. Scroll down and tap "Add to Home Screen".');
-            }
-        });
-    }
-
-    // 2. Button Feedbacks
+    // 2. iOS Notification Pill (Replaces browser alert)
+    const iosToast = document.getElementById('iosToast');
     const buttons = document.querySelectorAll('.hover-btn');
+    
+    function showIOSNotification() {
+        iosToast.classList.add('show');
+        setTimeout(() => {
+            iosToast.classList.remove('show');
+        }, 2500);
+    }
+
     buttons.forEach(btn => {
         btn.addEventListener('click', function(e) {
-            alert('🛒 Item added successfully!');
+            showIOSNotification();
         });
     });
 
     // 3. High-End Scroll Reveal Animation
     const reveals = document.querySelectorAll('.reveal');
-
-    const revealOptions = {
-        threshold: 0.10, 
-        rootMargin: "0px 0px -50px 0px"
-    };
+    const revealOptions = { threshold: 0.10, rootMargin: "0px 0px -50px 0px" };
 
     const revealOnScroll = new IntersectionObserver(function(entries, observer) {
         entries.forEach(entry => {
@@ -80,7 +39,52 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, revealOptions);
 
-    reveals.forEach(reveal => {
-        revealOnScroll.observe(reveal);
+    reveals.forEach(reveal => revealOnScroll.observe(reveal));
+
+    // 4. iOS Context Menu (3 Dots Dropdown)
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileDropdown = document.getElementById('mobileDropdown');
+
+    if (mobileMenuBtn && mobileDropdown) {
+        mobileMenuBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); 
+            mobileDropdown.classList.toggle('show');
+        });
+        document.addEventListener('click', function(e) {
+            if (mobileDropdown.classList.contains('show') && !e.target.closest('.mobile-nav-icons')) {
+                mobileDropdown.classList.remove('show');
+            }
+        });
+    }
+
+    // 5. iOS System Alert for App Download
+    const installAppBtn = document.getElementById('installAppBtn');
+    const iosAlertBox = document.getElementById('iosAlertBox');
+    const iosAlertClose = document.getElementById('iosAlertClose');
+    let deferredPrompt;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
     });
+
+    if (installAppBtn) {
+        installAppBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                // Android
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+            } else {
+                // iOS Alert Box
+                iosAlertBox.classList.add('show');
+            }
+        });
+    }
+
+    if(iosAlertClose) {
+        iosAlertClose.addEventListener('click', () => {
+            iosAlertBox.classList.remove('show');
+        });
+    }
 });
