@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern E-Commerce UI</title>
+    <title>Vehdic E-Commerce</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <!-- Header / Navbar (Top) -->
-    <header class="navbar">
+<header class="navbar">
     <div class="logo">Vehdic</div>
     
-    <!-- Desktop Links (Hidden on Mobile) -->
+    <!-- Desktop Links -->
     <nav class="nav-links" id="nav-links">
         <a href="#" class="active">Home</a>
         <a href="#">Shop</a>
@@ -25,167 +24,183 @@
         <a href="#">Profile</a>
     </nav>
 
-    <!-- Mobile Top Navigation Icons (Hidden on Desktop) -->
+    <!-- Mobile Top Navigation Icons -->
+    <!-- Mobile Top Navigation Icons -->
     <div class="mobile-nav-icons">
-        <!-- Download App Icon -->
-        <button id="installAppBtn" class="icon-btn" title="Download App">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+        <button id="installAppBtn" class="icon-btn ios-tap" title="Download App" style="color: #475569;">
+            <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+                <path d="M12 16V4M8 12l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M4 17v1a2 2 0 002 2h12a2 2 0 002-2v-1" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
         </button>
-        <!-- Profile Icon -->
-        <a href="#" class="icon-btn" title="Profile">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        <a href="#" class="icon-btn ios-tap" title="Profile" style="color: #475569;">
+            <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+                <circle cx="12" cy="8" r="4" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M20 21c0-2.5-2-5-8-5s-8 2.5-8 5" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
         </a>
-        <!-- 3 Dots Menu -->
-        <button id="mobileMenuBtn" class="icon-btn" title="Menu">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"></circle><circle cx="12" cy="12" r="2.5"></circle><circle cx="12" cy="19" r="2.5"></circle></svg>
+        <button id="mobileMenuBtn" class="icon-btn ios-tap" title="Menu" style="color: #475569;">
+            <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+                <circle cx="5" cy="12" r="2.2" fill="currentColor"/>
+                <circle cx="12" cy="12" r="2.2" fill="currentColor"/>
+                <circle cx="19" cy="12" r="2.2" fill="currentColor"/>
+            </svg>
         </button>
 
-        <!-- Small Popup Menu (from 3 dots) -->
+        <!-- iOS Style Popup Menu (from 3 dots) -->
         <div class="mobile-dropdown-menu" id="mobileDropdown">
-            <a href="#">About us</a>
-            <a href="#">Contact</a>
+            <a href="#" class="ios-tap">About us</a>
+            <div class="ios-divider"></div>
+            <a href="#" class="ios-tap">Contact</a>
         </div>
     </div>
 </header>
 
-    <main class="container">
-        <!-- Hero Section -->
-        <section class="hero reveal">
-            <h1 class="hero-bg-text">HEADPHONE</h1>
-            <div class="hero-content">
-                <div class="hero-text">
-                    <h3>Beats Solo</h3>
-                    <h2>Wireless</h2>
-                    <button class="btn-primary hover-btn">Shop now</button>
-                </div>
-                <div class="hero-img-container floating-anim">
-                    <img src="https://anadi.co.in/wp-content/uploads/2024/10/WhatsApp_Image_2024-10-11_at_12.04.04_PM-removebg-preview.png" class="floating-anim" alt="Headphones">
-                </div>
+<main class="container">
+    <!-- Hero Section -->
+    <section class="hero reveal">
+        <h1 class="hero-bg-text">HEADPHONE</h1>
+        <div class="hero-content">
+            <div class="hero-text">
+                <h3>Beats Solo</h3>
+                <h2>Wireless</h2>
+                <button class="btn-primary hover-btn ios-tap">Shop now</button>
             </div>
-        </section>
+            <div class="hero-img-container floating-anim">
+                <img src="https://anadi.co.in/wp-content/uploads/2024/10/WhatsApp_Image_2024-10-11_at_12.04.04_PM-removebg-preview.png" alt="Headphones">
+            </div>
+        </div>
+    </section>
 
-        <!-- Promo Categories Grid -->
-        <section class="promo-grid reveal">
-            <div class="promo-card bg-dark card-normal">
-                <div class="card-text">
-                    <p>Enjoy</p>
-                    <h3>With</h3>
-                    <h1 class="bg-title">Bud's</h1>
-                </div>
-                <img src="https://via.placeholder.com/150x150/222222/FF0000?text=Buds" class="promo-img" alt="Buds">
-            </div>
-            <div class="promo-card bg-yellow card-normal">
-                <div class="card-text">
-                    <p>Enjoy</p>
-                    <h3>With</h3>
-                    <h1 class="bg-title text-yellow">Watch</h1>
-                </div>
-                <img src="https://via.placeholder.com/150x150/fdc62e/FFFFFF?text=Watch" class="promo-img" alt="Watch">
-            </div>
-            <div class="promo-card bg-red card-wide">
-                <div class="card-text">
-                    <p>Enjoy</p>
-                    <h3>With</h3>
-                    <h1 class="bg-title text-red">Laptop</h1>
-                </div>
-                <img src="https://via.placeholder.com/250x150/f42c37/FFFFFF?text=Laptop" class="promo-img wide-img" alt="Laptop">
-            </div>
-            <div class="promo-card bg-grey card-wide">
-                <div class="card-text dark-text">
-                    <p>Enjoy</p>
-                    <h3>With</h3>
-                    <h1 class="bg-title text-grey">Console</h1>
-                </div>
-                <img src="https://via.placeholder.com/250x150/eeeeee/222222?text=PS5" class="promo-img wide-img" alt="Console">
-            </div>
-            <div class="promo-card bg-green card-normal">
-                <div class="card-text">
-                    <p>Enjoy</p>
-                    <h3>With</h3>
-                    <h1 class="bg-title text-green">Vision Pro</h1>
-                </div>
-                <img src="https://via.placeholder.com/150x150/2dcc6f/FFFFFF?text=VR" class="promo-img" alt="Vision Pro">
-            </div>
-            <div class="promo-card bg-blue card-normal">
-                <div class="card-text">
-                    <p>Enjoy</p>
-                    <h3>With</h3>
-                    <h1 class="bg-title text-blue">Assistant</h1>
-                </div>
-                <img src="https://via.placeholder.com/150x150/1376f4/FFFFFF?text=Echo" class="promo-img" alt="Voice Assistant">
-            </div>
-        </section>
+    <!-- Promo Categories Grid -->
+    <section class="promo-grid reveal">
+        <div class="promo-card bg-dark card-normal ios-tap">
+            <div class="card-text"><p>Enjoy</p><h3>With</h3><h1 class="bg-title">Bud's</h1></div>
+            <img src="https://via.placeholder.com/150x150/222222/FF0000?text=Buds" class="promo-img" alt="Buds">
+        </div>
+        <div class="promo-card bg-yellow card-normal ios-tap">
+            <div class="card-text"><p>Enjoy</p><h3>With</h3><h1 class="bg-title text-yellow">Watch</h1></div>
+            <img src="https://via.placeholder.com/150x150/fdc62e/FFFFFF?text=Watch" class="promo-img" alt="Watch">
+        </div>
+        <div class="promo-card bg-red card-wide ios-tap">
+            <div class="card-text"><p>Enjoy</p><h3>With</h3><h1 class="bg-title text-red">Laptop</h1></div>
+            <img src="https://via.placeholder.com/250x150/f42c37/FFFFFF?text=Laptop" class="promo-img wide-img" alt="Laptop">
+        </div>
+        <div class="promo-card bg-grey card-wide ios-tap">
+            <div class="card-text dark-text"><p>Enjoy</p><h3>With</h3><h1 class="bg-title text-grey">Console</h1></div>
+            <img src="https://via.placeholder.com/250x150/eeeeee/222222?text=PS5" class="promo-img wide-img" alt="Console">
+        </div>
+        <div class="promo-card bg-green card-normal ios-tap">
+            <div class="card-text"><p>Enjoy</p><h3>With</h3><h1 class="bg-title text-green">Vision Pro</h1></div>
+            <img src="https://via.placeholder.com/150x150/2dcc6f/FFFFFF?text=VR" class="promo-img" alt="Vision Pro">
+        </div>
+        <div class="promo-card bg-blue card-normal ios-tap">
+            <div class="card-text"><p>Enjoy</p><h3>With</h3><h1 class="bg-title text-blue">Assistant</h1></div>
+            <img src="https://via.placeholder.com/150x150/1376f4/FFFFFF?text=Echo" class="promo-img" alt="Voice Assistant">
+        </div>
+    </section>
 
-        <!-- Red Sale Banner -->
-        <section class="sale-banner dark-red-banner reveal">
-            <div class="banner-left"><h2>FINE<br>SMILE</h2></div>
-            <div class="banner-center">
-                <img src="https://via.placeholder.com/400x400/8a1c27/FFFFFF?text=Headphones" class="center-product floating-anim" style="border-radius: 50%;" alt="Headphones">
-            </div>
-            <div class="banner-right">
-                <p class="discount">50% off</p>
-                <h2>Summer Sale</h2>
-                <p class="desc">Company that grown from 200 to 400 employe's<br>in the last 12 month</p>
-                <button class="btn-white hover-btn">Shop now</button>
-            </div>
-        </section>
+    <!-- Red Sale Banner -->
+    <section class="sale-banner dark-red-banner reveal">
+        <div class="banner-left"><h2>FINE<br>SMILE</h2></div>
+        <div class="banner-center">
+            <img src="https://via.placeholder.com/400x400/8a1c27/FFFFFF?text=Headphones" class="center-product floating-anim" style="border-radius: 50%;" alt="Headphones">
+        </div>
+        <div class="banner-right">
+            <p class="discount">50% off</p>
+            <h2>Summer Sale</h2>
+            <p class="desc">Company that grown from 200 to 400 employe's<br>in the last 12 month</p>
+            <button class="btn-white hover-btn ios-tap">Shop now</button>
+        </div>
+    </section>
 
-        <!-- Best Seller Products Grid -->
-        <section class="best-sellers reveal">
-            <h2 class="section-title">Best Seller Products</h2>
-            <p class="section-subtitle">Find more Get best</p>
-            <div class="products-grid">
-                <div class="placeholder-box hover-card"></div>
-                <div class="placeholder-box hover-card"></div>
-                <div class="placeholder-box hover-card"></div>
-                <div class="placeholder-box hover-card"></div>
-            </div>
-        </section>
+    <!-- Best Seller Products Grid -->
+    <section class="best-sellers reveal">
+        <h2 class="section-title">Best Seller Products</h2>
+        <p class="section-subtitle">Find more Get best</p>
+        <div class="products-grid">
+            <div class="placeholder-box ios-tap"></div>
+            <div class="placeholder-box ios-tap"></div>
+            <div class="placeholder-box ios-tap"></div>
+            <div class="placeholder-box ios-tap"></div>
+        </div>
+    </section>
 
-        <!-- Green Sale Banner -->
-        <section class="sale-banner dark-green-banner reveal" style="margin-bottom: 120px;">
-            <div class="banner-left"><h2>HAPPY<br>HOURS</h2></div>
-            <div class="banner-center">
-                <img src="https://via.placeholder.com/400x400/2d5a3c/FFFFFF?text=Watch" class="center-product floating-anim" style="border-radius: 50%; transform: rotate(-15deg);" alt="Watch">
-            </div>
-            <div class="banner-right">
-                <p class="discount">50% off</p>
-                <h2>Summer Sale</h2>
-                <p class="desc">Company that grown from 200 to 400 employe's<br>in the last 12 month</p>
-                <button class="btn-white hover-btn">Shop now</button>
-            </div>
-        </section>
-    </main>
+    <!-- Green Sale Banner -->
+    <section class="sale-banner dark-green-banner reveal" style="margin-bottom: 120px;">
+        <div class="banner-left"><h2>HAPPY<br>HOURS</h2></div>
+        <div class="banner-center">
+            <img src="https://via.placeholder.com/400x400/2d5a3c/FFFFFF?text=Watch" class="center-product floating-anim" style="border-radius: 50%; transform: rotate(-15deg);" alt="Watch">
+        </div>
+        <div class="banner-right">
+            <p class="discount">50% off</p>
+            <h2>Summer Sale</h2>
+            <p class="desc">Company that grown from 200 to 400 employe's<br>in the last 12 month</p>
+            <button class="btn-white hover-btn ios-tap">Shop now</button>
+        </div>
+    </section>
+</main>
 
-    <!-- FLOATING BOTTOM NAV (Mobile Only) Blinkit Style -->
-    <nav class="bottom-nav">
-    <a href="#" class="nav-item active">
-        <!-- Home -->
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+<!-- FLOATING BOTTOM NAV (Restored to exact Floating Pill Shape from screenshot) -->
+<!-- FLOATING BOTTOM NAV (Modern Duotone Green Theme) -->
+<nav class="bottom-nav">
+    <a href="#" class="nav-item active ios-tap">
+        <svg viewBox="0 0 24 24" fill="none">
+            <path d="M3 10l9-7 9 7v10a2 2 0 01-2 2H5a2 2 0 01-2-2V10z" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M9 21V12h6v9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
         <span>Home</span>
     </a>
-    <a href="#" class="nav-item">
-        <!-- Shop (Shopping Bag) -->
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+    <a href="#" class="nav-item ios-tap">
+        <svg viewBox="0 0 24 24" fill="none">
+            <path d="M3 6h18l-2 15H5L3 6z" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M8 6V4a4 4 0 018 0v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
         <span>Shop</span>
     </a>
-    <a href="#" class="nav-item">
-        <!-- Category (Grid) -->
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+    <a href="#" class="nav-item ios-tap">
+        <svg viewBox="0 0 24 24" fill="none">
+            <rect x="4" y="4" width="6" height="6" rx="2" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.8"/>
+            <rect x="14" y="4" width="6" height="6" rx="2" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.8"/>
+            <rect x="4" y="14" width="6" height="6" rx="2" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.8"/>
+            <rect x="14" y="14" width="6" height="6" rx="2" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
         <span>Category</span>
     </a>
-    <a href="#" class="nav-item">
-        <!-- Cart (Trolley) -->
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"></path></svg>
+    <a href="#" class="nav-item ios-tap">
+        <svg viewBox="0 0 24 24" fill="none">
+            <path d="M5 3h1.81l2.4 10.8c.16.71.8 1.2 1.53 1.2h8.52c.73 0 1.37-.49 1.53-1.2L23 5H6" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="10" cy="20" r="2.2" fill="currentColor"/>
+            <circle cx="18" cy="20" r="2.2" fill="currentColor"/>
+        </svg>
         <span>Cart</span>
     </a>
-    <a href="#" class="nav-item">
-        <!-- My Order (Box/Package) -->
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+    <a href="#" class="nav-item ios-tap">
+        <svg viewBox="0 0 24 24" fill="none">
+            <path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2M6 7h12a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V9a2 2 0 012-2z" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M9 12h6M9 16h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
         <span>My Order</span>
     </a>
 </nav>
 
-    <script src="script.js"></script>
+<!-- iOS Style Toast Pill (For Cart added) -->
+<div class="ios-toast" id="iosToast">
+    <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path></svg>
+    <span>Item added successfully</span>
+</div>
+
+<!-- iOS Style Native Modal / Alert Box -->
+<div class="ios-overlay" id="iosAlertBox">
+    <div class="ios-alert">
+        <h3 id="iosAlertTitle">Install App</h3>
+        <p id="iosAlertMessage">To install this app on iOS:<br>1. Tap the Share icon below.<br>2. Select "Add to Home Screen".</p>
+        <div class="ios-alert-buttons">
+            <button class="ios-tap" id="iosAlertClose">OK</button>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
