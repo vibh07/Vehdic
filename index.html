@@ -8,15 +8,22 @@
 </head>
 <body>
 
-<!-- Header / Navbar (Top) -->
+<!-- Header / Navbar -->
 <header class="navbar">
     <div class="logo">Vehdic</div>
     
-    <!-- Desktop Links -->
     <nav class="nav-links" id="nav-links">
         <a href="#" class="active">Home</a>
         <a href="#">Shop</a>
-        <a href="#">Category</a>
+        <div class="nav-category-wrap">
+            <button class="nav-category-btn ios-tap" id="navCategoryBtn">
+                Category
+                <svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <div class="nav-category-dropdown" id="navCategoryDropdown">
+                <!-- Populated by JS -->
+            </div>
+        </div>
         <a href="#">My Order</a>
         <a href="#">About us</a>
         <a href="#">Contact</a>
@@ -24,30 +31,26 @@
         <a href="#">Profile</a>
     </nav>
 
-    <!-- Mobile Top Navigation Icons -->
-    <!-- Mobile Top Navigation Icons -->
     <div class="mobile-nav-icons">
-        <button id="installAppBtn" class="icon-btn ios-tap" title="Download App" style="color: #475569;">
+        <button id="installAppBtn" class="icon-btn ios-tap" title="Download App" style="color:#475569;">
             <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
                 <path d="M12 16V4M8 12l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M4 17v1a2 2 0 002 2h12a2 2 0 002-2v-1" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
             </svg>
         </button>
-        <a href="#" class="icon-btn ios-tap" title="Profile" style="color: #475569;">
+        <a href="#" class="icon-btn ios-tap" title="Profile" style="color:#475569;">
             <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
                 <circle cx="12" cy="8" r="4" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.8"/>
                 <path d="M20 21c0-2.5-2-5-8-5s-8 2.5-8 5" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
             </svg>
         </a>
-        <button id="mobileMenuBtn" class="icon-btn ios-tap" title="Menu" style="color: #475569;">
+        <button id="mobileMenuBtn" class="icon-btn ios-tap" title="Menu" style="color:#475569;">
             <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
                 <circle cx="5" cy="12" r="2.2" fill="currentColor"/>
                 <circle cx="12" cy="12" r="2.2" fill="currentColor"/>
                 <circle cx="19" cy="12" r="2.2" fill="currentColor"/>
             </svg>
         </button>
-
-        <!-- iOS Style Popup Menu (from 3 dots) -->
         <div class="mobile-dropdown-menu" id="mobileDropdown">
             <a href="#" class="ios-tap">About us</a>
             <div class="ios-divider"></div>
@@ -56,7 +59,12 @@
     </div>
 </header>
 
+<!-- ═══════════════════════════════════════ -->
+<!-- HOME CONTENT (hidden when Orders open) -->
+<!-- ═══════════════════════════════════════ -->
+<div id="homeContent">
 <main class="container">
+
     <!-- Hero Section -->
     <section class="hero reveal">
         <h1 class="hero-bg-text">HEADPHONE</h1>
@@ -104,7 +112,7 @@
     <section class="sale-banner dark-red-banner reveal">
         <div class="banner-left"><h2>FINE<br>SMILE</h2></div>
         <div class="banner-center">
-            <img src="https://via.placeholder.com/400x400/8a1c27/FFFFFF?text=Headphones" class="center-product floating-anim" style="border-radius: 50%;" alt="Headphones">
+            <img src="https://via.placeholder.com/400x400/8a1c27/FFFFFF?text=Headphones" class="center-product floating-anim" style="border-radius:50%;" alt="Headphones">
         </div>
         <div class="banner-right">
             <p class="discount">50% off</p>
@@ -114,23 +122,23 @@
         </div>
     </section>
 
-    <!-- Best Seller Products Grid -->
+    <!-- Best Seller Products -->
     <section class="best-sellers reveal">
         <h2 class="section-title">Best Seller Products</h2>
-        <p class="section-subtitle">Find more Get best</p>
+        <p class="section-subtitle">Find more · Get best</p>
+
+        <!-- no search bar here — moved to Shop page -->
+
         <div class="products-grid">
-            <div class="placeholder-box ios-tap"></div>
-            <div class="placeholder-box ios-tap"></div>
-            <div class="placeholder-box ios-tap"></div>
-            <div class="placeholder-box ios-tap"></div>
+            <!-- Skeletons / products injected by JS -->
         </div>
     </section>
 
     <!-- Green Sale Banner -->
-    <section class="sale-banner dark-green-banner reveal" style="margin-bottom: 120px;">
+    <section class="sale-banner dark-green-banner reveal" style="margin-bottom:120px;">
         <div class="banner-left"><h2>HAPPY<br>HOURS</h2></div>
         <div class="banner-center">
-            <img src="https://via.placeholder.com/400x400/2d5a3c/FFFFFF?text=Watch" class="center-product floating-anim" style="border-radius: 50%; transform: rotate(-15deg);" alt="Watch">
+            <img src="https://via.placeholder.com/400x400/2d5a3c/FFFFFF?text=Watch" class="center-product floating-anim" style="border-radius:50%;transform:rotate(-15deg);" alt="Watch">
         </div>
         <div class="banner-right">
             <p class="discount">50% off</p>
@@ -139,10 +147,93 @@
             <button class="btn-white hover-btn ios-tap">Shop now</button>
         </div>
     </section>
-</main>
 
-<!-- FLOATING BOTTOM NAV (Restored to exact Floating Pill Shape from screenshot) -->
-<!-- FLOATING BOTTOM NAV (Modern Duotone Green Theme) -->
+</main>
+</div><!-- /#homeContent -->
+
+<!-- ═══════════════════════════════════════ -->
+<!-- ORDER HISTORY VIEW                      -->
+<!-- ═══════════════════════════════════════ -->
+<div id="ordersView" style="display:none;">
+    <div class="orders-page container">
+        <div class="orders-page-header">
+            <h2>My Orders</h2>
+            <p>Your complete purchase history</p>
+        </div>
+        <div id="ordersContainer">
+            <!-- Injected by JS -->
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SHOP VIEW                               -->
+<!-- ═══════════════════════════════════════ -->
+<div id="shopView" style="display:none;">
+    <div class="shop-page container">
+        <div class="shop-page-header">
+            <h2>Shop</h2>
+            <p>All products</p>
+        </div>
+        <!-- Search bar (shop-only) -->
+        <div class="search-filter-bar">
+            <div class="search-input-wrap">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none">
+                    <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/>
+                    <path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+                <input type="text" id="shopSearchInput" placeholder="Search products…" autocomplete="off">
+            </div>
+        </div>
+        <div class="products-grid" id="shopProductsGrid">
+            <!-- Injected by JS -->
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- CATEGORY BOTTOM SHEET                   -->
+<!-- ═══════════════════════════════════════ -->
+<div class="cat-sheet-overlay" id="catSheetOverlay"></div>
+<div class="cat-sheet" id="catSheet">
+    <div class="cat-sheet-handle"></div>
+    <div class="cat-sheet-header">
+        <h3>Shop by Category</h3>
+        <button class="cat-sheet-close ios-tap" id="catSheetClose">
+            <svg viewBox="0 0 24 24" fill="none" width="20" height="20" stroke="currentColor" stroke-width="2.2">
+                <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </button>
+    </div>
+    <div class="cat-sheet-grid">
+        <div class="cat-card cat-dark ios-tap" data-cat="Audio">
+            <div class="cat-card-text"><p>Enjoy</p><h3>With</h3><h1>Bud's</h1></div>
+            <div class="cat-card-emoji">🎧</div>
+        </div>
+        <div class="cat-card cat-yellow ios-tap" data-cat="Wearables">
+            <div class="cat-card-text"><p>Enjoy</p><h3>With</h3><h1>Watch</h1></div>
+            <div class="cat-card-emoji">⌚</div>
+        </div>
+        <div class="cat-card cat-red cat-wide ios-tap" data-cat="">
+            <div class="cat-card-text"><p>Enjoy</p><h3>With</h3><h1>Laptop</h1></div>
+            <div class="cat-card-emoji">💻</div>
+        </div>
+        <div class="cat-card cat-grey cat-wide ios-tap" data-cat="">
+            <div class="cat-card-text dark-text"><p>Enjoy</p><h3>With</h3><h1>Console</h1></div>
+            <div class="cat-card-emoji">🎮</div>
+        </div>
+        <div class="cat-card cat-green ios-tap" data-cat="Tablets">
+            <div class="cat-card-text"><p>Enjoy</p><h3>With</h3><h1>Vision</h1></div>
+            <div class="cat-card-emoji">🥽</div>
+        </div>
+        <div class="cat-card cat-blue ios-tap" data-cat="Accessories">
+            <div class="cat-card-text"><p>Enjoy</p><h3>With</h3><h1>Smart</h1></div>
+            <div class="cat-card-emoji">🔊</div>
+        </div>
+    </div>
+</div>
+
+<!-- Floating Bottom Nav -->
 <nav class="bottom-nav">
     <a href="#" class="nav-item active ios-tap">
         <svg viewBox="0 0 24 24" fill="none">
@@ -184,23 +275,46 @@
     </a>
 </nav>
 
-<!-- iOS Style Toast Pill (For Cart added) -->
+<!-- iOS Toast -->
 <div class="ios-toast" id="iosToast">
     <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path></svg>
-    <span>Item added successfully</span>
+    <span>Done!</span>
 </div>
 
-<!-- iOS Style Native Modal / Alert Box -->
+<!-- iOS Alert -->
 <div class="ios-overlay" id="iosAlertBox">
     <div class="ios-alert">
-        <h3 id="iosAlertTitle">Install App</h3>
-        <p id="iosAlertMessage">To install this app on iOS:<br>1. Tap the Share icon below.<br>2. Select "Add to Home Screen".</p>
+        <h3 id="iosAlertTitle">Alert</h3>
+        <p id="iosAlertMessage"></p>
         <div class="ios-alert-buttons">
             <button class="ios-tap" id="iosAlertClose">OK</button>
         </div>
     </div>
 </div>
 
-<script src="script.js"></script>
+<!-- Cart Sidebar -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-header">
+        <h3>Your Cart</h3>
+        <button class="close-cart ios-tap" id="closeCartBtn">
+            <svg viewBox="0 0 24 24" fill="none" width="24" height="24" stroke="currentColor" stroke-width="2">
+                <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </button>
+    </div>
+    <div class="cart-items" id="cartItemsContainer">
+        <p class="empty-cart-msg">Your cart is empty.</p>
+    </div>
+    <div class="cart-footer">
+        <div class="cart-total">
+            <span>Total</span>
+            <span id="cartTotalPrice">$0.00</span>
+        </div>
+        <button class="btn-primary checkout-btn ios-tap" id="checkoutBtn">Place Order</button>
+    </div>
+</div>
+
+<script type="module" src="script.js"></script>
 </body>
 </html>
