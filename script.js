@@ -36,21 +36,83 @@ let activeView   = 'home';
 let pendingCat   = '';
 let currentUser  = null;
 
+// Coupon state
+let appliedCoupon = null;
+const COUPONS = {
+    'VEHDIC10':  { type: 'percent', value: 10,  label: '10% off' },
+    'WELCOME20': { type: 'percent', value: 20,  label: '20% off' },
+    'FLAT50':    { type: 'fixed',   value: 50,  label: '$50 off' },
+    'SAVE100':   { type: 'fixed',   value: 100, label: '$100 off' },
+    'FREESHIP':  { type: 'ship',    value: 0,   label: 'Free shipping' },
+};
+
+// Product detail state
+let pdpProduct  = null;
+let pdpQty      = 1;
+
 // Avatar colour palette
 const AVATAR_COLORS = ['#f42c37','#10b981','#1376f4','#fdc62e','#8b5cf6','#f97316','#06b6d4','#ec4899'];
 
 // ── SEED DATA ────────────────────────────────────────────────────────────────
-const img = (emoji) => `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect width="200" height="200" fill="#f5f5f5"/><text x="100" y="115" font-size="80" text-anchor="middle">${emoji}</text></svg>`)}`;
+const svgImg = (emoji, bg='#f5f5f5') => `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><rect width="400" height="400" fill="${bg}"/><text x="200" y="230" font-size="160" text-anchor="middle">${emoji}</text></svg>`)}`;
 
 const dummyProducts = [
-    { id:"p1", name:"Sony WH-1000XM5",       price:349.99, category:"Audio",       img:img("🎧") },
-    { id:"p2", name:"Apple AirPods Pro 2",    price:249.99, category:"Audio",       img:img("🎵") },
-    { id:"p3", name:"Samsung Galaxy Watch 6", price:299.99, category:"Wearables",   img:img("⌚") },
-    { id:"p4", name:"Logitech MX Master 3S",  price: 99.99, category:"Accessories", img:img("🖱️") },
-    { id:"p5", name:"iPad Air M2",            price:599.99, category:"Tablets",     img:img("📱") },
-    { id:"p6", name:"JBL Flip 6",             price:129.99, category:"Audio",       img:img("🔊") },
-    { id:"p7", name:"Apple Watch Ultra 2",    price:799.99, category:"Wearables",   img:img("⌚") },
-    { id:"p8", name:"Anker PowerCore 26K",    price: 59.99, category:"Accessories", img:img("🔋") }
+    {
+        id:"p1", name:"Sony WH-1000XM5", price:349.99, originalPrice:399.99, category:"Audio", rating:4.8, reviews:2341,
+        img: svgImg("🎧","#f0f0f0"),
+        images: [svgImg("🎧","#f0f0f0"), svgImg("🎧","#e8e8e8"), svgImg("🎧","#ebebeb")],
+        desc: "Industry-leading noise cancellation with the new Auto NC Optimizer. Crystal clear hands-free calling with precisely placed microphones. Up to 30 hours battery life with quick charge (3 min = 3 hours).",
+        highlights: ["30hr battery life","Multipoint connection","LDAC Hi-Res Audio","Wear detection","Speak-to-Chat"]
+    },
+    {
+        id:"p2", name:"Apple AirPods Pro 2", price:249.99, originalPrice:279.99, category:"Audio", rating:4.9, reviews:5820,
+        img: svgImg("🎵","#f5f5f5"),
+        images: [svgImg("🎵","#f5f5f5"), svgImg("🎵","#eee"), svgImg("🎵","#e8e8e8")],
+        desc: "Up to 2x more Active Noise Cancellation than before. Adaptive Transparency lets you tune out the world while still hearing important sounds. Personalized Spatial Audio with dynamic head tracking.",
+        highlights: ["Active Noise Cancellation","Adaptive Transparency","6hr listening time","MagSafe charging case","IPX4 water resistant"]
+    },
+    {
+        id:"p3", name:"Samsung Galaxy Watch 6", price:299.99, originalPrice:329.99, category:"Wearables", rating:4.6, reviews:1203,
+        img: svgImg("⌚","#f0f0f0"),
+        images: [svgImg("⌚","#f0f0f0"), svgImg("⌚","#e8e8e8"), svgImg("⌚","#ebebeb")],
+        desc: "Advanced health monitoring with BioActive Sensor for Body Composition analysis. Sleep Coaching powered by AI. Track over 90 workout types with enhanced GPS accuracy.",
+        highlights: ["Advanced BioActive Sensor","Sleep coaching AI","40hr battery","5ATM + IP68","Sapphire Crystal glass"]
+    },
+    {
+        id:"p4", name:"Logitech MX Master 3S", price:99.99, originalPrice:119.99, category:"Accessories", rating:4.7, reviews:876,
+        img: svgImg("🖱️","#f5f5f5"),
+        images: [svgImg("🖱️","#f5f5f5"), svgImg("🖱️","#eee"), svgImg("🖱️","#e8e8e8")],
+        desc: "8K DPI Any-Surface Tracking works even on glass. MagSpeed electromagnetic scrolling — 90% quieter clicks. Flow cross-computer control lets you work seamlessly across Mac and PC.",
+        highlights: ["8K DPI Any-Surface Tracking","MagSpeed scrolling","90% quieter clicks","USB-C fast charge","Multi-device Bluetooth"]
+    },
+    {
+        id:"p5", name:"iPad Air M2", price:599.99, originalPrice:649.99, category:"Tablets", rating:4.9, reviews:3102,
+        img: svgImg("📱","#f0f0f0"),
+        images: [svgImg("📱","#f0f0f0"), svgImg("📱","#e8e8e8"), svgImg("📱","#ebebeb")],
+        desc: "Supercharged by the M2 chip — 50% faster than M1. Stunning 10.9 Liquid Retina display. All-day battery life. Works with Apple Pencil and Magic Keyboard.",
+        highlights: ["M2 chip performance","10.9 Liquid Retina","All-day battery","5G capable","Center Stage camera"]
+    },
+    {
+        id:"p6", name:"JBL Flip 6", price:129.99, originalPrice:149.99, category:"Audio", rating:4.5, reviews:4231,
+        img: svgImg("🔊","#f5f5f5"),
+        images: [svgImg("🔊","#f5f5f5"), svgImg("🔊","#eee"), svgImg("🔊","#e8e8e8")],
+        desc: "Powerful sound with 2 JBL drivers and 2 separate tweeters. IP67 waterproof and dustproof — perfect for outdoor adventures. JBL PartyBoost connects multiple speakers for a bigger sound.",
+        highlights: ["IP67 waterproof","12hr playtime","JBL PartyBoost","USB-C charging","Racetrack-shaped driver"]
+    },
+    {
+        id:"p7", name:"Apple Watch Ultra 2", price:799.99, originalPrice:899.99, category:"Wearables", rating:4.8, reviews:986,
+        img: svgImg("⌚","#f0f0f0"),
+        images: [svgImg("⌚","#f0f0f0"), svgImg("⌚","#e8e8e8"), svgImg("⌚","#ebebeb")],
+        desc: "The most capable and rugged Apple Watch, redesigned with a natural titanium case. Up to 60 hours battery with Low Power mode. Precision dual-frequency GPS. Bright 2000 nit Always-On Retina display.",
+        highlights: ["60hr battery life","100m water resistance","Dual-frequency GPS","2000 nit display","S9 SiP chip"]
+    },
+    {
+        id:"p8", name:"Anker PowerCore 26K", price:59.99, originalPrice:79.99, category:"Accessories", rating:4.6, reviews:7823,
+        img: svgImg("🔋","#f5f5f5"),
+        images: [svgImg("🔋","#f5f5f5"), svgImg("🔋","#eee"), svgImg("🔋","#e8e8e8")],
+        desc: "26800mAh massive capacity — enough to charge an iPhone 14 over 6 times. USB-C and dual USB-A ports for simultaneous charging. Compact enough for any bag or backpack.",
+        highlights: ["26800mAh capacity","USB-C + dual USB-A","Charges iPhone 6x","PowerIQ 3.0","Trickle-Charge mode"]
+    }
 ];
 
 // ── AUTH STATE LISTENER ──────────────────────────────────────────────────────
@@ -309,6 +371,21 @@ function setupAppListeners() {
     document.getElementById('cartOverlay').addEventListener('click', closeCart);
     document.getElementById('checkoutBtn').addEventListener('click', handleCheckout);
 
+    // Product detail sheet
+    document.getElementById('pdpOverlay')?.addEventListener('click', closePDP);
+    document.getElementById('pdpClose')?.addEventListener('click', closePDP);
+    document.getElementById('pdpQtyMinus')?.addEventListener('click', () => { if(pdpQty>1){pdpQty--;document.getElementById('pdpQtyNum').textContent=pdpQty;} });
+    document.getElementById('pdpQtyPlus')?.addEventListener('click', () => { pdpQty++;document.getElementById('pdpQtyNum').textContent=pdpQty; });
+    document.getElementById('pdpAddBtn')?.addEventListener('click', () => {
+        if(!pdpProduct) return;
+        for(let i=0;i<pdpQty;i++) addToCart(pdpProduct.id);
+        closePDP();
+    });
+
+    // Coupon
+    document.getElementById('couponApplyBtn')?.addEventListener('click', applyCoupon);
+    document.getElementById('couponInput')?.addEventListener('keydown', e => { if(e.key==='Enter') applyCoupon(); });
+
     // Profile icon (mobile)
     document.getElementById('profileIconBtn')?.addEventListener('click', openProfileSheet);
 
@@ -410,10 +487,18 @@ function renderShopProducts(cat = pendingCat) {
 function attachGridListeners(grid) {
     if (grid._h) grid.removeEventListener('click', grid._h);
     grid._h = e => {
-        const add = e.target.closest('.add-to-cart-btn'), plus = e.target.closest('.qty-btn.plus'), minus = e.target.closest('.qty-btn.minus');
-        if (add)   addToCart(add.dataset.id);
-        if (plus)  changeQty(plus.dataset.id, +1);
-        if (minus) changeQty(minus.dataset.id, -1);
+        const add   = e.target.closest('.add-to-cart-btn');
+        const plus  = e.target.closest('.qty-btn.plus');
+        const minus = e.target.closest('.qty-btn.minus');
+        const card  = e.target.closest('.product-card');
+        if (add)   { addToCart(add.dataset.id); return; }
+        if (plus)  { changeQty(plus.dataset.id, +1); return; }
+        if (minus) { changeQty(minus.dataset.id, -1); return; }
+        // Tap anywhere else on card → open PDP
+        if (card) {
+            const pid = card.querySelector('[data-id]')?.dataset.id;
+            if (pid) openPDP(pid);
+        }
     };
     grid.addEventListener('click', grid._h);
 }
@@ -460,18 +545,101 @@ function openCart()  { document.getElementById('cartOverlay').classList.add('sho
 function closeCart() { document.getElementById('cartOverlay').classList.remove('show'); document.getElementById('cartSidebar').classList.remove('show'); }
 
 function renderCartUI() {
-    const con = document.getElementById('cartItemsContainer'), tot = document.getElementById('cartTotalPrice');
+    const con = document.getElementById('cartItemsContainer');
     const items = Object.values(cart);
-    if (!items.length) { con.innerHTML = `<p class="empty-cart-msg">Your cart is empty.</p>`; tot.textContent = '$0.00'; return; }
-    let total = 0; const f = document.createDocumentFragment();
+
+    if (!items.length) {
+        con.innerHTML = `<p class="empty-cart-msg">Your cart is empty.</p>`;
+        updateCartTotals(0);
+        appliedCoupon = null;
+        updateCouponStatus('');
+        return;
+    }
+
+    let subtotal = 0;
+    const f = document.createDocumentFragment();
     items.forEach(item => {
-        const sub = parseFloat(item.price) * item.qty; total += sub;
-        const el = document.createElement('div'); el.className = 'cart-item';
-        el.innerHTML = `<div class="cart-item-info"><h4>${item.name}</h4><p>$${parseFloat(item.price).toFixed(2)} × ${item.qty} = <strong>$${sub.toFixed(2)}</strong></p></div><div class="cart-item-controls"><button class="cart-qty-btn minus ios-tap" data-id="${item.id}">−</button><span>${item.qty}</span><button class="cart-qty-btn plus ios-tap" data-id="${item.id}">+</button></div>`;
+        const sub = parseFloat(item.price) * item.qty;
+        subtotal += sub;
+        const el = document.createElement('div');
+        el.className = 'cart-item';
+        el.innerHTML = `
+            <img class="cart-item-img" src="${item.img||''}" alt="${item.name}">
+            <div class="cart-item-info">
+                <h4>${item.name}</h4>
+                <p class="cart-item-price">$${parseFloat(item.price).toFixed(2)} each</p>
+                <p class="cart-item-sub">Subtotal: <strong>$${sub.toFixed(2)}</strong></p>
+            </div>
+            <div class="cart-item-controls">
+                <button class="cart-qty-btn minus ios-tap" data-id="${item.id}">−</button>
+                <span>${item.qty}</span>
+                <button class="cart-qty-btn plus ios-tap" data-id="${item.id}">+</button>
+            </div>`;
         f.appendChild(el);
     });
-    con.innerHTML = ''; con.appendChild(f); tot.textContent = `$${total.toFixed(2)}`;
-    con.querySelectorAll('.cart-qty-btn').forEach(b => b.addEventListener('click', () => changeQty(b.dataset.id, b.classList.contains('plus') ? 1 : -1)));
+    con.innerHTML = '';
+    con.appendChild(f);
+    con.querySelectorAll('.cart-qty-btn').forEach(b =>
+        b.addEventListener('click', () => changeQty(b.dataset.id, b.classList.contains('plus') ? 1 : -1))
+    );
+    updateCartTotals(subtotal);
+}
+
+function updateCartTotals(subtotal) {
+    const subtotalEl  = document.getElementById('cartSubtotal');
+    const totalEl     = document.getElementById('cartTotalPrice');
+    const discountRow = document.getElementById('discountRow');
+    const discountEl  = document.getElementById('cartDiscount');
+    const discLabelEl = document.getElementById('discountLabel');
+    const shippingEl  = document.getElementById('cartShipping');
+
+    if (subtotalEl) subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
+
+    let discount = 0;
+    let shippingFree = subtotal >= 50; // free shipping above $50
+
+    if (appliedCoupon) {
+        const c = appliedCoupon;
+        if (c.type === 'percent') discount = subtotal * (c.value / 100);
+        else if (c.type === 'fixed') discount = Math.min(c.value, subtotal);
+        else if (c.type === 'ship') shippingFree = true;
+    }
+
+    discount = Math.min(discount, subtotal);
+    const shipping = shippingFree ? 0 : 4.99;
+    const total = Math.max(0, subtotal - discount + shipping);
+
+    if (discountRow) {
+        discountRow.style.display = discount > 0 ? 'flex' : 'none';
+        if (discountEl) discountEl.textContent = `−$${discount.toFixed(2)}`;
+        if (discLabelEl && appliedCoupon) discLabelEl.textContent = `${appliedCoupon.label}`;
+    }
+    if (shippingEl) shippingEl.textContent = shipping === 0 ? 'Free 🎉' : `$${shipping.toFixed(2)}`;
+    if (totalEl) totalEl.textContent = `$${total.toFixed(2)}`;
+}
+
+function applyCoupon() {
+    const input = document.getElementById('couponInput');
+    const code = input?.value.trim().toUpperCase();
+    if (!code) { updateCouponStatus('Enter a coupon code', 'error'); return; }
+
+    const coupon = COUPONS[code];
+    if (!coupon) {
+        updateCouponStatus('Invalid coupon code ✗', 'error');
+        appliedCoupon = null;
+    } else {
+        appliedCoupon = { ...coupon, code };
+        updateCouponStatus(`${coupon.label} applied ✓`, 'success');
+        if(input) input.blur();
+    }
+    renderCartUI();
+}
+
+function updateCouponStatus(msg, type='') {
+    const el = document.getElementById('couponStatus');
+    if (!el) return;
+    el.textContent = msg;
+    el.className = `coupon-status ${type}`;
 }
 
 function renderCartBadge() {
@@ -492,9 +660,17 @@ async function handleCheckout() {
     const btn = document.getElementById('checkoutBtn');
     isCheckingOut = true; btn.innerHTML = `<span class="btn-spinner"></span> Processing…`; btn.style.opacity='0.75';
     try {
-        const total = items.reduce((s,i) => s + parseFloat(i.price)*i.qty, 0);
-        await set(push(ref(db,`orders/${currentUser.uid}`)), { items, totalAmount:parseFloat(total.toFixed(2)), timestamp:Date.now(), status:'Pending' });
-        cart={}; saveCartToStorage(); renderCartUI(); renderCartBadge(); refreshGrid();
+        const subtotal = items.reduce((s,i) => s + parseFloat(i.price)*i.qty, 0);
+        let discount = 0;
+        const shippingFree = subtotal >= 50 || (appliedCoupon && appliedCoupon.type==='ship');
+        if (appliedCoupon) {
+            if (appliedCoupon.type==='percent') discount = subtotal*(appliedCoupon.value/100);
+            else if (appliedCoupon.type==='fixed') discount = Math.min(appliedCoupon.value, subtotal);
+        }
+        const shipping = shippingFree ? 0 : 4.99;
+        const total = Math.max(0, subtotal - discount + shipping);
+        await set(push(ref(db,`orders/${currentUser.uid}`)), { items, subtotal:parseFloat(subtotal.toFixed(2)), discount:parseFloat(discount.toFixed(2)), coupon:appliedCoupon?.code||null, shipping, totalAmount:parseFloat(total.toFixed(2)), timestamp:Date.now(), status:'Pending' });
+        cart={}; appliedCoupon=null; saveCartToStorage(); renderCartUI(); renderCartBadge(); refreshGrid(); updateCouponStatus('');
         showToast('Order placed! 🎉'); closeCart();
     } catch(err) { showAlert('Order Failed','Something went wrong. Try again.'); }
     finally { btn.textContent='Place Order'; btn.style.opacity='1'; isCheckingOut=false; }
@@ -700,4 +876,105 @@ function checkPasswordStrength(val) {
     fill.style.background = l.color;
     label.textContent = l.text;
     label.style.color = l.color;
+}
+
+// ── PRODUCT DETAIL PAGE (PDP) ─────────────────────────────────────────────────
+function openPDP(productId) {
+    const p = allProducts.find(x => x.id === productId);
+    if (!p) return;
+    pdpProduct = p;
+    pdpQty = 1;
+
+    // Populate
+    document.getElementById('pdpTitle').textContent    = p.name;
+    document.getElementById('pdpPrice').textContent    = `$${parseFloat(p.price).toFixed(2)}`;
+    document.getElementById('pdpBadge').textContent    = p.category || '';
+    document.getElementById('pdpQtyNum').textContent   = '1';
+    document.getElementById('pdpDesc').textContent     = p.desc || 'Premium quality product from Vehdic store.';
+
+    // Original price + discount tag
+    const origEl = document.getElementById('pdpOrigPrice');
+    const tagEl  = document.getElementById('pdpDiscountTag');
+    if (p.originalPrice && p.originalPrice > p.price) {
+        const discPct = Math.round((1 - p.price / p.originalPrice) * 100);
+        origEl.textContent = `$${parseFloat(p.originalPrice).toFixed(2)}`;
+        origEl.style.display = '';
+        tagEl.textContent = `${discPct}% OFF`;
+        tagEl.style.display = '';
+    } else {
+        origEl.style.display = 'none';
+        tagEl.style.display  = 'none';
+    }
+
+    // Stars
+    const r = p.rating || 4.5;
+    const fullStars = Math.floor(r);
+    const half = r % 1 >= 0.5;
+    let stars = '★'.repeat(fullStars) + (half ? '½' : '') + '☆'.repeat(5 - fullStars - (half?1:0));
+    document.getElementById('pdpStars').textContent = stars;
+    document.getElementById('pdpReviewCount').textContent = p.reviews ? `(${p.reviews.toLocaleString()} reviews)` : '';
+
+    // Highlights
+    const hl = document.getElementById('pdpHighlights');
+    hl.innerHTML = '';
+    if (p.highlights?.length) {
+        const ul = document.createElement('ul');
+        ul.className = 'pdp-highlights-list';
+        p.highlights.forEach(h => {
+            const li = document.createElement('li');
+            li.textContent = h;
+            ul.appendChild(li);
+        });
+        hl.appendChild(ul);
+    }
+
+    // Gallery — use images array or fallback to single img
+    const imgs = p.images?.length ? p.images : [p.img];
+    const mainImg = document.getElementById('pdpMainImg');
+    mainImg.src = imgs[0];
+    mainImg.alt = p.name;
+
+    const thumbsEl = document.getElementById('pdpThumbnails');
+    thumbsEl.innerHTML = '';
+    if (imgs.length > 1) {
+        imgs.forEach((src, i) => {
+            const t = document.createElement('button');
+            t.className = `pdp-thumb ios-tap ${i === 0 ? 'active' : ''}`;
+            t.innerHTML = `<img src="${src}" alt="${p.name} view ${i+1}">`;
+            t.addEventListener('click', () => {
+                mainImg.src = src;
+                thumbsEl.querySelectorAll('.pdp-thumb').forEach(x => x.classList.remove('active'));
+                t.classList.add('active');
+            });
+            thumbsEl.appendChild(t);
+        });
+    }
+
+    // Update add button based on cart state
+    updatePDPCartBtn();
+
+    // Show
+    document.getElementById('pdpOverlay').classList.add('show');
+    document.getElementById('pdpSheet').classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+function updatePDPCartBtn() {
+    if (!pdpProduct) return;
+    const btn = document.getElementById('pdpAddBtn');
+    const inCart = cart[pdpProduct.id];
+    if (inCart) {
+        btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Add More (${inCart.qty} in cart)`;
+        btn.style.background = '#10b981';
+    } else {
+        btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M5 3h1.81l2.4 10.8c.16.71.8 1.2 1.53 1.2h8.52c.73 0 1.37-.49 1.53-1.2L23 5H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20" r="2" fill="currentColor"/><circle cx="18" cy="20" r="2" fill="currentColor"/></svg> Add to Cart`;
+        btn.style.background = '';
+    }
+}
+
+function closePDP() {
+    document.getElementById('pdpOverlay').classList.remove('show');
+    document.getElementById('pdpSheet').classList.remove('show');
+    document.body.style.overflow = '';
+    pdpProduct = null;
 }
