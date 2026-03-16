@@ -40,15 +40,17 @@ let currentUser  = null;
 const AVATAR_COLORS = ['#f42c37','#10b981','#1376f4','#fdc62e','#8b5cf6','#f97316','#06b6d4','#ec4899'];
 
 // ── SEED DATA ────────────────────────────────────────────────────────────────
+const img = (emoji) => `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect width="200" height="200" fill="#f5f5f5"/><text x="100" y="115" font-size="80" text-anchor="middle">${emoji}</text></svg>`)}`;
+
 const dummyProducts = [
-    { id:"p1", name:"Sony WH-1000XM5",       price:349.99, category:"Audio",       img:"https://via.placeholder.com/200x200/f0f0f0/222222?text=Sony+XM5" },
-    { id:"p2", name:"Apple AirPods Pro 2",    price:249.99, category:"Audio",       img:"https://via.placeholder.com/200x200/f0f0f0/222222?text=AirPods+Pro" },
-    { id:"p3", name:"Samsung Galaxy Watch 6", price:299.99, category:"Wearables",   img:"https://via.placeholder.com/200x200/f0f0f0/222222?text=Galaxy+Watch" },
-    { id:"p4", name:"Logitech MX Master 3S",  price: 99.99, category:"Accessories", img:"https://via.placeholder.com/200x200/f0f0f0/222222?text=MX+Master" },
-    { id:"p5", name:"iPad Air M2",            price:599.99, category:"Tablets",     img:"https://via.placeholder.com/200x200/f0f0f0/222222?text=iPad+Air" },
-    { id:"p6", name:"JBL Flip 6",             price:129.99, category:"Audio",       img:"https://via.placeholder.com/200x200/f0f0f0/222222?text=JBL+Flip+6" },
-    { id:"p7", name:"Apple Watch Ultra 2",    price:799.99, category:"Wearables",   img:"https://via.placeholder.com/200x200/f0f0f0/222222?text=Apple+Watch" },
-    { id:"p8", name:"Anker PowerCore 26K",    price: 59.99, category:"Accessories", img:"https://via.placeholder.com/200x200/f0f0f0/222222?text=Anker+26K" }
+    { id:"p1", name:"Sony WH-1000XM5",       price:349.99, category:"Audio",       img:img("🎧") },
+    { id:"p2", name:"Apple AirPods Pro 2",    price:249.99, category:"Audio",       img:img("🎵") },
+    { id:"p3", name:"Samsung Galaxy Watch 6", price:299.99, category:"Wearables",   img:img("⌚") },
+    { id:"p4", name:"Logitech MX Master 3S",  price: 99.99, category:"Accessories", img:img("🖱️") },
+    { id:"p5", name:"iPad Air M2",            price:599.99, category:"Tablets",     img:img("📱") },
+    { id:"p6", name:"JBL Flip 6",             price:129.99, category:"Audio",       img:img("🔊") },
+    { id:"p7", name:"Apple Watch Ultra 2",    price:799.99, category:"Wearables",   img:img("⌚") },
+    { id:"p8", name:"Anker PowerCore 26K",    price: 59.99, category:"Accessories", img:img("🔋") }
 ];
 
 // ── AUTH STATE LISTENER ──────────────────────────────────────────────────────
