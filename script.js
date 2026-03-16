@@ -137,9 +137,9 @@ document.addEventListener('DOMContentLoaded', () => {
     setupAppListeners();
 });
 
-async function loadSiteSettings() {
-    try {
-        const snap = await get(child(ref(db),'siteSettings'));
+function loadSiteSettings() {
+    // Use onValue for REALTIME updates — changes from admin reflect immediately
+    onValue(ref(db,'siteSettings'), snap => {
         if (!snap.exists()) return;
         const s = snap.val();
         if (s.hero) {
@@ -175,14 +175,14 @@ async function loadSiteSettings() {
             if (s.section.title)    { const e=document.querySelector('.section-title');    if(e) e.textContent=s.section.title; }
             if (s.section.subtitle) { const e=document.querySelector('.section-subtitle'); if(e) e.textContent=s.section.subtitle; }
         }
-    } catch(e) { /* non-critical */ }
+    }, err => { console.log('siteSettings error (non-critical)', err); });
 }
 
-async function loadCouponsFromDB() {
-    try {
-        const snap = await get(child(ref(db),'coupons'));
+function loadCouponsFromDB() {
+    // Realtime — when admin updates coupons, website picks them up immediately
+    onValue(ref(db,'coupons'), snap => {
         if (snap.exists()) Object.assign(COUPONS, snap.val());
-    } catch(e) { /* use hardcoded fallback */ }
+    });
 }
 
 // ── AUTH MODAL ────────────────────────────────────────────────────────────────
@@ -445,44 +445,48 @@ function setActiveBottomNav(label) {
 }
 
 // ── PRODUCTS ─────────────────────────────────────────────────────────────────
-async function loadProducts() {
-    // Show skeletons in BOTH grids
+function loadProducts() {
+    // Show skeletons initially
     document.querySelector('.products-grid').innerHTML = Array(4).fill('<div class="loading-skeleton"></div>').join('');
     document.getElementById('shopProductsGrid').innerHTML = Array(4).fill('<div class="loading-skeleton"></div>').join('');
-    try {
-        const snap = await get(child(ref(db),'products'));
-        // Use local dummyProducts as primary source — always fresh and reliable
-        // Merge with any extra products from Firebase that aren't in dummy list
+    // Use onValue for REALTIME — admin product changes show without refresh
+    onValue(ref(db,'products'), snap => {
+        // Start with local dummyProducts as base
         allProducts = [...dummyProducts];
         if (snap.exists()) {
             const dbProds = Object.keys(snap.val()).map(k=>({id:k,...snap.val()[k]}));
-            // Add any DB products not already in dummy (custom admin-added products)
+            // Admin-added products (not in dummy list) get appended
             dbProds.forEach(dp => {
-                if (!allProducts.find(p => p.id === dp.id)) allProducts.push(dp);
+                const idx = allProducts.findIndex(p => p.id === dp.id);
+                if (idx >= 0) {
+                    // If admin edited a product, use DB version
+                    allProducts[idx] = {...allProducts[idx], ...dp};
+                } else {
+                    allProducts.push(dp);
+                }
             });
+        } else {
+            // No products in DB yet — seed with dummyProducts
+            dummyProducts.forEach(p => set(ref(db,'products/'+p.id), {
+                id:p.id, name:p.name, price:p.price, originalPrice:p.originalPrice||null,
+                category:p.category, rating:p.rating||null, reviews:p.reviews||null,
+                img:p.img, images:p.images||[p.img],
+                desc:p.desc||'', highlights:p.highlights||[],
+                superSpecial:p.superSpecial||false
+            }));
         }
-        // Always keep Firebase in sync with latest dummy data
-        dummyProducts.forEach(p => set(ref(db,'products/'+p.id), {
-            id:p.id, name:p.name, price:p.price, originalPrice:p.originalPrice||null,
-            category:p.category, rating:p.rating||null, reviews:p.reviews||null,
-            img:p.img, images:p.images||[p.img],
-            desc:p.desc||'', highlights:p.highlights||[],
-            superSpecial:p.superSpecial||false
-        }));
         products = [...allProducts];
         buildCategoryUI();
         renderProducts(products);
-        // If user already navigated to shop, render there too
         if (activeView === 'shop') renderShopProducts(shopActiveCat);
-    } catch(err) {
+    }, err => {
         console.error('loadProducts error:', err);
-        // Fallback: always show dummy products even if Firebase fails
         allProducts = [...dummyProducts];
         products = [...allProducts];
         buildCategoryUI();
         renderProducts(products);
         if (activeView === 'shop') renderShopProducts(shopActiveCat);
-    }
+    });
 }
 
 function buildCategoryUI() {
@@ -832,19 +836,31 @@ async function saveProfile(){
     finally{btn.textContent='Save Changes';btn.style.opacity='1';}
 }
 
-function cycleAvatarColor(){const av=document.getElementById('profileAvatarLarge');const idx=((parseInt(av.dataset.colorIdx||0))+1)%AVATAR_COLORS.length;av.dataset.colorIdx=idx;av.style.background=AVATAR_COLORS[idx];}
+function cycleAvatarColor(){
+    const av=document.getElementById('profileAvatarLarge');
+    const idx=((parseInt(av.dataset.colorIdx||0))+1)%AVATAR_COLORS.length;
+    av.dataset.colorIdx=idx;
+    av.style.background=AVATAR_COLORS[idx];
+    // Immediately update nav avatar color (without saving — preview only)
+    const navAv=document.getElementById('navAvatar');
+    if(navAv) navAv.style.background=AVATAR_COLORS[idx];
+}
 
 async function updateNavAvatar(){
     if(!currentUser) return;
     try{
         const snap=await get(ref(db,`users/${currentUser.uid}/profile`));
         const d=snap.exists()?snap.val():{};
-        const name=d.name||currentUser.displayName||'U';
+        // Fix: use name from DB, then displayName, then email (not 'U' fallback)
+        const name=d.name||currentUser.displayName||currentUser.email?.split('@')[0]||'V';
         const init=name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
         const color=d.avatarColor||AVATAR_COLORS[0];
         const av=document.getElementById('navAvatar');
-        if(av){av.innerHTML=`<span>${init}</span>`;av.style.cssText=`background:${color};color:#fff;font-size:11px;font-weight:800;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;`;}
-    }catch{}
+        if(av){
+            av.innerHTML=`<span>${init}</span>`;
+            av.style.cssText=`background:${color};color:#fff;font-size:11px;font-weight:800;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;border-radius:50%;`;
+        }
+    }catch(e){console.error('updateNavAvatar',e);}
 }
 
 async function handleSignOut(){
