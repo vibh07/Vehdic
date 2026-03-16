@@ -11,18 +11,42 @@
 
 <!-- Header / Navbar (Top) -->
     <header class="navbar">
-        <div class="logo">LOGO</div>
-        
-        <!-- Desktop Links (Hidden on Mobile) -->
-        <nav class="nav-links" id="nav-links">
-            <a href="#" class="active">Home</a>
-            <a href="#">Shop</a>
+    <div class="logo">Vehdic</div>
+    
+    <!-- Desktop Links (Hidden on Mobile) -->
+    <nav class="nav-links" id="nav-links">
+        <a href="#" class="active">Home</a>
+        <a href="#">Shop</a>
+        <a href="#">Category</a>
+        <a href="#">My Order</a>
+        <a href="#">About us</a>
+        <a href="#">Contact</a>
+        <a href="#">Cart</a>
+        <a href="#">Profile</a>
+    </nav>
+
+    <!-- Mobile Top Navigation Icons (Hidden on Desktop) -->
+    <div class="mobile-nav-icons">
+        <!-- Download App Icon -->
+        <button id="installAppBtn" class="icon-btn" title="Download App">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+        </button>
+        <!-- Profile Icon -->
+        <a href="#" class="icon-btn" title="Profile">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        </a>
+        <!-- 3 Dots Menu -->
+        <button id="mobileMenuBtn" class="icon-btn" title="Menu">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"></circle><circle cx="12" cy="12" r="2.5"></circle><circle cx="12" cy="19" r="2.5"></circle></svg>
+        </button>
+
+        <!-- Small Popup Menu (from 3 dots) -->
+        <div class="mobile-dropdown-menu" id="mobileDropdown">
             <a href="#">About us</a>
-            <a href="#">Blog</a>
             <a href="#">Contact</a>
-            <a href="#">Profile</a>
-        </nav>
-    </header>
+        </div>
+    </div>
+</header>
 
     <main class="container">
         <!-- Hero Section -->
@@ -135,23 +159,32 @@
 
     <!-- FLOATING BOTTOM NAV (Mobile Only) Blinkit Style -->
     <nav class="bottom-nav">
-        <a href="#" class="nav-item active">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-            <span>Home</span>
-        </a>
-        <a href="#" class="nav-item">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-            <span>Category</span>
-        </a>
-        <a href="#" class="nav-item">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-            <span>Cart</span>
-        </a>
-        <a href="#" class="nav-item">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-            <span>Profile</span>
-        </a>
-    </nav>
+    <a href="#" class="nav-item active">
+        <!-- Home -->
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span>Home</span>
+    </a>
+    <a href="#" class="nav-item">
+        <!-- Shop (Shopping Bag) -->
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+        <span>Shop</span>
+    </a>
+    <a href="#" class="nav-item">
+        <!-- Category (Grid) -->
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        <span>Category</span>
+    </a>
+    <a href="#" class="nav-item">
+        <!-- Cart (Trolley) -->
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"></path></svg>
+        <span>Cart</span>
+    </a>
+    <a href="#" class="nav-item">
+        <!-- My Order (Box/Package) -->
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        <span>My Order</span>
+    </a>
+</nav>
 
     <script src="script.js"></script>
 </body>
