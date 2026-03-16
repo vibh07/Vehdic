@@ -222,18 +222,23 @@ body { background-color: var(--bg-main); color: var(--text-dark); overflow-x: hi
 /* Cart Sidebar Overlay */
 .cart-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
-    z-index: 10000; opacity: 0; visibility: hidden; transition: all 0.3s ease;
+    background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 19999; opacity: 0; visibility: hidden;
+    transition: opacity 0.35s ease, visibility 0.35s ease;
 }
 .cart-overlay.show { opacity: 1; visibility: visible; }
 
 /* Cart Sidebar (iOS Style) */
 .cart-sidebar {
-    position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100vh;
-    background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(25px) saturate(200%);
-    -webkit-backdrop-filter: blur(25px); box-shadow: -10px 0 40px rgba(0,0,0,0.1);
-    z-index: 10001; transition: right 0.4s var(--ios-spring);
+    position: fixed; top: 0; right: -110%; width: 100%; max-width: 420px; height: 100%;
+    height: 100dvh;
+    background: #ffffff;
+    box-shadow: -20px 0 60px rgba(0,0,0,0.15);
+    z-index: 20000;
+    transition: right 0.42s cubic-bezier(0.32, 0.72, 0, 1);
     display: flex; flex-direction: column;
+    overflow: hidden;
 }
 .cart-sidebar.show { right: 0; }
 .cart-header { display: flex; justify-content: space-between; align-items: center; padding: 25px 20px; border-bottom: 1px solid rgba(0,0,0,0.05); }
@@ -1351,4 +1356,37 @@ body { background-color: var(--bg-main); color: var(--text-dark); overflow-x: hi
 @media (max-width: 440px) {
     .auth-card { padding: 28px 20px 24px; border-radius: 24px; }
     .auth-logo  { font-size: 28px; }
+}
+
+/* ═══════════════════════════════════════════ */
+/* MOBILE CART — FULL WIDTH FIX                */
+/* ═══════════════════════════════════════════ */
+@media (max-width: 480px) {
+    .cart-sidebar {
+        max-width: 100% !important;
+        width: 100% !important;
+        right: -100% !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+    }
+    .cart-sidebar.show { right: 0 !important; }
+
+    /* Cart header safe area */
+    .cart-header {
+        padding-top: max(25px, env(safe-area-inset-top, 25px));
+    }
+
+    /* Profile sheet full width */
+    .profile-sheet { border-radius: 20px 20px 0 0; }
+
+    /* Auth card full bleed on tiny screens */
+    .auth-card { border-radius: 20px; }
+}
+
+/* ═══════════════════════════════════════════ */
+/* HERO IMAGE — OBJECT FIT FIX                 */
+/* ═══════════════════════════════════════════ */
+.hero-img-container img {
+    border-radius: 16px;
+    background: rgba(255,255,255,0.1);
 }
