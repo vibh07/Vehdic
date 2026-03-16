@@ -1,14 +1,17 @@
 import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import { getDatabase, ref, get, set, push, child } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+import { getDatabase, ref, get, set, push, child, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword,
          signOut, GoogleAuthProvider, signInWithPopup, updateProfile, sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
 // ── FIREBASE ─────────────────────────────────────────────────────────────────
 const firebaseConfig = {
-    apiKey:"AIzaSyCr4X0JCSg3GOLTbltdWihl5a4GZs6ipq8", authDomain:"anadi.firebaseapp.com",
-    projectId:"anadi", databaseURL:"https://anadi-default-rtdb.asia-southeast1.firebasedatabase.app",
-    storageBucket:"anadi.firebasestorage.app", messagingSenderId:"544387227261",
+    apiKey:"AIzaSyCr4X0JCSg3GOLTbltdWihl5a4GZs6ipq8",
+    authDomain:"vehdic.firebaseapp.com",
+    projectId:"vehdic",
+    databaseURL:"https://vehdic-default-rtdb.asia-southeast1.firebasedatabase.app",
+    storageBucket:"vehdic.firebasestorage.app",
+    messagingSenderId:"544387227261",
     appId:"1:544387227261:web:0ab1783048eb866ce55b14"
 };
 const fbApp = initializeApp(firebaseConfig);
@@ -128,9 +131,59 @@ onAuthStateChanged(auth, async (user) => {
 // ── DOM READY ────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
     loadProducts();
+    loadSiteSettings();
+    loadCouponsFromDB();
     setupAuthListeners();
     setupAppListeners();
 });
+
+async function loadSiteSettings() {
+    try {
+        const snap = await get(child(ref(db),'siteSettings'));
+        if (!snap.exists()) return;
+        const s = snap.val();
+        if (s.hero) {
+            const h = s.hero;
+            if (h.eyebrow)  { const el=document.querySelector('.hero-eyebrow');       if(el) el.textContent=h.eyebrow; }
+            if (h.subtitle) { const el=document.querySelector('.hero-text h3');        if(el) el.textContent=h.subtitle; }
+            if (h.title)    { const el=document.querySelector('.hero-text h2');        if(el) el.textContent=h.title; }
+            if (h.bgText)   { const el=document.querySelector('.hero-bg-text');        if(el) el.textContent=h.bgText; }
+            if (h.desc)     { const el=document.querySelector('.hero-sub');            if(el) el.textContent=h.desc; }
+            if (h.imgUrl)   { const el=document.querySelector('.hero-img-container img'); if(el) el.src=h.imgUrl; }
+        }
+        if (s.banner1) {
+            const banners=document.querySelectorAll('.sale-banner');
+            if (banners[0]) {
+                if (s.banner1.leftTitle)  { const e=banners[0].querySelector('.banner-left h2');  if(e) e.innerHTML=s.banner1.leftTitle.replace(' ','<br>'); }
+                if (s.banner1.discount)   { const e=banners[0].querySelector('.discount');         if(e) e.textContent=s.banner1.discount; }
+                if (s.banner1.rightTitle) { const e=banners[0].querySelector('.banner-right h2'); if(e) e.textContent=s.banner1.rightTitle; }
+                if (s.banner1.desc)       { const e=banners[0].querySelector('.desc');             if(e) e.textContent=s.banner1.desc; }
+                if (s.banner1.imgUrl)     { const e=banners[0].querySelector('.banner-product-img'); if(e) e.src=s.banner1.imgUrl; }
+            }
+        }
+        if (s.banner2) {
+            const banners=document.querySelectorAll('.sale-banner');
+            if (banners[1]) {
+                if (s.banner2.leftTitle)  { const e=banners[1].querySelector('.banner-left h2');  if(e) e.innerHTML=s.banner2.leftTitle.replace(' ','<br>'); }
+                if (s.banner2.discount)   { const e=banners[1].querySelector('.discount');         if(e) e.textContent=s.banner2.discount; }
+                if (s.banner2.rightTitle) { const e=banners[1].querySelector('.banner-right h2'); if(e) e.textContent=s.banner2.rightTitle; }
+                if (s.banner2.desc)       { const e=banners[1].querySelector('.desc');             if(e) e.textContent=s.banner2.desc; }
+                if (s.banner2.imgUrl)     { const e=banners[1].querySelector('.banner-product-img'); if(e) e.src=s.banner2.imgUrl; }
+            }
+        }
+        if (s.section) {
+            if (s.section.title)    { const e=document.querySelector('.section-title');    if(e) e.textContent=s.section.title; }
+            if (s.section.subtitle) { const e=document.querySelector('.section-subtitle'); if(e) e.textContent=s.section.subtitle; }
+        }
+    } catch(e) { /* non-critical */ }
+}
+
+async function loadCouponsFromDB() {
+    try {
+        const snap = await get(child(ref(db),'coupons'));
+        if (snap.exists()) Object.assign(COUPONS, snap.val());
+    } catch(e) { /* use hardcoded fallback */ }
+}
 
 // ── AUTH MODAL ────────────────────────────────────────────────────────────────
 function openAuthModal(preferTab = 'login') {
@@ -544,12 +597,12 @@ function attachGridListeners(grid) {
 
 // ── CART ─────────────────────────────────────────────────────────────────────
 function loadCartFromStorage(uid) {
-    try { return JSON.parse(localStorage.getItem(`anadi_cart_${uid}`))||{}; }
+    try { return JSON.parse(localStorage.getItem(`vehdic_cart_${uid}`))||{}; }
     catch { return {}; }
 }
 function saveCartToStorage() {
     const uid = currentUser ? currentUser.uid : 'guest';
-    localStorage.setItem(`anadi_cart_${uid}`, JSON.stringify(cart));
+    localStorage.setItem(`vehdic_cart_${uid}`, JSON.stringify(cart));
 }
 
 function addToCart(pid) {
@@ -698,7 +751,7 @@ function renderOrdersView() {
 
 async function loadOrders() {
     const con=document.getElementById('ordersContainer');
-    con.innerHTML=`<div class="orders-loading"><div class="anadi-loader"><span>A</span><span>n</span><span>a</span><span>d</span><span>i</span></div></div>`;
+    con.innerHTML=`<div class="orders-loading"><div class="vehdic-loader"><span>V</span><span>e</span><span>h</span><span>d</span><span>i</span><span>c</span></div></div>`;
     try{
         const snap=await get(ref(db,`orders/${currentUser.uid}`));
         if(!snap.exists()){con.innerHTML='<div class="orders-empty"><p>No orders yet. Shop something! 🛍️</p></div>';return;}
