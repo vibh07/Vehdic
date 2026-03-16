@@ -19,8 +19,41 @@ const db    = getDatabase(fbApp);
 const auth  = getAuth(fbApp);
 const gProvider = new GoogleAuthProvider();
 
+// ── NETWORK & PERFORMANCE ────────────────────────────────────────────────────
+// Detect slow connection — adjust behavior accordingly
+const isSlowConnection = () => {
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (!conn) return false;
+    return conn.saveData || ['slow-2g','2g'].includes(conn.effectiveType);
+};
+
+// LocalStorage product cache — avoids Firebase fetch on every load
+const PROD_CACHE_KEY = 'vehdic_products_cache';
+const PROD_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+function saveProductsToCache(prods) {
+    try {
+        localStorage.setItem(PROD_CACHE_KEY, JSON.stringify({
+            ts: Date.now(), data: prods
+        }));
+    } catch(e) {}
+}
+
+function loadProductsFromCache() {
+    try {
+        const raw = localStorage.getItem(PROD_CACHE_KEY);
+        if (!raw) return null;
+        const { ts, data } = JSON.parse(raw);
+        // Cache valid for 5 min — on slow networks use even stale cache
+        const maxAge = isSlowConnection() ? 30 * 60 * 1000 : PROD_CACHE_TTL;
+        if (Date.now() - ts < maxAge) return data;
+    } catch(e) {}
+    return null;
+}
+
 // ── STATE ────────────────────────────────────────────────────────────────────
 let currentUser   = null;
+let deferredInstallPrompt = null; // holds the PWA install event
 let cart          = {};
 let allProducts   = [];
 let products      = [];
@@ -204,6 +237,95 @@ function closeAuthModal() {
     document.body.style.overflow = '';
 }
 
+// ── PWA INSTALL BUTTON ───────────────────────────────────────────────────────
+function setupInstallButton() {
+    const btn = document.getElementById('installBtn');
+    if (!btn) return;
+
+    // Capture the beforeinstallprompt event — this is what enables the install
+    window.addEventListener('beforeinstallprompt', e => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        btn.style.display = 'flex'; // show button only when installable
+    });
+
+    // If already installed as PWA — show checkmark, hide button
+    window.addEventListener('appinstalled', () => {
+        deferredInstallPrompt = null;
+        btn.classList.remove('expanded');
+        btn.classList.add('installed');
+        document.getElementById('installIconState').innerHTML = `
+            <svg class="check-icon" viewBox="0 0 24 24" fill="none" width="20" height="20">
+                <path d="M20 6L9 17l-5-5" stroke="#4a7c59" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>`;
+        showToast('App installed! ✅');
+    });
+
+    // Check if already running as installed PWA
+    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+        btn.style.display = 'none'; // already installed, hide button
+        return;
+    }
+
+    // Auto-animate: expand after 2s to draw attention
+    let animTimer;
+    function runInstallAnimation() {
+        // Expand the button
+        btn.classList.add('expanded');
+        document.getElementById('installIconState').style.display = 'none';
+        document.getElementById('installExpandedState').style.display = 'flex';
+
+        // Animate progress bar from 0 to 100%
+        const fill = document.getElementById('installProgressFill');
+        if (!fill) return;
+        fill.style.width = '0%';
+        let pct = 0;
+        const interval = setInterval(() => {
+            pct += 2;
+            fill.style.width = pct + '%';
+            if (pct >= 100) {
+                clearInterval(interval);
+                // Collapse back to icon after 200ms
+                setTimeout(() => {
+                    btn.classList.remove('expanded');
+                    document.getElementById('installIconState').style.display = 'flex';
+                    document.getElementById('installExpandedState').style.display = 'none';
+                    fill.style.width = '0%';
+                    // Repeat animation every 12 seconds
+                    animTimer = setTimeout(runInstallAnimation, 4000);
+                }, 200);
+            }
+        }, 40); // 40ms * 50 steps = 2000ms total
+    }
+
+    // Start first animation after 2 seconds
+    animTimer = setTimeout(runInstallAnimation, 2000);
+
+    // On tap — trigger actual PWA install
+    btn.addEventListener('click', async () => {
+        clearTimeout(animTimer);
+        if (deferredInstallPrompt) {
+            // Show the native install prompt
+            deferredInstallPrompt.prompt();
+            const { outcome } = await deferredInstallPrompt.userChoice;
+            if (outcome === 'accepted') {
+                deferredInstallPrompt = null;
+                showToast('Installing Vehdic App… 🚀');
+            } else {
+                // User dismissed — show toast and retry animation later
+                showToast('Tap again anytime to install!');
+                animTimer = setTimeout(runInstallAnimation, 15000);
+            }
+        } else {
+            // Fallback for browsers that don't support beforeinstallprompt (Safari)
+            showAlert(
+                'Install Vehdic App 📱',
+                '<b>On iPhone/iPad:</b><br>1. Tap the <b>Share</b> button (box with arrow)<br>2. Scroll down and tap <b>"Add to Home Screen"</b><br><br><b>On Android:</b><br>Tap the browser menu → "Add to Home Screen"'
+            );
+        }
+    });
+}
+
 function setupAuthListeners() {
     // Dismiss (guest)
     document.getElementById('authModalDismiss')?.addEventListener('click', closeAuthModal);
@@ -336,8 +458,8 @@ function setupAppListeners() {
         document.addEventListener('click', e => { if(!e.target.closest('.mobile-nav-icons')) mmDrop.classList.remove('show'); });
     }
 
-    // Install
-    document.getElementById('mobileCartBtn')?.addEventListener('click', () => openCart());
+    // PWA Install button — animated download bar then trigger install
+    setupInstallButton();
 
     // Desktop nav
     document.querySelectorAll('.nav-links a').forEach(a => {
@@ -434,6 +556,8 @@ function switchView(name, category='') {
     });
     if (name==='shop')   { const i=document.getElementById('shopSearchInput'); if(i){i.value=''; document.getElementById('shopSearchClear').style.display='none';} renderShopProducts(category); }
     if (name==='orders') renderOrdersView();
+    // Stop orders listener when leaving orders view (saves bandwidth)
+    if (name!=='orders' && _ordersUnsub) { _ordersUnsub(); _ordersUnsub=null; }
     window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -446,10 +570,20 @@ function setActiveBottomNav(label) {
 
 // ── PRODUCTS ─────────────────────────────────────────────────────────────────
 function loadProducts() {
-    // Show skeletons initially
-    document.querySelector('.products-grid').innerHTML = Array(4).fill('<div class="loading-skeleton"></div>').join('');
-    document.getElementById('shopProductsGrid').innerHTML = Array(4).fill('<div class="loading-skeleton"></div>').join('');
-    // Use onValue for REALTIME — admin product changes show without refresh
+    // Try cache first — instant render on slow networks
+    const cached = loadProductsFromCache();
+    if (cached && cached.length) {
+        allProducts = cached;
+        products = [...allProducts];
+        buildCategoryUI();
+        renderProducts(products);
+        if (activeView === 'shop') renderShopProducts(shopActiveCat);
+        // Show skeletons only in background if no cache
+    } else {
+        document.querySelector('.products-grid').innerHTML = Array(4).fill('<div class="loading-skeleton"></div>').join('');
+        document.getElementById('shopProductsGrid').innerHTML = Array(4).fill('<div class="loading-skeleton"></div>').join('');
+    }
+    // Always sync with Firebase in background
     onValue(ref(db,'products'), snap => {
         // Start with local dummyProducts as base
         allProducts = [...dummyProducts];
@@ -476,6 +610,7 @@ function loadProducts() {
             }));
         }
         products = [...allProducts];
+        saveProductsToCache(allProducts); // cache for next visit
         buildCategoryUI();
         renderProducts(products);
         if (activeView === 'shop') renderShopProducts(shopActiveCat);
@@ -606,7 +741,10 @@ function loadCartFromStorage(uid) {
 }
 function saveCartToStorage() {
     const uid = currentUser ? currentUser.uid : 'guest';
-    localStorage.setItem(`vehdic_cart_${uid}`, JSON.stringify(cart));
+    const data = JSON.stringify(cart);
+    localStorage.setItem(`vehdic_cart_${uid}`, data);
+    // Also save to sessionStorage as instant backup
+    try { sessionStorage.setItem('vehdic_cart_current', data); } catch(e) {}
 }
 
 function addToCart(pid) {
