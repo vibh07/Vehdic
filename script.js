@@ -284,7 +284,7 @@ function setupAppListeners() {
     }
 
     // Install
-    document.getElementById('installAppBtn')?.addEventListener('click', () => showAlert('Install App','1. Tap the Share icon.<br>2. Select "Add to Home Screen".'));
+    document.getElementById('mobileCartBtn')?.addEventListener('click', () => openCart());
 
     // Desktop nav
     document.querySelectorAll('.nav-links a').forEach(a => {
@@ -393,20 +393,42 @@ function setActiveBottomNav(label) {
 
 // ── PRODUCTS ─────────────────────────────────────────────────────────────────
 async function loadProducts() {
+    // Show skeletons in BOTH grids
     document.querySelector('.products-grid').innerHTML = Array(4).fill('<div class="loading-skeleton"></div>').join('');
+    document.getElementById('shopProductsGrid').innerHTML = Array(4).fill('<div class="loading-skeleton"></div>').join('');
     try {
         const snap = await get(child(ref(db),'products'));
+        // Use local dummyProducts as primary source — always fresh and reliable
+        // Merge with any extra products from Firebase that aren't in dummy list
+        allProducts = [...dummyProducts];
         if (snap.exists()) {
-            allProducts = Object.keys(snap.val()).map(k=>({id:k,...snap.val()[k]}));
-        } else {
-            allProducts = dummyProducts;
-            allProducts.forEach(p => set(ref(db,'products/'+p.id), p));
+            const dbProds = Object.keys(snap.val()).map(k=>({id:k,...snap.val()[k]}));
+            // Add any DB products not already in dummy (custom admin-added products)
+            dbProds.forEach(dp => {
+                if (!allProducts.find(p => p.id === dp.id)) allProducts.push(dp);
+            });
         }
+        // Always keep Firebase in sync with latest dummy data
+        dummyProducts.forEach(p => set(ref(db,'products/'+p.id), {
+            id:p.id, name:p.name, price:p.price, originalPrice:p.originalPrice||null,
+            category:p.category, rating:p.rating||null, reviews:p.reviews||null,
+            img:p.img, images:p.images||[p.img],
+            desc:p.desc||'', highlights:p.highlights||[],
+            superSpecial:p.superSpecial||false
+        }));
         products = [...allProducts];
         buildCategoryUI();
         renderProducts(products);
-    } catch {
-        document.querySelector('.products-grid').innerHTML = '<p class="grid-empty-msg">Failed to load. Refresh.</p>';
+        // If user already navigated to shop, render there too
+        if (activeView === 'shop') renderShopProducts(shopActiveCat);
+    } catch(err) {
+        console.error('loadProducts error:', err);
+        // Fallback: always show dummy products even if Firebase fails
+        allProducts = [...dummyProducts];
+        products = [...allProducts];
+        buildCategoryUI();
+        renderProducts(products);
+        if (activeView === 'shop') renderShopProducts(shopActiveCat);
     }
 }
 
@@ -449,10 +471,10 @@ function buildProductCard(p) {
     div.className = 'product-card ios-tap';
     div.innerHTML = `
         <div class="product-card-img-wrap">
-            <img src="${p.img}" alt="${p.name}" loading="lazy">
+            <img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20fill%3D%22%23f5ede0%22%2F%3E%3Ctext%20x%3D%22100%22%20y%3D%22115%22%20font-size%3D%2280%22%20text-anchor%3D%22middle%22%3E%F0%9F%8C%BF%3C%2Ftext%3E%3C%2Fsvg%3E'">
             ${pct>0 ? `<span class="product-sale-tag">-${pct}%</span>` : ''}
         </div>
-        ${p.superSpecial ? `<span class="product-super-badge">⭐ Super Special</span>` : (p.category ? `<span class="product-badge">${p.category}</span>` : '')}
+        ${(p.superSpecial||p.name.includes('Nasya')) ? `<span class="product-super-badge">⭐ Super Special</span>` : (p.category ? `<span class="product-badge">${p.category}</span>` : '')}
         <h3>${p.name}</h3>
         <div class="product-price-row">
             <p class="product-price">₹${p.price.toLocaleString("en-IN")}</p>
@@ -480,6 +502,11 @@ function renderShopProducts(cat=shopActiveCat) {
     const grid  = document.getElementById('shopProductsGrid');
     const query = document.getElementById('shopSearchInput')?.value.trim().toLowerCase()||'';
     const sort  = document.getElementById('shopSortSelect')?.value||'';
+    // If products not loaded yet, show skeleton and wait
+    if (!allProducts.length) {
+        grid.innerHTML = Array(4).fill('<div class="loading-skeleton"></div>').join('');
+        return;
+    }
     let list = allProducts.filter(p =>
         (!cat||p.category===cat) &&
         (!query||p.name.toLowerCase().includes(query)||(p.category||'').toLowerCase().includes(query))
@@ -549,7 +576,25 @@ function closeCart() { document.getElementById('cartOverlay').classList.remove('
 function renderCartUI() {
     const con = document.getElementById('cartItemsContainer');
     const items = Object.values(cart);
-    if (!items.length) { con.innerHTML='<p class="empty-cart-msg">Your cart is empty.</p>'; updateCartTotals(0); return; }
+    if (!items.length) {
+        con.innerHTML=`
+            <div class="cart-empty-state">
+                <div class="cart-empty-icon">🛒</div>
+                <h4>Your cart is empty</h4>
+                <p>Add some products to get started</p>
+                <button class="cart-shop-now-btn ios-tap" id="cartShopNowBtn">
+                    <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M3 6h18l-2 15H5L3 6z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 6V4a4 4 0 018 0v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                    Shop Now
+                </button>
+            </div>`;
+        document.getElementById('cartShopNowBtn')?.addEventListener('click', () => {
+            closeCart();
+            switchView('shop');
+            setActiveBottomNav('Shop');
+        });
+        updateCartTotals(0);
+        return;
+    }
     let sub=0; const f=document.createDocumentFragment();
     items.forEach(item => {
         const s=parseFloat(item.price)*item.qty; sub+=s;
@@ -602,6 +647,8 @@ function renderCartBadge() {
         if(q>0){if(!badge){n.style.position='relative';n.insertAdjacentHTML('beforeend',`<span class="cart-badge">${q}</span>`);}else badge.textContent=q;}
         else if(badge) badge.remove();
     });
+    const mb=document.getElementById('mobileCartBadge');
+    if(mb){if(q>0){mb.textContent=q;mb.style.display='flex';}else mb.style.display='none';}
 }
 
 // ── CHECKOUT ─────────────────────────────────────────────────────────────────
@@ -651,7 +698,7 @@ function renderOrdersView() {
 
 async function loadOrders() {
     const con=document.getElementById('ordersContainer');
-    con.innerHTML=`<div class="orders-loading"><div class="anadi-loader"><span>V</span><span>e</span><span>h</span><span>d</span><span>i</span><span>c</span></div></div>`;
+    con.innerHTML=`<div class="orders-loading"><div class="anadi-loader"><span>A</span><span>n</span><span>a</span><span>d</span><span>i</span></div></div>`;
     try{
         const snap=await get(ref(db,`orders/${currentUser.uid}`));
         if(!snap.exists()){con.innerHTML='<div class="orders-empty"><p>No orders yet. Shop something! 🛍️</p></div>';return;}
@@ -769,7 +816,7 @@ function openPDP(pid) {
     const hl=document.getElementById('pdpHighlights');hl.innerHTML='';
     if(p.highlights?.length){const ul=document.createElement('ul');ul.className='pdp-highlights-list';p.highlights.forEach(h=>{const li=document.createElement('li');li.textContent=h;ul.appendChild(li);});hl.appendChild(ul);}
     const imgs=p.images?.length?p.images:[p.img];
-    const mainImg=document.getElementById('pdpMainImg');mainImg.src=imgs[0];mainImg.alt=p.name;
+    const mainImg=document.getElementById('pdpMainImg');mainImg.src=imgs[0];mainImg.alt=p.name;mainImg.onerror=function(){this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22400%22%3E%3Crect%20width%3D%22400%22%20height%3D%22400%22%20fill%3D%22%23f5ede0%22%2F%3E%3Ctext%20x%3D%22200%22%20y%3D%22220%22%20font-size%3D%22150%22%20text-anchor%3D%22middle%22%3E%F0%9F%8C%BF%3C%2Ftext%3E%3C%2Fsvg%3E';};
     const thumbsEl=document.getElementById('pdpThumbnails');thumbsEl.innerHTML='';
     if(imgs.length>1){imgs.forEach((src,i)=>{const t=document.createElement('button');t.className=`pdp-thumb ios-tap${i===0?' active':''}`;t.innerHTML=`<img src="${src}" alt="${p.name} ${i+1}">`;t.addEventListener('click',()=>{mainImg.src=src;thumbsEl.querySelectorAll('.pdp-thumb').forEach(x=>x.classList.remove('active'));t.classList.add('active');});thumbsEl.appendChild(t);});}
     updatePDPCartBtn();
