@@ -77,16 +77,22 @@ async function bootApp() {
 
 // ── SHOW / HIDE SCREENS ──────────────────────────────────────────────────────
 function showApp() {
-    document.getElementById('authWall').classList.add('view-hidden');
-    document.getElementById('authWall').classList.remove('view-visible');
-    document.getElementById('appShell').classList.remove('view-hidden');
-    document.getElementById('appShell').classList.add('view-visible');
+    // Auth wall off
+    const aw = document.getElementById('authWall');
+    aw.classList.remove('view-visible');
+    aw.classList.add('view-hidden');
+    // App shell on — use display:block without any animation/transform
+    const shell = document.getElementById('appShell');
+    shell.classList.remove('app-shell-hidden');
+    shell.classList.add('app-shell-visible');
 }
 function showAuthWall() {
-    document.getElementById('appShell').classList.add('view-hidden');
-    document.getElementById('appShell').classList.remove('view-visible');
-    document.getElementById('authWall').classList.remove('view-hidden');
-    document.getElementById('authWall').classList.add('view-visible');
+    const shell = document.getElementById('appShell');
+    shell.classList.add('app-shell-hidden');
+    shell.classList.remove('app-shell-visible');
+    const aw = document.getElementById('authWall');
+    aw.classList.remove('view-hidden');
+    aw.classList.add('view-visible');
 }
 
 // ── AUTH LISTENERS (run once, no user dependency) ────────────────────────────
@@ -208,12 +214,26 @@ async function handleGoogleAuth() {
 
 async function handleForgotPassword() {
     const email = document.getElementById('loginEmail').value.trim();
-    if (!email || !/\S+@\S+\.\S+/.test(email)) { setErr('loginEmailErr', 'Enter your email first'); return; }
+    clearAuthErrors();
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+        setErr('loginEmailErr', 'Enter your email address first');
+        return;
+    }
+    const btn = document.getElementById('forgotPassBtn');
+    btn.textContent = 'Sending…';
+    btn.style.opacity = '0.6';
     try {
         await sendPasswordResetEmail(auth, email);
-        showAlert('Email Sent', `Password reset link sent to ${email}`);
+        showAlert('Reset Email Sent ✉️', `A password reset link has been sent to:<br><strong>${email}</strong><br><br>Check your inbox and spam folder.`);
     } catch (err) {
-        setErr('loginEmailErr', friendlyAuthError(err.code));
+        if (err.code === 'auth/user-not-found') {
+            setErr('loginEmailErr', 'No account found with this email.');
+        } else {
+            setErr('loginEmailErr', friendlyAuthError(err.code));
+        }
+    } finally {
+        btn.textContent = 'Forgot password?';
+        btn.style.opacity = '1';
     }
 }
 
@@ -519,10 +539,14 @@ function closeProfileSheet() {
 
 async function loadProfileData() {
     if (!currentUser) return;
+    // Show what we know immediately — no "Loading…"
+    const quickName = currentUser.displayName || currentUser.email?.split('@')[0] || 'User';
+    document.getElementById('profileDisplayName').textContent = quickName;
+    document.getElementById('profileDisplayEmail').textContent = currentUser.email || '';
     try {
         const snap = await get(ref(db, `users/${currentUser.uid}/profile`));
         const data = snap.exists() ? snap.val() : {};
-        const name = data.name || currentUser.displayName || 'User';
+        const name = data.name || currentUser.displayName || quickName;
         document.getElementById('profileDisplayName').textContent = name;
         document.getElementById('profileDisplayEmail').textContent = currentUser.email || '';
         document.getElementById('profilePhone').textContent   = data.phone   || '—';
@@ -636,17 +660,23 @@ function setAuthBtnLoading(btn, loading) {
     else         { btn.innerHTML=`<span>${btn.id==='loginBtn'?'Sign In':'Create Account'}</span>`; btn.disabled=false; }
 }
 function friendlyAuthError(code) {
+    // Firebase v9/v10 unified error codes
     const map = {
-        'auth/user-not-found':      'No account with this email.',
-        'auth/wrong-password':      'Incorrect password.',
-        'auth/email-already-in-use':'Email already registered.',
-        'auth/invalid-email':       'Invalid email address.',
-        'auth/weak-password':       'Password must be 6+ characters.',
-        'auth/too-many-requests':   'Too many attempts. Try later.',
-        'auth/network-request-failed':'Network error. Check connection.',
-        'auth/invalid-credential':  'Incorrect email or password.',
+        'auth/user-not-found':         'No account found with this email.',
+        'auth/wrong-password':         'Incorrect password. Please try again.',
+        'auth/invalid-credential':     'Incorrect email or password. Please check and try again.',
+        'auth/invalid-login-credentials':'Incorrect email or password. Please check and try again.',
+        'auth/email-already-in-use':   'This email is already registered. Try signing in.',
+        'auth/invalid-email':          'Please enter a valid email address.',
+        'auth/weak-password':          'Password must be at least 6 characters.',
+        'auth/too-many-requests':      'Too many failed attempts. Please wait a few minutes.',
+        'auth/network-request-failed': 'Network error. Please check your connection.',
+        'auth/user-disabled':          'This account has been disabled.',
+        'auth/popup-blocked':          'Popup was blocked. Please allow popups for this site.',
+        'auth/cancelled-popup-request':'Sign in cancelled.',
+        'auth/operation-not-allowed':  'This sign-in method is not enabled.',
     };
-    return map[code] || 'Something went wrong. Try again.';
+    return map[code] || `Sign in failed. Please try again. (${code})`;
 }
 function checkPasswordStrength(val) {
     const fill  = document.getElementById('strengthFill');
