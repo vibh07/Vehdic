@@ -8,7 +8,17 @@
 </head>
 <body>
 
-<!-- Header / Navbar -->
+<!-- ═══════════════════════════════════ -->
+<!-- PAGE LOADER (Vehdic branded)        -->
+<!-- ═══════════════════════════════════ -->
+<div id="pageLoader" class="page-loader show">
+    <div class="loader-inner">
+        <div class="loader-logo">
+            <span>V</span><span>e</span><span>h</span><span>d</span><span>i</span><span>c</span>
+        </div>
+        <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+    </div>
+</div>
 <header class="navbar">
     <div class="logo">Vehdic</div>
     
@@ -62,7 +72,7 @@
 <!-- ═══════════════════════════════════════ -->
 <!-- HOME CONTENT (hidden when Orders open) -->
 <!-- ═══════════════════════════════════════ -->
-<div id="homeContent">
+<div id="homeContent" class="view-page view-visible">
 <main class="container">
 
     <!-- Hero Section -->
@@ -154,7 +164,7 @@
 <!-- ═══════════════════════════════════════ -->
 <!-- ORDER HISTORY VIEW                      -->
 <!-- ═══════════════════════════════════════ -->
-<div id="ordersView" style="display:none;">
+<div id="ordersView" class="view-page view-hidden">
     <div class="orders-page container">
         <div class="orders-page-header">
             <h2>My Orders</h2>
@@ -169,7 +179,7 @@
 <!-- ═══════════════════════════════════════ -->
 <!-- SHOP VIEW                               -->
 <!-- ═══════════════════════════════════════ -->
-<div id="shopView" style="display:none;">
+<div id="shopView" class="view-page view-hidden">
     <div class="shop-page container">
         <div class="shop-page-header">
             <h2>Shop</h2>
