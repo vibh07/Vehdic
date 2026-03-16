@@ -302,8 +302,40 @@
         <p class="empty-cart-msg">Your cart is empty.</p>
     </div>
     <div class="cart-footer">
-        <div class="cart-total"><span>Total</span><span id="cartTotalPrice">$0.00</span></div>
-        <button class="btn-primary checkout-btn ios-tap" id="checkoutBtn">Place Order</button>
+        <!-- Coupon input -->
+        <div class="coupon-row" id="couponRow">
+            <div class="coupon-input-wrap">
+                <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><rect x="2" y="7" width="20" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v10M7 12h.01M17 12h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                <input type="text" id="couponInput" placeholder="Enter coupon code" autocomplete="off">
+            </div>
+            <button class="coupon-apply-btn ios-tap" id="couponApplyBtn">Apply</button>
+        </div>
+        <div class="coupon-status" id="couponStatus"></div>
+
+        <!-- Price breakdown -->
+        <div class="cart-breakdown">
+            <div class="breakdown-row">
+                <span>Subtotal</span>
+                <span id="cartSubtotal">$0.00</span>
+            </div>
+            <div class="breakdown-row discount-row" id="discountRow" style="display:none">
+                <span id="discountLabel">Discount</span>
+                <span id="cartDiscount" class="discount-val">−$0.00</span>
+            </div>
+            <div class="breakdown-row">
+                <span>Shipping</span>
+                <span id="cartShipping">Free</span>
+            </div>
+        </div>
+
+        <!-- Total + button -->
+        <div class="cart-total-row">
+            <div class="cart-total">
+                <span>Total</span>
+                <span id="cartTotalPrice">$0.00</span>
+            </div>
+            <button class="btn-primary checkout-btn ios-tap" id="checkoutBtn">Place Order</button>
+        </div>
     </div>
 </div>
 
@@ -322,6 +354,63 @@
     </div>
 </div>
 
+
 <script type="module" src="script.js"></script>
 </body>
 </html>
+
+<!-- ══════════════════════ PRODUCT DETAIL SHEET ══════════════════════ -->
+<div class="pdp-overlay" id="pdpOverlay"></div>
+<div class="pdp-sheet" id="pdpSheet">
+    <!-- Close -->
+    <button class="pdp-close ios-tap" id="pdpClose">
+        <svg viewBox="0 0 24 24" fill="none" width="18" height="18" stroke="currentColor" stroke-width="2.2"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+
+    <!-- Image gallery -->
+    <div class="pdp-gallery">
+        <div class="pdp-main-img-wrap">
+            <img id="pdpMainImg" src="" alt="" class="pdp-main-img">
+        </div>
+        <div class="pdp-thumbnails" id="pdpThumbnails"></div>
+    </div>
+
+    <!-- Content -->
+    <div class="pdp-content">
+        <div class="pdp-top-row">
+            <span class="pdp-badge" id="pdpBadge"></span>
+            <div class="pdp-rating">
+                <span class="pdp-stars" id="pdpStars">★★★★★</span>
+                <span class="pdp-review-count" id="pdpReviewCount">(128 reviews)</span>
+            </div>
+        </div>
+        <h1 class="pdp-title" id="pdpTitle">Product Name</h1>
+        <div class="pdp-price-row">
+            <span class="pdp-price" id="pdpPrice">$0.00</span>
+            <span class="pdp-original-price" id="pdpOrigPrice"></span>
+            <span class="pdp-discount-tag" id="pdpDiscountTag"></span>
+        </div>
+
+        <!-- Description -->
+        <p class="pdp-desc" id="pdpDesc"></p>
+
+        <!-- Highlights -->
+        <div class="pdp-highlights" id="pdpHighlights"></div>
+
+        <!-- Qty selector -->
+        <div class="pdp-qty-row">
+            <span class="pdp-qty-label">Quantity</span>
+            <div class="pdp-qty-ctrl">
+                <button class="pdp-qty-btn ios-tap" id="pdpQtyMinus">−</button>
+                <span id="pdpQtyNum">1</span>
+                <button class="pdp-qty-btn ios-tap" id="pdpQtyPlus">+</button>
+            </div>
+        </div>
+
+        <!-- Add to cart -->
+        <button class="pdp-add-btn ios-tap" id="pdpAddBtn">
+            <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M5 3h1.81l2.4 10.8c.16.71.8 1.2 1.53 1.2h8.52c.73 0 1.37-.49 1.53-1.2L23 5H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20" r="2" fill="currentColor"/><circle cx="18" cy="20" r="2" fill="currentColor"/></svg>
+            Add to Cart
+        </button>
+    </div>
+</div>
