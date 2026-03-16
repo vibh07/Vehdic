@@ -757,3 +757,185 @@ body { background-color: var(--bg-main); color: var(--text-dark); overflow-x: hi
     filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
     pointer-events: none;
 }
+
+/* ═══════════════════════════════════════════ */
+/* SMOOTH VIEW TRANSITIONS                     */
+/* ═══════════════════════════════════════════ */
+.view-page {
+    will-change: opacity, transform;
+}
+.view-visible {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+    animation: viewIn 0.32s cubic-bezier(0.25, 1, 0.5, 1) both;
+}
+.view-hidden {
+    display: none;
+    opacity: 0;
+}
+@keyframes viewIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* GPU-accelerate all animated elements */
+.cat-sheet, .cart-sidebar, .ios-toast,
+.ios-alert, .bottom-nav, .floating-anim {
+    will-change: transform;
+}
+.promo-card, .product-card, .order-card {
+    will-change: transform, box-shadow;
+}
+
+/* ═══════════════════════════════════════════ */
+/* VEHDIC PAGE LOADER                          */
+/* ═══════════════════════════════════════════ */
+.page-loader {
+    position: fixed;
+    inset: 0;
+    background: #fff;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.45s ease, visibility 0.45s ease;
+}
+.page-loader.fade-out {
+    opacity: 0;
+    visibility: hidden;
+}
+.page-loader:not(.show) {
+    display: none;
+}
+
+.loader-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+}
+
+/* Animated letter-by-letter logo */
+.loader-logo {
+    display: flex;
+    gap: 2px;
+}
+.loader-logo span {
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    color: var(--text-dark);
+    display: inline-block;
+    animation: letterPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.loader-logo span:nth-child(1) { animation-delay: 0.00s; }
+.loader-logo span:nth-child(2) { animation-delay: 0.07s; }
+.loader-logo span:nth-child(3) { animation-delay: 0.14s; }
+.loader-logo span:nth-child(4) { animation-delay: 0.21s; }
+.loader-logo span:nth-child(5) { animation-delay: 0.28s; }
+.loader-logo span:nth-child(6) { animation-delay: 0.35s; }
+
+@keyframes letterPop {
+    0%   { opacity: 0; transform: translateY(20px) scale(0.7); }
+    60%  { opacity: 1; transform: translateY(-4px) scale(1.08); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Thin animated progress bar under the logo */
+.loader-bar {
+    width: 120px;
+    height: 3px;
+    background: rgba(0,0,0,0.07);
+    border-radius: 2px;
+    overflow: hidden;
+}
+.loader-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--card-green), #10b981);
+    border-radius: 2px;
+    animation: barFill 1.4s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
+}
+@keyframes barFill {
+    0%   { width: 0%; }
+    60%  { width: 75%; }
+    100% { width: 100%; }
+}
+
+/* ═══════════════════════════════════════════ */
+/* VEHDIC INLINE LOADER (orders / network)     */
+/* ═══════════════════════════════════════════ */
+.vehdic-loader {
+    display: flex;
+    gap: 3px;
+    justify-content: center;
+}
+.vehdic-loader span {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--text-dark);
+    animation: vPulse 1s ease-in-out infinite;
+}
+.vehdic-loader span:nth-child(1) { animation-delay: 0.00s; }
+.vehdic-loader span:nth-child(2) { animation-delay: 0.10s; }
+.vehdic-loader span:nth-child(3) { animation-delay: 0.20s; }
+.vehdic-loader span:nth-child(4) { animation-delay: 0.30s; }
+.vehdic-loader span:nth-child(5) { animation-delay: 0.40s; }
+.vehdic-loader span:nth-child(6) { animation-delay: 0.50s; }
+@keyframes vPulse {
+    0%, 100% { opacity: 0.2; transform: translateY(0); }
+    50%       { opacity: 1;   transform: translateY(-5px); }
+}
+.orders-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 60px 0;
+}
+.orders-loading p {
+    font-size: 14px;
+    color: var(--text-grey);
+    font-weight: 500;
+}
+
+/* ═══════════════════════════════════════════ */
+/* CHECKOUT BUTTON SPINNER                     */
+/* ═══════════════════════════════════════════ */
+.btn-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+}
+
+/* ═══════════════════════════════════════════ */
+/* GRID EMPTY MESSAGE                          */
+/* ═══════════════════════════════════════════ */
+.grid-empty-msg {
+    text-align: center;
+    width: 100%;
+    padding: 40px;
+    color: #999;
+    font-size: 15px;
+    font-weight: 500;
+    grid-column: 1 / -1;
+}
+
+/* ═══════════════════════════════════════════ */
+/* PERFORMANCE: reduce motion for a11y         */
+/* ═══════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
