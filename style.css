@@ -772,12 +772,16 @@ body { background-color: var(--bg-main); color: var(--text-dark); overflow-x: hi
 .view-visible {
     display: block;
     opacity: 1;
-    transform: translateY(0);
-    animation: viewIn 0.32s cubic-bezier(0.25, 1, 0.5, 1) both;
 }
 .view-hidden {
     display: none;
     opacity: 0;
+}
+/* Page-level view animation — only on the inner content divs, not containers */
+#homeContent.view-visible,
+#shopView.view-visible,
+#ordersView.view-visible {
+    animation: viewIn 0.28s cubic-bezier(0.25, 1, 0.5, 1) both;
 }
 @keyframes viewIn {
     from { opacity: 0; transform: translateY(14px); }
@@ -1177,8 +1181,9 @@ body { background-color: var(--bg-main); color: var(--text-dark); overflow-x: hi
 /* ═══════════════════════════════════════════ */
 /* APP SHELL FADE IN                           */
 /* ═══════════════════════════════════════════ */
-#appShell.view-visible { animation: viewIn 0.35s cubic-bezier(0.25,1,0.5,1) both; }
-#appShell.view-hidden  { display: none; }
+/* appShell: NO animation/transform — would create stacking context and break position:fixed children */
+.app-shell-hidden { display: none; }
+.app-shell-visible { display: block; }
 
 /* ═══════════════════════════════════════════ */
 /* NAV AVATAR BUTTON                           */
@@ -1390,3 +1395,67 @@ body { background-color: var(--bg-main); color: var(--text-dark); overflow-x: hi
     border-radius: 16px;
     background: rgba(255,255,255,0.1);
 }
+
+/* ═══════════════════════════════════════════ */
+/* PROMO CARD — EMOJI (replaces broken imgs)   */
+/* ═══════════════════════════════════════════ */
+.promo-emoji {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    font-size: 52px;
+    line-height: 1;
+    pointer-events: none;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+    z-index: 1;
+}
+.card-wide .promo-emoji { font-size: 64px; right: 20px; bottom: 14px; }
+
+/* Banner center emoji */
+.banner-emoji-img {
+    font-size: clamp(100px, 14vw, 200px);
+    line-height: 1;
+    filter: drop-shadow(0 20px 30px rgba(0,0,0,0.35));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ═══════════════════════════════════════════ */
+/* AUTH WALL — force full screen, no overflow  */
+/* ═══════════════════════════════════════════ */
+.auth-wall {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 50000 !important;
+    overflow-y: auto;
+}
+
+/* ═══════════════════════════════════════════ */
+/* PAGE LOADER on top of everything            */
+/* ═══════════════════════════════════════════ */
+.page-loader { z-index: 99999 !important; }
+
+/* ═══════════════════════════════════════════ */
+/* GUARANTEE overlays are above appShell       */
+/* ═══════════════════════════════════════════ */
+.cat-sheet-overlay,
+.cat-sheet,
+.profile-overlay,
+.profile-sheet,
+.cart-overlay,
+.cart-sidebar,
+.ios-toast,
+.ios-overlay {
+    /* These are direct children of body — position:fixed works correctly */
+    isolation: auto !important;
+}
+
+.cart-overlay   { z-index: 30000; }
+.cart-sidebar   { z-index: 30001; }
+.cat-sheet-overlay { z-index: 30002; }
+.cat-sheet      { z-index: 30003; }
+.profile-overlay{ z-index: 30004; }
+.profile-sheet  { z-index: 30005; }
+.ios-overlay    { z-index: 30006; }
+.ios-toast      { z-index: 30007; }
