@@ -198,7 +198,7 @@ body{background:var(--bg-main);color:var(--text-dark);overflow-x:hidden;backgrou
 .olp-create-btn{background:none;border:none;color:var(--card-green);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:12px;}
 
 /* ═══ SHOP — MODERN SEARCH HEADER ═══════════════════════════ */
-.shop-search-header{padding:24px 0 16px;position:sticky;top:68px;background:#fff;z-index:10;}
+.shop-search-header{padding:24px 0 16px;position:sticky;top:68px;background:#ffffff00;z-index:10;}
 
 .shop-search-bar-wrap{padding:0 0 14px;}
 .shop-search-bar{display:flex;align-items:center;gap:0;background:#f1f5f9;border-radius:16px;padding:0 16px;transition:all .3s var(--spring);border:2px solid transparent;min-height:52px;}
