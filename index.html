@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Vehdic</title>
+    <title>Anadi</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -13,7 +13,7 @@
 <!-- PAGE LOADER -->
 <div id="pageLoader" class="page-loader show">
     <div class="loader-inner">
-        <div class="loader-logo"><span>V</span><span>e</span><span>h</span><span>d</span><span>i</span><span>c</span></div>
+        <div class="loader-logo"><span>A</span><span>n</span><span>a</span><span>d</span><span>i</span></div>
         <div class="loader-bar"><div class="loader-bar-fill"></div></div>
     </div>
 </div>
@@ -31,9 +31,9 @@
 
         <!-- Brand -->
         <div class="auth-brand">
-            <div class="auth-brand-logo">V</div>
+            <div class="auth-brand-logo">A</div>
             <div>
-                <div class="auth-brand-name">Vehdic</div>
+                <div class="auth-brand-name">Anadi</div>
                 <div class="auth-brand-sub">Pure &amp; Natural Products</div>
             </div>
         </div>
@@ -116,7 +116,7 @@
 <div id="appShell">
 
     <header class="navbar">
-        <div class="logo">Vehdic</div>
+        <div class="logo">Anadi</div>
         <nav class="nav-links" id="nav-links">
             <a href="#" class="active">Home</a>
             <a href="#">Shop</a>
@@ -133,16 +133,31 @@
             <a href="#" id="navProfileLink">Profile</a>
         </nav>
         <div class="mobile-nav-icons">
-            <button id="installAppBtn" class="icon-btn ios-tap" title="Download App" style="color:#475569;">
-                <svg viewBox="0 0 24 24" fill="none" width="22" height="22"><path d="M12 16V4M8 12l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17v1a2 2 0 002 2h12a2 2 0 002-2v-1" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <!-- Cart shortcut -->
+            <button id="mobileCartBtn" class="icon-btn ios-tap" title="Cart" style="position:relative;">
+                <svg viewBox="0 0 24 24" fill="none" width="24" height="24">
+                    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <path d="M16 10a4 4 0 01-8 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="mobile-cart-badge" id="mobileCartBadge" style="display:none"></span>
             </button>
+            <!-- Profile / login -->
             <button id="profileIconBtn" class="icon-btn ios-tap profile-icon-btn" title="Profile">
                 <div class="nav-avatar" id="navAvatar">
-                    <svg viewBox="0 0 24 24" fill="none" width="22" height="22"><circle cx="12" cy="8" r="4" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.8"/><path d="M20 21c0-2.5-2-5-8-5s-8 2.5-8 5" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" width="24" height="24">
+                        <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8" fill="currentColor" fill-opacity="0.1"/>
+                        <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    </svg>
                 </div>
             </button>
-            <button id="mobileMenuBtn" class="icon-btn ios-tap" title="Menu" style="color:#475569;">
-                <svg viewBox="0 0 24 24" fill="none" width="22" height="22"><circle cx="5" cy="12" r="2.2" fill="currentColor"/><circle cx="12" cy="12" r="2.2" fill="currentColor"/><circle cx="19" cy="12" r="2.2" fill="currentColor"/></svg>
+            <!-- 3-dot menu -->
+            <button id="mobileMenuBtn" class="icon-btn ios-tap" title="More">
+                <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+                    <circle cx="5" cy="12" r="1.8" fill="currentColor"/>
+                    <circle cx="12" cy="12" r="1.8" fill="currentColor"/>
+                    <circle cx="19" cy="12" r="1.8" fill="currentColor"/>
+                </svg>
             </button>
             <div class="mobile-dropdown-menu" id="mobileDropdown">
                 <a href="#" class="ios-tap">About us</a>
