@@ -4,7 +4,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800;900&display=swap');
 
 :root {
-    /* Anadi brand palette — earthy, Ayurvedic, sacred */
+    /* Vehdic brand palette — earthy, Ayurvedic, sacred */
     --bg-main:#faf7f2;        /* warm cream */
     --text-dark:#1a1208;      /* deep brown-black */
     --text-grey:#7c6f5e;      /* warm grey */
@@ -198,7 +198,7 @@ body{background:var(--bg-main);color:var(--text-dark);overflow-x:hidden;backgrou
 .olp-create-btn{background:none;border:none;color:var(--card-green);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:12px;}
 
 /* ═══ SHOP — MODERN SEARCH HEADER ═══════════════════════════ */
-.shop-search-header{padding:24px 0 16px;position:sticky;top:68px;background:#ffffff00;z-index:10;}
+.shop-search-header{padding:24px 0 16px;position:sticky;top:68px;background:#faf7f2;z-index:10;}
 
 .shop-search-bar-wrap{padding:0 0 14px;}
 .shop-search-bar{display:flex;align-items:center;gap:0;background:#f1f5f9;border-radius:16px;padding:0 16px;transition:all .3s var(--spring);border:2px solid transparent;min-height:52px;}
@@ -382,9 +382,9 @@ body{background:var(--bg-main);color:var(--text-dark);overflow-x:hidden;backgrou
 .loader-bar{width:120px;height:3px;background:rgba(0,0,0,.07);border-radius:2px;overflow:hidden;}
 .loader-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--card-green),#059669);border-radius:2px;animation:barFill 1.4s cubic-bezier(.4,0,.2,1) .3s forwards;}
 @keyframes barFill{0%{width:0%}60%{width:75%}100%{width:100%}}
-.anadi-loader{display:flex;gap:3px;justify-content:center;}
-.anadi-loader span{font-size:22px;font-weight:900;color:var(--text-dark);animation:vPulse 1s ease-in-out infinite;}
-.anadi-loader span:nth-child(1){animation-delay:.00s}.anadi-loader span:nth-child(2){animation-delay:.10s}.anadi-loader span:nth-child(3){animation-delay:.20s}.anadi-loader span:nth-child(4){animation-delay:.30s}.anadi-loader span:nth-child(5){animation-delay:.40s}.anadi-loader span:nth-child(6){animation-delay:.50s}
+.vehdic-loader{display:flex;gap:3px;justify-content:center;}
+.vehdic-loader span{font-size:22px;font-weight:900;color:var(--text-dark);animation:vPulse 1s ease-in-out infinite;}
+.vehdic-loader span:nth-child(1){animation-delay:.00s}.vehdic-loader span:nth-child(2){animation-delay:.10s}.vehdic-loader span:nth-child(3){animation-delay:.20s}.vehdic-loader span:nth-child(4){animation-delay:.30s}.vehdic-loader span:nth-child(5){animation-delay:.40s}.vehdic-loader span:nth-child(6){animation-delay:.50s}
 @keyframes vPulse{0%,100%{opacity:.2;transform:translateY(0)}50%{opacity:1;transform:translateY(-5px)}}
 .orders-loading{display:flex;flex-direction:column;align-items:center;gap:20px;padding:60px 0;}
 .orders-loading p{font-size:14px;color:var(--text-grey);font-weight:500;}
@@ -467,7 +467,7 @@ body{background:var(--bg-main);color:var(--text-dark);overflow-x:hidden;backgrou
 /* ═══ REDUCE MOTION ══════════════════════════════════════════ */
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
 
-/* ═══ ANADI PROMO CARD COLOURS ═══════════════════════════════ */
+/* ═══ VEHDIC PROMO CARD COLOURS ═══════════════════════════════ */
 .bg-saffron   { background:linear-gradient(135deg,#e8821a,#c4620e); }
 .bg-earthen   { background:linear-gradient(135deg,#c47a2b,#9a5a18); }
 .bg-forest    { background:linear-gradient(135deg,#2d5a3c,#1d3c28); }
@@ -488,7 +488,7 @@ body{background:var(--bg-main);color:var(--text-dark);overflow-x:hidden;backgrou
 .cat-turmeric { background:linear-gradient(135deg,#d4940a,#a87008); }
 .cat-maroon   { background:linear-gradient(135deg,#8b2635,#5c1420); }
 
-/* ═══ HERO ANADI STYLE ═════════════════════════════════════ */
+/* ═══ HERO VEHDIC STYLE ═════════════════════════════════════ */
 .hero { background:linear-gradient(135deg,#f5ede0,#efe3d0)!important; }
 .hero-bg-text { color:rgba(184,92,26,.12)!important; }
 .hero-eyebrow { font-size:13px; font-weight:700; color:var(--card-saffron); background:rgba(232,130,26,.1); display:inline-block; padding:4px 12px; border-radius:20px; margin-bottom:8px; }
@@ -502,7 +502,7 @@ body{background:var(--bg-main);color:var(--text-dark);overflow-x:hidden;backgrou
 /* Super special badge */
 .product-super-badge { background:linear-gradient(135deg,#e8821a,#c4620e); color:#fff; font-size:10px; font-weight:800; padding:4px 10px; border-radius:20px; margin-bottom:6px; display:inline-block; letter-spacing:.3px; }
 
-/* ═══ ANADI GREEN → SAFFRON ════════════════════════════════ */
+/* ═══ VEHDIC ACCENT COLOURS ════════════════════════════════ */
 /* Replace emerald green with saffron-terracotta for active states */
 .bottom-nav .nav-item.active { color:var(--card-saffron)!important; }
 .bottom-nav .nav-item.active svg { filter:drop-shadow(0px 5px 7px rgba(232,130,26,.4))!important; transform:translateY(-3px) scale(1.12); }
@@ -534,7 +534,7 @@ body{background:var(--bg-main);color:var(--text-dark);overflow-x:hidden;backgrou
 .cart-sidebar { background:#faf7f2!important; }
 .cat-sheet, .profile-sheet { background:#f5ede0!important; }
 
-/* ═══ SALE BANNERS ANADI COLOURS ══════════════════════════ */
+/* ═══ SALE BANNER COLOURS ══════════════════════════ */
 .dark-red-banner { background:linear-gradient(135deg,#8b2635,#5c1420)!important; box-shadow:0 20px 40px rgba(139,38,53,.3)!important; }
 .dark-green-banner { background:linear-gradient(135deg,#2d5a3c,#1d3c28)!important; box-shadow:0 20px 40px rgba(45,90,60,.3)!important; }
 
@@ -571,21 +571,21 @@ body{background:var(--bg-main);color:var(--text-dark);overflow-x:hidden;backgrou
 }
 .cart-shop-now-btn:active { transform:scale(.97); opacity:.9; }
 
-/* ═══ LOADER — 5 LETTERS (ANADI) ════════════════════════ */
+/* ═══ LOADER — VEHDIC ════════════════════════ */
 /* Override 6-letter delay rules with 5-letter */
 .loader-logo span:nth-child(5) { animation-delay:.28s; }
 .loader-logo span:nth-child(6) { display:none; }  /* hide if 6th exists */
 
-/* ═══ ANADI LOADER (orders) ════════════════════════════ */
-.anadi-loader { display:flex; gap:3px; justify-content:center; }
-.anadi-loader span { font-size:22px; font-weight:900; color:var(--primary); animation:vPulse 1s ease-in-out infinite; }
-.anadi-loader span:nth-child(1){animation-delay:.00s}
-.anadi-loader span:nth-child(2){animation-delay:.10s}
-.anadi-loader span:nth-child(3){animation-delay:.20s}
-.anadi-loader span:nth-child(4){animation-delay:.30s}
-.anadi-loader span:nth-child(5){animation-delay:.40s}
+/* ═══ VEHDIC LOADER (orders) ════════════════════════════ */
+.vehdic-loader { display:flex; gap:3px; justify-content:center; }
+.vehdic-loader span { font-size:22px; font-weight:900; color:var(--primary); animation:vPulse 1s ease-in-out infinite; }
+.vehdic-loader span:nth-child(1){animation-delay:.00s}
+.vehdic-loader span:nth-child(2){animation-delay:.10s}
+.vehdic-loader span:nth-child(3){animation-delay:.20s}
+.vehdic-loader span:nth-child(4){animation-delay:.30s}
+.vehdic-loader span:nth-child(5){animation-delay:.40s}
 
-/* ═══ LOGO FORCE — ensure Anadi shows on all devices ═══════ */
+/* ═══ LOGO FORCE — ensure Vehdic shows on all devices ═══════ */
 .logo {
     font-size:22px !important;
     font-weight:900 !important;
