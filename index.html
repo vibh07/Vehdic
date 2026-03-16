@@ -4,25 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Vehdic</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- ══════════════════════ PAGE LOADER ══════════════════════ -->
+<!-- PAGE LOADER -->
 <div id="pageLoader" class="page-loader show">
     <div class="loader-inner">
-        <div class="loader-logo">
-            <span>V</span><span>e</span><span>h</span><span>d</span><span>i</span><span>c</span>
-        </div>
+        <div class="loader-logo"><span>A</span><span>e</span><span>h</span><span>d</span><span>i</span><span>c</span></div>
         <div class="loader-bar"><div class="loader-bar-fill"></div></div>
     </div>
 </div>
 
-<!-- ══════════════════════ AUTH WALL ══════════════════════ -->
-<div id="authWall" class="auth-wall view-hidden">
-    <div class="auth-card">
-        <div class="auth-logo">Vehdic</div>
-        <p class="auth-tagline">Your premium tech store</p>
+<!-- ═══════════════════════════════════════════════ -->
+<!--  AUTH MODAL (floating, not full wall)           -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="authModalOverlay" class="auth-modal-overlay view-hidden" tabindex="-1">
+    <div class="auth-modal" role="dialog" aria-modal="true">
+
+        <!-- Dismiss (guest mode) -->
+        <button class="auth-modal-dismiss ios-tap" id="authModalDismiss" title="Continue as guest">
+            <svg viewBox="0 0 24 24" fill="none" width="18" height="18" stroke="currentColor" stroke-width="2.2"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <!-- Brand -->
+        <div class="auth-brand">
+            <div class="auth-brand-logo">V</div>
+            <div>
+                <div class="auth-brand-name">Vehdic</div>
+                <div class="auth-brand-sub">Pure &amp; Natural Products</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
         <div class="auth-tabs">
             <button class="auth-tab active" data-tab="login">Sign In</button>
             <button class="auth-tab" data-tab="register">Create Account</button>
@@ -31,21 +47,23 @@
         <!-- LOGIN -->
         <div class="auth-panel" id="loginPanel">
             <button class="google-btn ios-tap" id="googleSignInBtn">
-                <svg viewBox="0 0 24 24" width="20" height="20"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84z"/></svg>
                 Continue with Google
             </button>
-            <div class="auth-divider"><span>or</span></div>
+            <div class="auth-divider"><span>or continue with email</span></div>
             <div class="auth-field">
-                <label>Email</label>
-                <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email">
+                <div class="field-input-wrap">
+                    <svg class="field-icon" viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="1.8"/><path d="M22 6l-10 7L2 6" stroke="currentColor" stroke-width="1.8"/></svg>
+                    <input type="email" id="loginEmail" placeholder="Email address" autocomplete="email">
+                </div>
                 <span class="field-err" id="loginEmailErr"></span>
             </div>
             <div class="auth-field">
-                <label>Password</label>
-                <div class="pass-wrap">
-                    <input type="password" id="loginPassword" placeholder="Enter password" autocomplete="current-password">
-                    <button class="toggle-pass ios-tap" data-target="loginPassword">
-                        <svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>
+                <div class="field-input-wrap">
+                    <svg class="field-icon" viewBox="0 0 24 24" fill="none" width="16" height="16"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                    <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
+                    <button class="toggle-pass ios-tap" data-target="loginPassword" tabindex="-1">
+                        <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>
                     </button>
                 </div>
                 <span class="field-err" id="loginPassErr"></span>
@@ -57,26 +75,30 @@
         <!-- REGISTER -->
         <div class="auth-panel view-hidden" id="registerPanel">
             <button class="google-btn ios-tap" id="googleSignUpBtn">
-                <svg viewBox="0 0 24 24" width="20" height="20"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84z"/></svg>
                 Sign up with Google
             </button>
-            <div class="auth-divider"><span>or</span></div>
+            <div class="auth-divider"><span>or continue with email</span></div>
             <div class="auth-field">
-                <label>Full Name</label>
-                <input type="text" id="regName" placeholder="John Doe" autocomplete="name">
+                <div class="field-input-wrap">
+                    <svg class="field-icon" viewBox="0 0 24 24" fill="none" width="16" height="16"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M20 21c0-2.5-2-5-8-5s-8 2.5-8 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                    <input type="text" id="regName" placeholder="Full name" autocomplete="name">
+                </div>
                 <span class="field-err" id="regNameErr"></span>
             </div>
             <div class="auth-field">
-                <label>Email</label>
-                <input type="email" id="regEmail" placeholder="you@example.com" autocomplete="email">
+                <div class="field-input-wrap">
+                    <svg class="field-icon" viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="1.8"/><path d="M22 6l-10 7L2 6" stroke="currentColor" stroke-width="1.8"/></svg>
+                    <input type="email" id="regEmail" placeholder="Email address" autocomplete="email">
+                </div>
                 <span class="field-err" id="regEmailErr"></span>
             </div>
             <div class="auth-field">
-                <label>Password</label>
-                <div class="pass-wrap">
-                    <input type="password" id="regPassword" placeholder="Min 6 characters" autocomplete="new-password">
-                    <button class="toggle-pass ios-tap" data-target="regPassword">
-                        <svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>
+                <div class="field-input-wrap">
+                    <svg class="field-icon" viewBox="0 0 24 24" fill="none" width="16" height="16"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                    <input type="password" id="regPassword" placeholder="Create password (min 6 chars)" autocomplete="new-password">
+                    <button class="toggle-pass ios-tap" data-target="regPassword" tabindex="-1">
+                        <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>
                     </button>
                 </div>
                 <div class="pass-strength"><div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div><span id="strengthLabel"></span></div>
@@ -84,12 +106,14 @@
             </div>
             <button class="auth-submit ios-tap" id="registerBtn"><span>Create Account</span></button>
         </div>
+
     </div>
 </div>
 
-<!-- ══════════════════════ APP SHELL ══════════════════════ -->
-<!-- NOTE: appShell has NO animation/transform — overlays use fixed positioning relative to viewport -->
-<div id="appShell" class="app-shell-hidden">
+<!-- ═══════════════════════════════════════════════ -->
+<!--  APP (always visible — guest or logged in)      -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="appShell">
 
     <header class="navbar">
         <div class="logo">Vehdic</div>
@@ -97,8 +121,7 @@
             <a href="#" class="active">Home</a>
             <a href="#">Shop</a>
             <div class="nav-category-wrap">
-                <button class="nav-category-btn ios-tap" id="navCategoryBtn">
-                    Category
+                <button class="nav-category-btn ios-tap" id="navCategoryBtn">Category
                     <svg viewBox="0 0 24 24" fill="none" width="14" height="14"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
                 </button>
                 <div class="nav-category-dropdown" id="navCategoryDropdown"></div>
@@ -107,7 +130,7 @@
             <a href="#">About us</a>
             <a href="#">Contact</a>
             <a href="#">Cart</a>
-            <a href="#">Profile</a>
+            <a href="#" id="navProfileLink">Profile</a>
         </nav>
         <div class="mobile-nav-icons">
             <button id="installAppBtn" class="icon-btn ios-tap" title="Download App" style="color:#475569;">
@@ -133,40 +156,42 @@
     <div id="homeContent" class="view-page view-visible">
         <main class="container">
             <section class="hero reveal">
-                <h1 class="hero-bg-text">HEADPHONE</h1>
+                <h1 class="hero-bg-text">NASYA</h1>
                 <div class="hero-content">
                     <div class="hero-text">
-                        <h3>Beats Solo</h3>
-                        <h2>Wireless</h2>
+                        <p class="hero-eyebrow">⭐ Super Special</p>
+                        <h3>Gir Ahinsak</h3>
+                        <h2>Nasya</h2>
+                        <p class="hero-sub">Ancient Ayurvedic nasal therapy with pure A2 Gir Cow Ghee</p>
                         <button class="btn-primary hover-btn ios-tap">Shop now</button>
                     </div>
                     <div class="hero-img-container floating-anim">
-                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80" alt="Headphones">
+                        <img src="https://anadi.co.in/wp-content/uploads/2024/10/WhatsApp-Image-2024-10-19-at-1.33.23-PM-600x960.jpeg" alt="Gir Ahinsak Nasya">
                     </div>
                 </div>
             </section>
             <section class="promo-grid reveal">
-                <div class="promo-card bg-dark card-normal ios-tap"><div class="card-text"><p>Enjoy</p><h3>With</h3><h1 class="bg-title">Bud's</h1></div><div class="promo-emoji">🎧</div></div>
-                <div class="promo-card bg-yellow card-normal ios-tap"><div class="card-text"><p>Enjoy</p><h3>With</h3><h1 class="bg-title text-yellow">Watch</h1></div><div class="promo-emoji">⌚</div></div>
-                <div class="promo-card bg-red card-wide ios-tap"><div class="card-text"><p>Enjoy</p><h3>With</h3><h1 class="bg-title text-red">Laptop</h1></div><div class="promo-emoji">💻</div></div>
-                <div class="promo-card bg-grey card-wide ios-tap"><div class="card-text dark-text"><p>Enjoy</p><h3>With</h3><h1 class="bg-title text-grey">Console</h1></div><div class="promo-emoji">🎮</div></div>
-                <div class="promo-card bg-green card-normal ios-tap"><div class="card-text"><p>Enjoy</p><h3>With</h3><h1 class="bg-title text-green">Vision Pro</h1></div><div class="promo-emoji">🥽</div></div>
-                <div class="promo-card bg-blue card-normal ios-tap"><div class="card-text"><p>Enjoy</p><h3>With</h3><h1 class="bg-title text-blue">Assistant</h1></div><div class="promo-emoji">🔊</div></div>
+                <div class="promo-card bg-saffron card-normal ios-tap"><div class="card-text"><p>Pure</p><h3>Ayurvedic</h3><h1 class="bg-title">Nasya</h1></div><div class="promo-emoji">🫙</div></div>
+                <div class="promo-card bg-earthen card-normal ios-tap"><div class="card-text"><p>Sacred</p><h3>Puja</h3><h1 class="bg-title text-earthen">Sambrani</h1></div><div class="promo-emoji">🪔</div></div>
+                <div class="promo-card bg-forest card-wide ios-tap"><div class="card-text"><p>Traditional</p><h3>Hawan</h3><h1 class="bg-title text-forest">Tikki</h1></div><div class="promo-emoji">🔥</div></div>
+                <div class="promo-card bg-clay card-wide ios-tap"><div class="card-text dark-text"><p>Aromatic</p><h3>Sacred</h3><h1 class="bg-title text-clay">Dhoop Batti</h1></div><div class="promo-emoji">🌿</div></div>
+                <div class="promo-card bg-turmeric card-normal ios-tap"><div class="card-text"><p>Herbal</p><h3>Health</h3><h1 class="bg-title text-turmeric">Gau Mutra</h1></div><div class="promo-emoji">🐄</div></div>
+                <div class="promo-card bg-maroon card-normal ios-tap"><div class="card-text"><p>100%</p><h3>Natural</h3><h1 class="bg-title text-maroon">Organic</h1></div><div class="promo-emoji">🌱</div></div>
             </section>
             <section class="sale-banner dark-red-banner reveal">
-                <div class="banner-left"><h2>FINE<br>SMILE</h2></div>
-                <div class="banner-center"><div class="banner-emoji-img">🎧</div></div>
-                <div class="banner-right"><p class="discount">50% off</p><h2>Summer Sale</h2><p class="desc">Company that grown from 200 to 400 employe's<br>in the last 12 month</p><button class="btn-white hover-btn ios-tap">Shop now</button></div>
+                <div class="banner-left"><h2>PURE<br>NASYA</h2></div>
+                <div class="banner-center"><img src="https://anadi.co.in/wp-content/uploads/2024/10/WhatsApp-Image-2024-10-19-at-1.33.23-PM-600x960.jpeg" class="center-product floating-anim banner-product-img" alt="Nasya"></div>
+                <div class="banner-right"><p class="discount">50% off</p><h2>Summer Sale</h2><p class="desc">Ancient Ayurvedic nasal therapy with pure<br>A2 Gir Cow Ghee</p><button class="btn-white hover-btn ios-tap">Shop now</button></div>
             </section>
             <section class="best-sellers reveal">
-                <h2 class="section-title">Best Seller Products</h2>
-                <p class="section-subtitle">Find more · Get best</p>
+                <h2 class="section-title">Our Products</h2>
+                <p class="section-subtitle">Pure · Natural · Ayurvedic</p>
                 <div class="products-grid"></div>
             </section>
             <section class="sale-banner dark-green-banner reveal" style="margin-bottom:120px;">
-                <div class="banner-left"><h2>HAPPY<br>HOURS</h2></div>
-                <div class="banner-center"><div class="banner-emoji-img">⌚</div></div>
-                <div class="banner-right"><p class="discount">50% off</p><h2>Summer Sale</h2><p class="desc">Company that grown from 200 to 400 employe's<br>in the last 12 month</p><button class="btn-white hover-btn ios-tap">Shop now</button></div>
+                <div class="banner-left"><h2>SACRED<br>PUJA</h2></div>
+                <div class="banner-center"><img src="https://anadi.co.in/wp-content/uploads/2024/10/XXXX-600x960.png" class="center-product floating-anim banner-product-img" alt="Sambrani"></div>
+                <div class="banner-right"><p class="discount">50% off</p><h2>Summer Sale</h2><p class="desc">Premium Sambrani Cups made from pure<br>Benzoin resin &amp; cow dung</p><button class="btn-white hover-btn ios-tap">Shop now</button></div>
             </section>
         </main>
     </div>
@@ -175,6 +200,7 @@
     <div id="ordersView" class="view-page view-hidden">
         <div class="orders-page container">
             <div class="orders-page-header"><h2>My Orders</h2><p>Your complete purchase history</p></div>
+            <!-- Guest orders prompt injected by JS or ordersContainer -->
             <div id="ordersContainer"></div>
         </div>
     </div>
@@ -182,13 +208,40 @@
     <!-- SHOP -->
     <div id="shopView" class="view-page view-hidden">
         <div class="shop-page container">
-            <div class="shop-page-header"><h2>Shop</h2><p>All products</p></div>
-            <div class="search-filter-bar">
-                <div class="search-input-wrap">
-                    <svg class="search-icon" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                    <input type="text" id="shopSearchInput" placeholder="Search products…" autocomplete="off">
+
+            <!-- Modern search header -->
+            <div class="shop-search-header">
+                <div class="shop-search-bar-wrap">
+                    <div class="shop-search-bar" id="shopSearchBar">
+                        <svg class="shop-search-icon" viewBox="0 0 24 24" fill="none" width="20" height="20"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                        <input type="text" id="shopSearchInput" placeholder="Search products, brands…" autocomplete="off" spellcheck="false">
+                        <button class="shop-search-clear" id="shopSearchClear" style="display:none">
+                            <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><circle cx="12" cy="12" r="9" fill="currentColor" fill-opacity="0.12"/><path d="M9 9l6 6M15 9l-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filter chips -->
+                <div class="shop-filter-chips" id="shopFilterChips">
+                    <button class="chip chip-active" data-cat="">All</button>
+                    <!-- More chips injected by JS -->
+                </div>
+
+                <!-- Results count -->
+                <div class="shop-results-bar">
+                    <span id="shopResultsCount" class="results-count"></span>
+                    <div class="sort-wrap">
+                        <select id="shopSortSelect" class="shop-sort">
+                            <option value="">Sort: Default</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="name">Name A–Z</option>
+                            <option value="rating">Top Rated</option>
+                        </select>
+                    </div>
                 </div>
             </div>
+
             <div class="products-grid" id="shopProductsGrid"></div>
         </div>
     </div>
@@ -204,28 +257,20 @@
 
 </div><!-- /#appShell -->
 
-<!-- ══════════════════════════════════════════════════════════
-     ALL OVERLAYS / SHEETS / SIDEBARS — OUTSIDE #appShell
-     so position:fixed works relative to viewport, not container
-     ══════════════════════════════════════════════════════════ -->
+<!-- ════════════════ OVERLAYS (outside appShell) ════════════════ -->
 
 <!-- CATEGORY SHEET -->
 <div class="cat-sheet-overlay" id="catSheetOverlay"></div>
 <div class="cat-sheet" id="catSheet">
     <div class="cat-sheet-handle"></div>
-    <div class="cat-sheet-header">
-        <h3>Shop by Category</h3>
-        <button class="cat-sheet-close ios-tap" id="catSheetClose">
-            <svg viewBox="0 0 24 24" fill="none" width="20" height="20" stroke="currentColor" stroke-width="2.2"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-    </div>
+    <div class="cat-sheet-header"><h3>Shop by Category</h3><button class="cat-sheet-close ios-tap" id="catSheetClose"><svg viewBox="0 0 24 24" fill="none" width="20" height="20" stroke="currentColor" stroke-width="2.2"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
     <div class="cat-sheet-grid">
-        <div class="cat-card cat-dark ios-tap" data-cat="Audio"><div class="cat-card-text"><p>Enjoy</p><h3>With</h3><h1>Bud's</h1></div><div class="cat-card-emoji">🎧</div></div>
-        <div class="cat-card cat-yellow ios-tap" data-cat="Wearables"><div class="cat-card-text"><p>Enjoy</p><h3>With</h3><h1>Watch</h1></div><div class="cat-card-emoji">⌚</div></div>
-        <div class="cat-card cat-red cat-wide ios-tap" data-cat=""><div class="cat-card-text"><p>Enjoy</p><h3>With</h3><h1>Laptop</h1></div><div class="cat-card-emoji">💻</div></div>
-        <div class="cat-card cat-grey cat-wide ios-tap" data-cat=""><div class="cat-card-text dark-text"><p>Enjoy</p><h3>With</h3><h1>Console</h1></div><div class="cat-card-emoji">🎮</div></div>
-        <div class="cat-card cat-green ios-tap" data-cat="Tablets"><div class="cat-card-text"><p>Enjoy</p><h3>With</h3><h1>Vision</h1></div><div class="cat-card-emoji">🥽</div></div>
-        <div class="cat-card cat-blue ios-tap" data-cat="Accessories"><div class="cat-card-text"><p>Enjoy</p><h3>With</h3><h1>Smart</h1></div><div class="cat-card-emoji">🔊</div></div>
+        <div class="cat-card cat-saffron ios-tap" data-cat="Health"><div class="cat-card-text"><p>Ayurvedic</p><h3>Health</h3><h1>Nasya</h1></div><div class="cat-card-emoji">🫙</div></div>
+        <div class="cat-card cat-earthen ios-tap" data-cat="Puja"><div class="cat-card-text"><p>Sacred</p><h3>Puja</h3><h1>Items</h1></div><div class="cat-card-emoji">🪔</div></div>
+        <div class="cat-card cat-forest cat-wide ios-tap" data-cat="Puja"><div class="cat-card-text"><p>Traditional</p><h3>Hawan</h3><h1>Tikki</h1></div><div class="cat-card-emoji">🔥</div></div>
+        <div class="cat-card cat-clay cat-wide ios-tap" data-cat="Puja"><div class="cat-card-text dark-text"><p>Aromatic</p><h3>Dhoop</h3><h1>Batti</h1></div><div class="cat-card-emoji">🌿</div></div>
+        <div class="cat-card cat-turmeric ios-tap" data-cat="Health"><div class="cat-card-text"><p>Herbal</p><h3>Gau</h3><h1>Mutra</h1></div><div class="cat-card-emoji">🐄</div></div>
+        <div class="cat-card cat-maroon ios-tap" data-cat="Puja"><div class="cat-card-text"><p>Premium</p><h3>Sambrani</h3><h1>Cup</h1></div><div class="cat-card-emoji">🪔</div></div>
     </div>
 </div>
 
@@ -235,17 +280,8 @@
     <div class="cat-sheet-handle"></div>
     <div id="profileViewMode">
         <div class="profile-hero">
-            <div class="profile-avatar-large" id="profileAvatarLarge">
-                <span id="profileInitials">?</span>
-                <button class="avatar-edit-btn ios-tap" id="avatarColorBtn" title="Change color">
-                    <svg viewBox="0 0 24 24" fill="none" width="14" height="14"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                </button>
-            </div>
-            <div class="profile-hero-text">
-                <h2 id="profileDisplayName">—</h2>
-                <p id="profileDisplayEmail"></p>
-                <span class="profile-member-badge">Member</span>
-            </div>
+            <div class="profile-avatar-large" id="profileAvatarLarge"><span id="profileInitials">?</span><button class="avatar-edit-btn ios-tap" id="avatarColorBtn"><svg viewBox="0 0 24 24" fill="none" width="14" height="14"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
+            <div class="profile-hero-text"><h2 id="profileDisplayName">—</h2><p id="profileDisplayEmail"></p><span class="profile-member-badge">Member</span></div>
         </div>
         <div class="profile-info-cards">
             <div class="profile-info-row">
@@ -255,34 +291,16 @@
             <div class="profile-info-item full-width"><span class="info-label">Address</span><span class="info-value" id="profileAddress">—</span></div>
         </div>
         <div class="profile-actions">
-            <button class="profile-action-btn edit-btn ios-tap" id="editProfileBtn">
-                <svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                Edit Profile
-            </button>
-            <button class="profile-action-btn signout-btn ios-tap" id="signOutBtn">
-                <svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                Sign Out
-            </button>
+            <button class="profile-action-btn edit-btn ios-tap" id="editProfileBtn"><svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg> Edit Profile</button>
+            <button class="profile-action-btn signout-btn ios-tap" id="signOutBtn"><svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Sign Out</button>
         </div>
     </div>
     <div id="profileEditMode" class="view-hidden">
-        <div class="edit-header">
-            <button class="back-btn ios-tap" id="cancelEditBtn">
-                <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M19 12H5M12 5l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <h3>Edit Profile</h3>
-        </div>
+        <div class="edit-header"><button class="back-btn ios-tap" id="cancelEditBtn"><svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M19 12H5M12 5l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h3>Edit Profile</h3></div>
         <div class="edit-fields">
             <div class="auth-field"><label>Full Name</label><input type="text" id="editName" placeholder="Your full name"></div>
             <div class="auth-field"><label>Phone</label><input type="tel" id="editPhone" placeholder="+91 00000 00000"></div>
-            <div class="auth-field">
-                <label>Gender</label>
-                <div class="gender-options">
-                    <label class="gender-opt ios-tap"><input type="radio" name="gender" value="Male"><span>Male</span></label>
-                    <label class="gender-opt ios-tap"><input type="radio" name="gender" value="Female"><span>Female</span></label>
-                    <label class="gender-opt ios-tap"><input type="radio" name="gender" value="Other"><span>Other</span></label>
-                </div>
-            </div>
+            <div class="auth-field"><label>Gender</label><div class="gender-options"><label class="gender-opt ios-tap"><input type="radio" name="gender" value="Male"><span>Male</span></label><label class="gender-opt ios-tap"><input type="radio" name="gender" value="Female"><span>Female</span></label><label class="gender-opt ios-tap"><input type="radio" name="gender" value="Other"><span>Other</span></label></div></div>
             <div class="auth-field"><label>Address</label><textarea id="editAddress" placeholder="Your delivery address" rows="2"></textarea></div>
         </div>
         <button class="auth-submit ios-tap" id="saveProfileBtn"><span>Save Changes</span></button>
@@ -292,97 +310,38 @@
 <!-- CART SIDEBAR -->
 <div class="cart-overlay" id="cartOverlay"></div>
 <div class="cart-sidebar" id="cartSidebar">
-    <div class="cart-header">
-        <h3>Your Cart</h3>
-        <button class="close-cart ios-tap" id="closeCartBtn">
-            <svg viewBox="0 0 24 24" fill="none" width="24" height="24" stroke="currentColor" stroke-width="2"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-    </div>
-    <div class="cart-items" id="cartItemsContainer">
-        <p class="empty-cart-msg">Your cart is empty.</p>
-    </div>
+    <div class="cart-header"><h3>Your Cart</h3><button class="close-cart ios-tap" id="closeCartBtn"><svg viewBox="0 0 24 24" fill="none" width="24" height="24" stroke="currentColor" stroke-width="2"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+    <div class="cart-items" id="cartItemsContainer"><p class="empty-cart-msg">Your cart is empty.</p></div>
     <div class="cart-footer">
-        <!-- Coupon input -->
         <div class="coupon-row" id="couponRow">
-            <div class="coupon-input-wrap">
-                <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><rect x="2" y="7" width="20" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v10M7 12h.01M17 12h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                <input type="text" id="couponInput" placeholder="Enter coupon code" autocomplete="off">
-            </div>
+            <div class="coupon-input-wrap"><svg viewBox="0 0 24 24" fill="none" width="16" height="16"><rect x="2" y="7" width="20" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v10M7 12h.01M17 12h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><input type="text" id="couponInput" placeholder="Coupon code" autocomplete="off"></div>
             <button class="coupon-apply-btn ios-tap" id="couponApplyBtn">Apply</button>
         </div>
         <div class="coupon-status" id="couponStatus"></div>
-
-        <!-- Price breakdown -->
         <div class="cart-breakdown">
-            <div class="breakdown-row">
-                <span>Subtotal</span>
-                <span id="cartSubtotal">$0.00</span>
-            </div>
-            <div class="breakdown-row discount-row" id="discountRow" style="display:none">
-                <span id="discountLabel">Discount</span>
-                <span id="cartDiscount" class="discount-val">−$0.00</span>
-            </div>
-            <div class="breakdown-row">
-                <span>Shipping</span>
-                <span id="cartShipping">Free</span>
-            </div>
+            <div class="breakdown-row"><span>Subtotal</span><span id="cartSubtotal">$0.00</span></div>
+            <div class="breakdown-row discount-row" id="discountRow" style="display:none"><span id="discountLabel">Discount</span><span id="cartDiscount" class="discount-val">−$0.00</span></div>
+            <div class="breakdown-row"><span>Shipping</span><span id="cartShipping">Free</span></div>
         </div>
-
-        <!-- Total + button -->
         <div class="cart-total-row">
-            <div class="cart-total">
-                <span>Total</span>
-                <span id="cartTotalPrice">$0.00</span>
-            </div>
+            <div class="cart-total"><span>Total</span><span id="cartTotalPrice">$0.00</span></div>
             <button class="btn-primary checkout-btn ios-tap" id="checkoutBtn">Place Order</button>
         </div>
     </div>
 </div>
 
-<!-- TOAST -->
-<div class="ios-toast" id="iosToast">
-    <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-    <span>Done!</span>
-</div>
-
-<!-- IOS ALERT -->
-<div class="ios-overlay" id="iosAlertBox">
-    <div class="ios-alert">
-        <h3 id="iosAlertTitle">Alert</h3>
-        <p id="iosAlertMessage"></p>
-        <div class="ios-alert-buttons"><button class="ios-tap" id="iosAlertClose">OK</button></div>
-    </div>
-</div>
-
-
-<script type="module" src="script.js"></script>
-</body>
-</html>
-
-<!-- ══════════════════════ PRODUCT DETAIL SHEET ══════════════════════ -->
+<!-- PRODUCT DETAIL SHEET -->
 <div class="pdp-overlay" id="pdpOverlay"></div>
 <div class="pdp-sheet" id="pdpSheet">
-    <!-- Close -->
-    <button class="pdp-close ios-tap" id="pdpClose">
-        <svg viewBox="0 0 24 24" fill="none" width="18" height="18" stroke="currentColor" stroke-width="2.2"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
-
-    <!-- Image gallery -->
+    <button class="pdp-close ios-tap" id="pdpClose"><svg viewBox="0 0 24 24" fill="none" width="18" height="18" stroke="currentColor" stroke-width="2.2"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <div class="pdp-gallery">
-        <div class="pdp-main-img-wrap">
-            <img id="pdpMainImg" src="" alt="" class="pdp-main-img">
-        </div>
+        <div class="pdp-main-img-wrap"><img id="pdpMainImg" src="" alt="" class="pdp-main-img"></div>
         <div class="pdp-thumbnails" id="pdpThumbnails"></div>
     </div>
-
-    <!-- Content -->
     <div class="pdp-content">
         <div class="pdp-top-row">
             <span class="pdp-badge" id="pdpBadge"></span>
-            <div class="pdp-rating">
-                <span class="pdp-stars" id="pdpStars">★★★★★</span>
-                <span class="pdp-review-count" id="pdpReviewCount">(128 reviews)</span>
-            </div>
+            <div class="pdp-rating"><span class="pdp-stars" id="pdpStars">★★★★★</span><span class="pdp-review-count" id="pdpReviewCount"></span></div>
         </div>
         <h1 class="pdp-title" id="pdpTitle">Product Name</h1>
         <div class="pdp-price-row">
@@ -390,14 +349,8 @@
             <span class="pdp-original-price" id="pdpOrigPrice"></span>
             <span class="pdp-discount-tag" id="pdpDiscountTag"></span>
         </div>
-
-        <!-- Description -->
         <p class="pdp-desc" id="pdpDesc"></p>
-
-        <!-- Highlights -->
         <div class="pdp-highlights" id="pdpHighlights"></div>
-
-        <!-- Qty selector -->
         <div class="pdp-qty-row">
             <span class="pdp-qty-label">Quantity</span>
             <div class="pdp-qty-ctrl">
@@ -406,11 +359,19 @@
                 <button class="pdp-qty-btn ios-tap" id="pdpQtyPlus">+</button>
             </div>
         </div>
-
-        <!-- Add to cart -->
         <button class="pdp-add-btn ios-tap" id="pdpAddBtn">
             <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M5 3h1.81l2.4 10.8c.16.71.8 1.2 1.53 1.2h8.52c.73 0 1.37-.49 1.53-1.2L23 5H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20" r="2" fill="currentColor"/><circle cx="18" cy="20" r="2" fill="currentColor"/></svg>
             Add to Cart
         </button>
     </div>
 </div>
+
+<!-- TOAST -->
+<div class="ios-toast" id="iosToast"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg><span>Done!</span></div>
+
+<!-- IOS ALERT -->
+<div class="ios-overlay" id="iosAlertBox"><div class="ios-alert"><h3 id="iosAlertTitle">Alert</h3><p id="iosAlertMessage"></p><div class="ios-alert-buttons"><button class="ios-tap" id="iosAlertClose">OK</button></div></div></div>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>
