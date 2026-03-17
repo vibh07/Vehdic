@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#b85c1a">
-    <meta name="description" content="Vehdic — Pure & Natural Ayurvedic Products. Nasya, Sambrani, Hawan Tikki, Dhoop Batti and more.">
+    <meta name="description"
+        content="Vehdic — Pure & Natural Ayurvedic Products. Nasya, Sambrani, Hawan Tikki, Dhoop Batti and more.">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Vehdic">
@@ -17,723 +19,1100 @@
     <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://vehdic-default-rtdb.asia-southeast1.firebasedatabase.app" crossorigin>
     <!-- Font: load async so it doesn't block render -->
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800;900&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800;900&display=swap"></noscript>
+    <link rel="preload" as="style"
+        href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800;900&display=swap"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800;900&display=swap">
+    </noscript>
     <!-- Critical CSS — inline so page renders immediately without network -->
     <style>
-    /* Minimal critical CSS for above-fold render */
-    *{margin:0;padding:0;box-sizing:border-box;font-family:'Sora',-apple-system,BlinkMacSystemFont,sans-serif;}
-    body{background:#faf7f2;color:#1a1208;overflow-x:hidden;}
+        /* Minimal critical CSS for above-fold render */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Sora', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
 
-    /* ── PAGE LOADER with full background pattern ── */
-    .page-loader{
-        position:fixed;inset:0;z-index:99999;
-        display:flex;align-items:center;justify-content:center;
-        background-color:#faf7f2;
-        /* Same circle mandala pattern as the main site */
-        background-image:url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg stroke='%23b85c1a' stroke-opacity='0.07' stroke-width='1'%3E%3Ccircle cx='40' cy='40' r='30'/%3E%3Ccircle cx='40' cy='40' r='20'/%3E%3Ccircle cx='40' cy='40' r='10'/%3E%3Ccircle cx='0' cy='0' r='30'/%3E%3Ccircle cx='80' cy='0' r='30'/%3E%3Ccircle cx='0' cy='80' r='30'/%3E%3Ccircle cx='80' cy='80' r='30'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        background-size:80px 80px;
-        transition:opacity .5s ease, visibility .5s ease;
-    }
-    .page-loader:not(.show){opacity:0;visibility:hidden;pointer-events:none;}
-    .page-loader.fade-out{opacity:0;visibility:hidden;}
-    .loader-inner{
-        display:flex;flex-direction:column;align-items:center;gap:8px;
-        /* Soft card blur effect behind text */
-        background:rgba(250,247,242,0.7);
-        backdrop-filter:blur(8px);
-        -webkit-backdrop-filter:blur(8px);
-        padding:32px 40px;
-        border-radius:24px;
-        border:1px solid rgba(184,92,26,0.1);
-        box-shadow:0 8px 40px rgba(184,92,26,0.08);
-    }
-    .loader-tagline{
-        font-size:11px;font-weight:700;color:#b85c1a;
-        letter-spacing:2px;text-transform:uppercase;
-        opacity:0;animation:tagIn .6s ease .8s forwards;
-    }
-    @keyframes tagIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-    .vehdic-loader{display:flex;gap:3px;}
-    .vehdic-loader span{font-size:42px;font-weight:900;color:#b85c1a;animation:vP 1s ease-in-out infinite;letter-spacing:-1px;}
-    .vehdic-loader span:nth-child(1){animation-delay:0s}
-    .vehdic-loader span:nth-child(2){animation-delay:.1s}
-    .vehdic-loader span:nth-child(3){animation-delay:.2s}
-    .vehdic-loader span:nth-child(4){animation-delay:.3s}
-    .vehdic-loader span:nth-child(5){animation-delay:.4s}
-    .vehdic-loader span:nth-child(6){animation-delay:.5s}
-    @keyframes vP{0%,100%{opacity:.25;transform:translateY(0)}50%{opacity:1;transform:translateY(-9px)}}
-    #appShell{opacity:0;transition:opacity .4s ease;}
-    #appShell.loaded{opacity:1;}
+        body {
+            background: #faf7f2;
+            color: #1a1208;
+            overflow-x: hidden;
+        }
+
+        /* ── PAGE LOADER with full background pattern ── */
+        .page-loader {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #faf7f2;
+            /* Same circle mandala pattern as the main site */
+            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg stroke='%23b85c1a' stroke-opacity='0.07' stroke-width='1'%3E%3Ccircle cx='40' cy='40' r='30'/%3E%3Ccircle cx='40' cy='40' r='20'/%3E%3Ccircle cx='40' cy='40' r='10'/%3E%3Ccircle cx='0' cy='0' r='30'/%3E%3Ccircle cx='80' cy='0' r='30'/%3E%3Ccircle cx='0' cy='80' r='30'/%3E%3Ccircle cx='80' cy='80' r='30'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background-size: 80px 80px;
+            transition: opacity .5s ease, visibility .5s ease;
+        }
+
+        .page-loader:not(.show) {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .page-loader.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            /* Soft card blur effect behind text */
+            background: rgba(250, 247, 242, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 32px 40px;
+            border-radius: 24px;
+            border: 1px solid rgba(184, 92, 26, 0.1);
+            box-shadow: 0 8px 40px rgba(184, 92, 26, 0.08);
+        }
+
+        .loader-tagline {
+            font-size: 11px;
+            font-weight: 700;
+            color: #b85c1a;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: tagIn .6s ease .8s forwards;
+        }
+
+        @keyframes tagIn {
+            from {
+                opacity: 0;
+                transform: translateY(4px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .vehdic-loader {
+            display: flex;
+            gap: 3px;
+        }
+
+        .vehdic-loader span {
+            font-size: 42px;
+            font-weight: 900;
+            color: #b85c1a;
+            animation: vP 1s ease-in-out infinite;
+            letter-spacing: -1px;
+        }
+
+        .vehdic-loader span:nth-child(1) {
+            animation-delay: 0s
+        }
+
+        .vehdic-loader span:nth-child(2) {
+            animation-delay: .1s
+        }
+
+        .vehdic-loader span:nth-child(3) {
+            animation-delay: .2s
+        }
+
+        .vehdic-loader span:nth-child(4) {
+            animation-delay: .3s
+        }
+
+        .vehdic-loader span:nth-child(5) {
+            animation-delay: .4s
+        }
+
+        .vehdic-loader span:nth-child(6) {
+            animation-delay: .5s
+        }
+
+        @keyframes vP {
+
+            0%,
+            100% {
+                opacity: .25;
+                transform: translateY(0)
+            }
+
+            50% {
+                opacity: 1;
+                transform: translateY(-9px)
+            }
+        }
+
+        #appShell {
+            opacity: 0;
+            transition: opacity .4s ease;
+        }
+
+        #appShell.loaded {
+            opacity: 1;
+        }
     </style>
     <!-- Full stylesheet — loads after critical CSS -->
     <link rel="stylesheet" href="style.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="style.css"></noscript>
+    <noscript>
+        <link rel="stylesheet" href="style.css">
+    </noscript>
 </head>
+
 <body>
 
-<!-- PAGE LOADER -->
-<div id="pageLoader" class="page-loader show">
-    <div class="loader-inner">
-        <div class="vehdic-loader">
-            <span>V</span><span>e</span><span>h</span><span>d</span><span>i</span><span>c</span>
+    <!-- PAGE LOADER -->
+    <div id="pageLoader" class="page-loader show">
+        <div class="loader-inner">
+            <div class="vehdic-loader">
+                <span>V</span><span>e</span><span>h</span><span>d</span><span>i</span><span>c</span>
+            </div>
+            <div class="loader-tagline">Pure &amp; Natural</div>
         </div>
-        <div class="loader-tagline">Pure &amp; Natural</div>
     </div>
-</div>
 
-<!-- ═══════════════════════════════════════════════ -->
-<!--  AUTH MODAL (floating, not full wall)           -->
-<!-- ═══════════════════════════════════════════════ -->
-<div id="authModalOverlay" class="auth-modal-overlay view-hidden" tabindex="-1">
-    <div class="auth-modal" role="dialog" aria-modal="true">
+    <!-- ═══════════════════════════════════════════════ -->
+    <!--  AUTH MODAL (floating, not full wall)           -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div id="authModalOverlay" class="auth-modal-overlay view-hidden" tabindex="-1">
+        <div class="auth-modal" role="dialog" aria-modal="true">
 
-        <!-- Dismiss (guest mode) -->
-        <button class="auth-modal-dismiss ios-tap" id="authModalDismiss" title="Continue as guest">
-            <svg viewBox="0 0 24 24" fill="none" width="18" height="18" stroke="currentColor" stroke-width="2.2"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-
-        <!-- Brand -->
-        <div class="auth-brand">
-            <div class="auth-brand-logo">V</div>
-            <div>
-                <div class="auth-brand-name">Vehdic</div>
-                <div class="auth-brand-sub">Pure &amp; Natural Products</div>
-            </div>
-        </div>
-
-        <!-- Tabs -->
-        <div class="auth-tabs">
-            <button class="auth-tab active" data-tab="login">Sign In</button>
-            <button class="auth-tab" data-tab="register">Create Account</button>
-        </div>
-
-        <!-- LOGIN -->
-        <div class="auth-panel" id="loginPanel">
-            <button class="google-btn ios-tap" id="googleSignInBtn">
-                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84z"/></svg>
-                Continue with Google
+            <!-- Dismiss (guest mode) -->
+            <button class="auth-modal-dismiss ios-tap" id="authModalDismiss" title="Continue as guest">
+                <svg viewBox="0 0 24 24" fill="none" width="18" height="18" stroke="currentColor" stroke-width="2.2">
+                    <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
             </button>
-            <div class="auth-divider"><span>or continue with email</span></div>
-            <div class="auth-field">
-                <div class="field-input-wrap">
-                    <svg class="field-icon" viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="1.8"/><path d="M22 6l-10 7L2 6" stroke="currentColor" stroke-width="1.8"/></svg>
-                    <input type="email" id="loginEmail" placeholder="Email address" autocomplete="email">
-                </div>
-                <span class="field-err" id="loginEmailErr"></span>
-            </div>
-            <div class="auth-field">
-                <div class="field-input-wrap">
-                    <svg class="field-icon" viewBox="0 0 24 24" fill="none" width="16" height="16"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                    <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
-                    <button class="toggle-pass ios-tap" data-target="loginPassword" tabindex="-1">
-                        <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>
-                    </button>
-                </div>
-                <span class="field-err" id="loginPassErr"></span>
-            </div>
-            <button class="forgot-link ios-tap" id="forgotPassBtn">Forgot password?</button>
-            <button class="auth-submit ios-tap" id="loginBtn"><span>Sign In</span></button>
-        </div>
 
-        <!-- REGISTER -->
-        <div class="auth-panel view-hidden" id="registerPanel">
-            <button class="google-btn ios-tap" id="googleSignUpBtn">
-                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84z"/></svg>
-                Sign up with Google
-            </button>
-            <div class="auth-divider"><span>or continue with email</span></div>
-            <div class="auth-field">
-                <div class="field-input-wrap">
-                    <svg class="field-icon" viewBox="0 0 24 24" fill="none" width="16" height="16"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M20 21c0-2.5-2-5-8-5s-8 2.5-8 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                    <input type="text" id="regName" placeholder="Full name" autocomplete="name">
+            <!-- Brand -->
+            <div class="auth-brand">
+                <div class="auth-brand-logo">V</div>
+                <div>
+                    <div class="auth-brand-name">Vehdic</div>
+                    <div class="auth-brand-sub">Pure &amp; Natural Products</div>
                 </div>
-                <span class="field-err" id="regNameErr"></span>
             </div>
-            <div class="auth-field">
-                <div class="field-input-wrap">
-                    <svg class="field-icon" viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="1.8"/><path d="M22 6l-10 7L2 6" stroke="currentColor" stroke-width="1.8"/></svg>
-                    <input type="email" id="regEmail" placeholder="Email address" autocomplete="email">
-                </div>
-                <span class="field-err" id="regEmailErr"></span>
-            </div>
-            <div class="auth-field">
-                <div class="field-input-wrap">
-                    <svg class="field-icon" viewBox="0 0 24 24" fill="none" width="16" height="16"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                    <input type="password" id="regPassword" placeholder="Create password (min 6 chars)" autocomplete="new-password">
-                    <button class="toggle-pass ios-tap" data-target="regPassword" tabindex="-1">
-                        <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg>
-                    </button>
-                </div>
-                <div class="pass-strength"><div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div><span id="strengthLabel"></span></div>
-                <span class="field-err" id="regPassErr"></span>
-            </div>
-            <button class="auth-submit ios-tap" id="registerBtn"><span>Create Account</span></button>
-        </div>
 
+            <!-- Tabs -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Sign In</button>
+                <button class="auth-tab" data-tab="register">Create Account</button>
+            </div>
+
+            <!-- LOGIN -->
+            <div class="auth-panel" id="loginPanel">
+                <button class="google-btn ios-tap" id="googleSignInBtn">
+                    <svg viewBox="0 0 24 24" width="18" height="18">
+                        <path fill="#4285F4"
+                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                        <path fill="#34A853"
+                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                        <path fill="#FBBC05"
+                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" />
+                        <path fill="#EA4335"
+                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84z" />
+                    </svg>
+                    Continue with Google
+                </button>
+                <div class="auth-divider"><span>or continue with email</span></div>
+                <div class="auth-field">
+                    <div class="field-input-wrap">
+                        <svg class="field-icon" viewBox="0 0 24 24" fill="none" width="16" height="16">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                                stroke="currentColor" stroke-width="1.8" />
+                            <path d="M22 6l-10 7L2 6" stroke="currentColor" stroke-width="1.8" />
+                        </svg>
+                        <input type="email" id="loginEmail" placeholder="Email address" autocomplete="email">
+                    </div>
+                    <span class="field-err" id="loginEmailErr"></span>
+                </div>
+                <div class="auth-field">
+                    <div class="field-input-wrap">
+                        <svg class="field-icon" viewBox="0 0 24 24" fill="none" width="16" height="16">
+                            <rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="1.8" />
+                            <path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="1.8"
+                                stroke-linecap="round" />
+                        </svg>
+                        <input type="password" id="loginPassword" placeholder="Password"
+                            autocomplete="current-password">
+                        <button class="toggle-pass ios-tap" data-target="loginPassword" tabindex="-1">
+                            <svg viewBox="0 0 24 24" fill="none" width="16" height="16">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor"
+                                    stroke-width="1.8" />
+                                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8" />
+                            </svg>
+                        </button>
+                    </div>
+                    <span class="field-err" id="loginPassErr"></span>
+                </div>
+                <button class="forgot-link ios-tap" id="forgotPassBtn">Forgot password?</button>
+                <button class="auth-submit ios-tap" id="loginBtn"><span>Sign In</span></button>
+            </div>
+
+            <!-- REGISTER -->
+            <div class="auth-panel view-hidden" id="registerPanel">
+                <button class="google-btn ios-tap" id="googleSignUpBtn">
+                    <svg viewBox="0 0 24 24" width="18" height="18">
+                        <path fill="#4285F4"
+                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                        <path fill="#34A853"
+                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                        <path fill="#FBBC05"
+                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" />
+                        <path fill="#EA4335"
+                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84z" />
+                    </svg>
+                    Sign up with Google
+                </button>
+                <div class="auth-divider"><span>or continue with email</span></div>
+                <div class="auth-field">
+                    <div class="field-input-wrap">
+                        <svg class="field-icon" viewBox="0 0 24 24" fill="none" width="16" height="16">
+                            <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8" />
+                            <path d="M20 21c0-2.5-2-5-8-5s-8 2.5-8 5" stroke="currentColor" stroke-width="1.8"
+                                stroke-linecap="round" />
+                        </svg>
+                        <input type="text" id="regName" placeholder="Full name" autocomplete="name">
+                    </div>
+                    <span class="field-err" id="regNameErr"></span>
+                </div>
+                <div class="auth-field">
+                    <div class="field-input-wrap">
+                        <svg class="field-icon" viewBox="0 0 24 24" fill="none" width="16" height="16">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                                stroke="currentColor" stroke-width="1.8" />
+                            <path d="M22 6l-10 7L2 6" stroke="currentColor" stroke-width="1.8" />
+                        </svg>
+                        <input type="email" id="regEmail" placeholder="Email address" autocomplete="email">
+                    </div>
+                    <span class="field-err" id="regEmailErr"></span>
+                </div>
+                <div class="auth-field">
+                    <div class="field-input-wrap">
+                        <svg class="field-icon" viewBox="0 0 24 24" fill="none" width="16" height="16">
+                            <rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="1.8" />
+                            <path d="M7 11V7a5 5 0 0110 0v4" stroke="currentColor" stroke-width="1.8"
+                                stroke-linecap="round" />
+                        </svg>
+                        <input type="password" id="regPassword" placeholder="Create password (min 6 chars)"
+                            autocomplete="new-password">
+                        <button class="toggle-pass ios-tap" data-target="regPassword" tabindex="-1">
+                            <svg viewBox="0 0 24 24" fill="none" width="16" height="16">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor"
+                                    stroke-width="1.8" />
+                                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="pass-strength">
+                        <div class="strength-bar">
+                            <div class="strength-fill" id="strengthFill"></div>
+                        </div><span id="strengthLabel"></span>
+                    </div>
+                    <span class="field-err" id="regPassErr"></span>
+                </div>
+                <button class="auth-submit ios-tap" id="registerBtn"><span>Create Account</span></button>
+            </div>
+
+        </div>
     </div>
-</div>
 
-<!-- ═══════════════════════════════════════════════ -->
-<!--  APP (always visible — guest or logged in)      -->
-<!-- ═══════════════════════════════════════════════ -->
-<div id="appShell">
+    <!-- ═══════════════════════════════════════════════ -->
+    <!--  APP (always visible — guest or logged in)      -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div id="appShell">
 
-    <header class="navbar">
-        <div class="logo">Vehdic</div>
-        <nav class="nav-links" id="nav-links">
-            <a href="#" class="active">Home</a>
-            <a href="#">Shop</a>
-            <a href="#">My Order</a>
-            <a href="javascript:void(0)" id="menuAboutBtn" class="ios-tap">About us</a>
-            <a href="javascript:void(0)" id="menuContactBtn" class="ios-tap">Contact</a>
-            <a href="#">Cart</a>
-            <a href="#" id="navProfileLink">Profile</a>
-        </nav>
-        <div class="mobile-nav-icons">
-            <!-- PWA Install Button — animated download -->
-            <button id="installBtn" class="install-btn ios-tap" title="Install App">
-                <!-- Default state: download icon -->
-                <div class="install-icon-state" id="installIconState">
-                    <svg id="installIconSvg" viewBox="0 0 24 24" fill="none" width="20" height="20">
-                        <path d="M12 3v11M8 10l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M3 17v1a3 3 0 003 3h12a3 3 0 003-3v-1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <header class="navbar">
+            <div class="logo">Vehdic</div>
+            <nav class="nav-links" id="nav-links">
+                <a href="#" class="active">Home</a>
+                <a href="#">Shop</a>
+                <a href="#">My Order</a>
+                <a href="javascript:void(0)" id="menuAboutBtn" class="ios-tap">About us</a>
+                <a href="javascript:void(0)" id="menuContactBtn" class="ios-tap">Contact</a>
+                <a href="#">Cart</a>
+                <a href="#" id="navProfileLink">Profile</a>
+            </nav>
+            <div class="mobile-nav-icons">
+                <!-- PWA Install Button — animated download -->
+                <button id="installBtn" class="install-btn ios-tap" title="Install App">
+                    <!-- Default state: download icon -->
+                    <div class="install-icon-state" id="installIconState">
+                        <svg id="installIconSvg" viewBox="0 0 24 24" fill="none" width="20" height="20">
+                            <path d="M12 3v11M8 10l4 4 4-4" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M3 17v1a3 3 0 003 3h12a3 3 0 003-3v-1" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <!-- Expanded state: bar + text (shown on animation) -->
+                    <div class="install-expanded-state" id="installExpandedState" style="display:none;">
+                        <svg viewBox="0 0 24 24" fill="none" width="16" height="16" style="flex-shrink:0">
+                            <path d="M12 3v11M8 10l4 4 4-4" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M3 17v1a3 3 0 003 3h12a3 3 0 003-3v-1" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" />
+                        </svg>
+                        <div class="install-text-wrap">
+                            <span class="install-label">Download App</span>
+                            <div class="install-progress-bar">
+                                <div class="install-progress-fill" id="installProgressFill"></div>
+                            </div>
+                        </div>
+                    </div>
+                </button>
+                <!-- Profile / login -->
+                <button id="profileIconBtn" class="icon-btn ios-tap profile-icon-btn" title="Profile">
+                    <div class="nav-avatar" id="navAvatar">
+                        <svg viewBox="0 0 24 24" fill="none" width="24" height="24">
+                            <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8" fill="currentColor"
+                                fill-opacity="0.1" />
+                            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="1.8"
+                                stroke-linecap="round" />
+                        </svg>
+                    </div>
+                </button>
+                <!-- 3-dot menu -->
+                <button id="mobileMenuBtn" class="icon-btn ios-tap" title="More">
+                    <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+                        <circle cx="5" cy="12" r="1.8" fill="currentColor" />
+                        <circle cx="12" cy="12" r="1.8" fill="currentColor" />
+                        <circle cx="19" cy="12" r="1.8" fill="currentColor" />
                     </svg>
+                </button>
+                <div class="mobile-dropdown-menu" id="mobileDropdown">
+                    <a href="javascript:void(0)" id="mobAboutBtn" class="ios-tap">About us</a>
+                    <div class="ios-divider"></div>
+                    <a href="javascript:void(0)" id="mobContactBtn" class="ios-tap">Contact</a>
                 </div>
-                <!-- Expanded state: bar + text (shown on animation) -->
-                <div class="install-expanded-state" id="installExpandedState" style="display:none;">
-                    <svg viewBox="0 0 24 24" fill="none" width="16" height="16" style="flex-shrink:0">
-                        <path d="M12 3v11M8 10l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M3 17v1a3 3 0 003 3h12a3 3 0 003-3v-1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                    <div class="install-text-wrap">
-                        <span class="install-label">Download App</span>
-                        <div class="install-progress-bar">
-                            <div class="install-progress-fill" id="installProgressFill"></div>
+            </div>
+        </header>
+
+        <!-- HOME -->
+        <div id="homeContent" class="view-page view-visible">
+            <main class="container">
+                <section class="hero reveal">
+                    <h1 class="hero-bg-text">NASYA</h1>
+                    <div class="hero-content">
+                        <div class="hero-text">
+                            <p class="hero-eyebrow">⭐ Super Special</p>
+                            <h3>Gir Ahinsak</h3>
+                            <h2>Nasya</h2>
+                            <p class="hero-sub">Ancient Ayurvedic nasal therapy with pure A2 Gir Cow Ghee</p>
+                            <button class="btn-primary hover-btn ios-tap">Shop now</button>
+                        </div>
+                        <div class="hero-img-container floating-anim">
+                            <img loading="lazy" decoding="async"
+                                src="https://anadi.co.in/wp-content/uploads/2024/10/WhatsApp-Image-2024-10-19-at-1.33.23-PM-600x960.jpeg"
+                                alt="Gir Ahinsak Nasya" fetchpriority="high" loading="eager">
+                        </div>
+                    </div>
+                </section>
+                <section class="promo-grid reveal">
+                    <div class="promo-card bg-saffron card-normal ios-tap">
+                        <div class="card-text">
+                            <p>Pure</p>
+                            <h3>Ayurvedic</h3>
+                            <h1 class="bg-title">Nasya</h1>
+                        </div>
+                        <div class="promo-emoji">🫙</div>
+                    </div>
+                    <div class="promo-card bg-earthen card-normal ios-tap">
+                        <div class="card-text">
+                            <p>Sacred</p>
+                            <h3>Puja</h3>
+                            <h1 class="bg-title text-earthen">Sambrani</h1>
+                        </div>
+                        <div class="promo-emoji">🪔</div>
+                    </div>
+                    <div class="promo-card bg-forest card-wide ios-tap">
+                        <div class="card-text">
+                            <p>Traditional</p>
+                            <h3>Hawan</h3>
+                            <h1 class="bg-title text-forest">Tikki</h1>
+                        </div>
+                        <div class="promo-emoji">🔥</div>
+                    </div>
+                    <div class="promo-card bg-clay card-wide ios-tap">
+                        <div class="card-text dark-text">
+                            <p>Aromatic</p>
+                            <h3>Sacred</h3>
+                            <h1 class="bg-title text-clay">Dhoop Batti</h1>
+                        </div>
+                        <div class="promo-emoji">🌿</div>
+                    </div>
+                    <div class="promo-card bg-turmeric card-normal ios-tap">
+                        <div class="card-text">
+                            <p>Herbal</p>
+                            <h3>Health</h3>
+                            <h1 class="bg-title text-turmeric">Gau Mutra</h1>
+                        </div>
+                        <div class="promo-emoji">🐄</div>
+                    </div>
+                    <div class="promo-card bg-maroon card-normal ios-tap">
+                        <div class="card-text">
+                            <p>100%</p>
+                            <h3>Natural</h3>
+                            <h1 class="bg-title text-maroon">Organic</h1>
+                        </div>
+                        <div class="promo-emoji">🌱</div>
+                    </div>
+                </section>
+                <section class="sale-banner dark-red-banner reveal">
+                    <div class="banner-left">
+                        <h2>PURE<br>NASYA</h2>
+                    </div>
+                    <div class="banner-center"><img loading="lazy" decoding="async"
+                            src="https://anadi.co.in/wp-content/uploads/2024/10/WhatsApp-Image-2024-10-19-at-1.33.23-PM-600x960.jpeg"
+                            class="center-product floating-anim banner-product-img" alt="Nasya"></div>
+                    <div class="banner-right">
+                        <p class="discount">50% off</p>
+                        <h2>Summer Sale</h2>
+                        <p class="desc">Ancient Ayurvedic nasal therapy with pure<br>A2 Gir Cow Ghee</p><button
+                            class="btn-white hover-btn ios-tap">Shop now</button>
+                    </div>
+                </section>
+                <section class="best-sellers reveal">
+                    <h2 class="section-title">Our Products</h2>
+                    <p class="section-subtitle">Pure · Natural · Ayurvedic</p>
+                    <div class="products-grid"></div>
+                </section>
+                <section class="sale-banner dark-green-banner reveal" style="margin-bottom:40px;">
+                    <div class="banner-left">
+                        <h2>SACRED<br>PUJA</h2>
+                    </div>
+                    <div class="banner-center"><img loading="lazy" decoding="async"
+                            src="https://anadi.co.in/wp-content/uploads/2024/10/XXXX-600x960.png"
+                            class="center-product floating-anim banner-product-img" alt="Sambrani"></div>
+                    <div class="banner-right">
+                        <p class="discount">50% off</p>
+                        <h2>Summer Sale</h2>
+                        <p class="desc">Premium Sambrani Cups made from pure<br>Benzoin resin &amp; cow dung</p><button
+                            class="btn-white hover-btn ios-tap">Shop now</button>
+                    </div>
+                </section>
+            </main>
+
+            <!-- ── FOOTER ── -->
+            <footer class="site-footer">
+                <div class="footer-top">
+                    <!-- Brand -->
+                    <div class="footer-brand-col">
+                        <div class="footer-logo">Vehdic</div>
+                        <p class="footer-tagline">Rooted in ancient Ayurvedic wisdom. Bringing pure, natural products
+                            from Gir cow farms directly to your home.</p>
+                        <div class="footer-social">
+                            <a class="footer-social-btn" href="#" title="Instagram">📸</a>
+                            <a class="footer-social-btn" href="#" title="WhatsApp">💬</a>
+                            <a class="footer-social-btn" href="#" title="Facebook">👤</a>
+                            <a class="footer-social-btn" href="#" title="YouTube">▶️</a>
+                        </div>
+                    </div>
+                    <!-- Quick Links -->
+                    <div class="footer-col">
+                        <h4>Quick Links</h4>
+                        <div class="footer-links">
+                            <a id="footerHome">Home</a>
+                            <a id="footerShop">Shop</a>
+                            <a id="footerAbout">About Us</a>
+                            <a id="footerContact">Contact</a>
+                            <a id="footerOrders">My Orders</a>
+                        </div>
+                    </div>
+                    <!-- Products -->
+                    <div class="footer-col">
+                        <h4>Products</h4>
+                        <div class="footer-links">
+                            <a>Gir Ahinsak Nasya</a>
+                            <a>Premium Sambrani Cup</a>
+                            <a>Badi Hawan Tikki</a>
+                            <a>Dhoop Batti</a>
+                            <a>Choti Hawan Tikki</a>
+                            <a>Gau Mutra (Ark)</a>
+                        </div>
+                    </div>
+                    <!-- Contact -->
+                    <div class="footer-col">
+                        <h4>Get in Touch</h4>
+                        <div class="footer-contact-item">
+                            <span>📞</span>
+                            <a href="tel:+919810017422">+91 98100 17422</a>
+                        </div>
+                        <div class="footer-contact-item">
+                            <span>✉️</span>
+                            <a href="mailto:vehdic@gmail.com">vehdic@gmail.com</a>
+                        </div>
+                        <div class="footer-contact-item">
+                            <span>📍</span>
+                            <span>India</span>
+                        </div>
+                        <div class="footer-contact-item">
+                            <span>⏰</span>
+                            <span>Mon–Sat, 9AM–7PM</span>
                         </div>
                     </div>
                 </div>
-            </button>
-            <!-- Profile / login -->
-            <button id="profileIconBtn" class="icon-btn ios-tap profile-icon-btn" title="Profile">
-                <div class="nav-avatar" id="navAvatar">
-                    <svg viewBox="0 0 24 24" fill="none" width="24" height="24">
-                        <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8" fill="currentColor" fill-opacity="0.1"/>
-                        <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                    </svg>
+                <div class="footer-bottom">
+                    <p class="footer-copy">© 2024 Vehdic. All rights reserved. Crafted with 🌿 for Ayurvedic wellness.
+                    </p>
+                    <div class="footer-badges">
+                        <div class="footer-badge">🚚 Free ship ₹1500+</div>
+                        <div class="footer-badge">✅ 100% Natural</div>
+                        <div class="footer-badge">🐄 Gir Cow</div>
+                        <div class="footer-badge">🔒 Secure</div>
+                    </div>
                 </div>
-            </button>
-            <!-- 3-dot menu -->
-            <button id="mobileMenuBtn" class="icon-btn ios-tap" title="More">
-                <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
-                    <circle cx="5" cy="12" r="1.8" fill="currentColor"/>
-                    <circle cx="12" cy="12" r="1.8" fill="currentColor"/>
-                    <circle cx="19" cy="12" r="1.8" fill="currentColor"/>
-                </svg>
-            </button>
-            <div class="mobile-dropdown-menu" id="mobileDropdown">
-    <a href="javascript:void(0)" id="menuAboutBtn" class="ios-tap">About us</a>
-    <div class="ios-divider"></div>
-    <a href="javascript:void(0)" id="menuContactBtn" class="ios-tap">Contact</a>
-</div>
+            </footer>
         </div>
-    </header>
 
-    <!-- HOME -->
-    <div id="homeContent" class="view-page view-visible">
-        <main class="container">
-            <section class="hero reveal">
-                <h1 class="hero-bg-text">NASYA</h1>
-                <div class="hero-content">
-                    <div class="hero-text">
-                        <p class="hero-eyebrow">⭐ Super Special</p>
-                        <h3>Gir Ahinsak</h3>
-                        <h2>Nasya</h2>
-                        <p class="hero-sub">Ancient Ayurvedic nasal therapy with pure A2 Gir Cow Ghee</p>
-                        <button class="btn-primary hover-btn ios-tap">Shop now</button>
-                    </div>
-                    <div class="hero-img-container floating-anim">
-                        <img loading="lazy" decoding="async" src="https://anadi.co.in/wp-content/uploads/2024/10/WhatsApp-Image-2024-10-19-at-1.33.23-PM-600x960.jpeg" alt="Gir Ahinsak Nasya" fetchpriority="high" loading="eager">
-                    </div>
+        <!-- ORDERS -->
+        <div id="ordersView" class="view-page view-hidden">
+            <div class="orders-page container">
+                <div class="orders-page-header">
+                    <h2>My Orders</h2>
+                    <p>Your complete purchase history</p>
                 </div>
-            </section>
-            <section class="promo-grid reveal">
-                <div class="promo-card bg-saffron card-normal ios-tap"><div class="card-text"><p>Pure</p><h3>Ayurvedic</h3><h1 class="bg-title">Nasya</h1></div><div class="promo-emoji">🫙</div></div>
-                <div class="promo-card bg-earthen card-normal ios-tap"><div class="card-text"><p>Sacred</p><h3>Puja</h3><h1 class="bg-title text-earthen">Sambrani</h1></div><div class="promo-emoji">🪔</div></div>
-                <div class="promo-card bg-forest card-wide ios-tap"><div class="card-text"><p>Traditional</p><h3>Hawan</h3><h1 class="bg-title text-forest">Tikki</h1></div><div class="promo-emoji">🔥</div></div>
-                <div class="promo-card bg-clay card-wide ios-tap"><div class="card-text dark-text"><p>Aromatic</p><h3>Sacred</h3><h1 class="bg-title text-clay">Dhoop Batti</h1></div><div class="promo-emoji">🌿</div></div>
-                <div class="promo-card bg-turmeric card-normal ios-tap"><div class="card-text"><p>Herbal</p><h3>Health</h3><h1 class="bg-title text-turmeric">Gau Mutra</h1></div><div class="promo-emoji">🐄</div></div>
-                <div class="promo-card bg-maroon card-normal ios-tap"><div class="card-text"><p>100%</p><h3>Natural</h3><h1 class="bg-title text-maroon">Organic</h1></div><div class="promo-emoji">🌱</div></div>
-            </section>
-            <section class="sale-banner dark-red-banner reveal">
-                <div class="banner-left"><h2>PURE<br>NASYA</h2></div>
-                <div class="banner-center"><img loading="lazy" decoding="async" src="https://anadi.co.in/wp-content/uploads/2024/10/WhatsApp-Image-2024-10-19-at-1.33.23-PM-600x960.jpeg" class="center-product floating-anim banner-product-img" alt="Nasya"></div>
-                <div class="banner-right"><p class="discount">50% off</p><h2>Summer Sale</h2><p class="desc">Ancient Ayurvedic nasal therapy with pure<br>A2 Gir Cow Ghee</p><button class="btn-white hover-btn ios-tap">Shop now</button></div>
-            </section>
-            <section class="best-sellers reveal">
-                <h2 class="section-title">Our Products</h2>
-                <p class="section-subtitle">Pure · Natural · Ayurvedic</p>
-                <div class="products-grid"></div>
-            </section>
-            <section class="sale-banner dark-green-banner reveal" style="margin-bottom:40px;">
-                <div class="banner-left"><h2>SACRED<br>PUJA</h2></div>
-                <div class="banner-center"><img loading="lazy" decoding="async" src="https://anadi.co.in/wp-content/uploads/2024/10/XXXX-600x960.png" class="center-product floating-anim banner-product-img" alt="Sambrani"></div>
-                <div class="banner-right"><p class="discount">50% off</p><h2>Summer Sale</h2><p class="desc">Premium Sambrani Cups made from pure<br>Benzoin resin &amp; cow dung</p><button class="btn-white hover-btn ios-tap">Shop now</button></div>
-            </section>
-        </main>
+                <!-- Guest orders prompt injected by JS or ordersContainer -->
+                <div id="ordersContainer"></div>
+            </div>
+        </div>
 
-        <!-- ── FOOTER ── -->
-        <footer class="site-footer">
-            <div class="footer-top">
-                <!-- Brand -->
-                <div class="footer-brand-col">
-                    <div class="footer-logo">Vehdic</div>
-                    <p class="footer-tagline">Rooted in ancient Ayurvedic wisdom. Bringing pure, natural products from Gir cow farms directly to your home.</p>
-                    <div class="footer-social">
-                        <a class="footer-social-btn" href="#" title="Instagram">📸</a>
-                        <a class="footer-social-btn" href="#" title="WhatsApp">💬</a>
-                        <a class="footer-social-btn" href="#" title="Facebook">👤</a>
-                        <a class="footer-social-btn" href="#" title="YouTube">▶️</a>
-                    </div>
+        <!-- ABOUT US -->
+        <div id="aboutView" class="view-page view-hidden">
+            <section class="about-hero reveal">
+                <div class="about-hero-badge">🌿 Our Story</div>
+                <h1>Pure. Natural.<br>Ayurvedic.</h1>
+                <p>Vehdic was born from a deep reverence for ancient Vedic traditions. We believe that nature has always
+                    held the answers — we simply help you find them.</p>
+            </section>
+
+            <div class="why-grid reveal">
+                <div class="why-card">
+                    <div class="why-icon">🐄</div>
+                    <h3>Gir Cow Heritage</h3>
+                    <p>Our products are crafted from A2 milk and by-products of authentic Gir cows — one of India's most
+                        sacred and nutrient-rich breeds.</p>
                 </div>
-                <!-- Quick Links -->
-                <div class="footer-col">
-                    <h4>Quick Links</h4>
-                    <div class="footer-links">
-                        <a id="footerHome">Home</a>
-                        <a id="footerShop">Shop</a>
-                        <a id="footerAbout">About Us</a>
-                        <a id="footerContact">Contact</a>
-                        <a id="footerOrders">My Orders</a>
-                    </div>
+                <div class="why-card">
+                    <div class="why-icon">🫙</div>
+                    <h3>Ancient Nasya Therapy</h3>
+                    <p>Our flagship Gir Ahinsak Nasya follows authentic Ayurvedic protocols — nasal administration that
+                        purifies the mind, sharpens senses and boosts immunity.</p>
                 </div>
-                <!-- Products -->
-                <div class="footer-col">
-                    <h4>Products</h4>
-                    <div class="footer-links">
-                        <a>Gir Ahinsak Nasya</a>
-                        <a>Premium Sambrani Cup</a>
-                        <a>Badi Hawan Tikki</a>
-                        <a>Dhoop Batti</a>
-                        <a>Choti Hawan Tikki</a>
-                        <a>Gau Mutra (Ark)</a>
-                    </div>
+                <div class="why-card">
+                    <div class="why-icon">🌿</div>
+                    <h3>Zero Chemicals</h3>
+                    <p>Every product is completely free from synthetic chemicals, preservatives, artificial colours and
+                        fragrances. What you get is purely natural.</p>
                 </div>
-                <!-- Contact -->
-                <div class="footer-col">
-                    <h4>Get in Touch</h4>
-                    <div class="footer-contact-item">
-                        <span>📞</span>
+                <div class="why-card">
+                    <div class="why-icon">🔥</div>
+                    <h3>Sacred Puja Products</h3>
+                    <p>Our Hawan Tikkis, Dhoop Batti and Sambrani Cups are crafted with pure cow dung and medicinal
+                        herbs — purifying your space the Vedic way.</p>
+                </div>
+                <div class="why-card">
+                    <div class="why-icon">🚚</div>
+                    <h3>Farm to Doorstep</h3>
+                    <p>From Gir farms straight to your home. No middlemen, no compromises. Freshly prepared and
+                        delivered within 5 working days.</p>
+                </div>
+                <div class="why-card">
+                    <div class="why-icon">❤️</div>
+                    <h3>Made with Devotion</h3>
+                    <p>Every product is prepared with utmost care and reverence — honouring the ancient traditions that
+                        have sustained wellness for thousands of years.</p>
+                </div>
+            </div>
+
+            <div class="about-story reveal" style="margin-bottom:0;">
+                <div class="about-story-text">
+                    <h2>Why We Started Vehdic</h2>
+                    <p>In a world flooded with synthetic products, we asked: <em>what would our ancestors use?</em> The
+                        answer was always rooted in nature — the cow, the herbs, the fire.</p>
+                    <p>Vehdic is our commitment to preserving these ancient practices. Every product we make is a bridge
+                        between Vedic wisdom and modern life — making it simple, accessible and genuinely effective.</p>
+                    <p>We source exclusively from Gir cow farms in Gujarat, work with Ayurvedic practitioners, and never
+                        compromise on purity. This is not just a business — it is seva (service) to the ancient
+                        knowledge that still heals.</p>
+                </div>
+                <div class="about-story-img">🫙</div>
+            </div>
+
+            <div class="trust-strip reveal" style="margin-top:32px;">
+                <div class="trust-item">
+                    <span>✅</span>
+                    <div class="trust-item-text"><strong>100% Natural</strong><small>No synthetics ever</small></div>
+                </div>
+                <div class="trust-item">
+                    <span>🐄</span>
+                    <div class="trust-item-text"><strong>Gir Cow</strong><small>A2 products only</small></div>
+                </div>
+                <div class="trust-item">
+                    <span>🚚</span>
+                    <div class="trust-item-text"><strong>Fast Delivery</strong><small>Within 5 days</small></div>
+                </div>
+                <div class="trust-item">
+                    <span>🌿</span>
+                    <div class="trust-item-text"><strong>Formaldehyde Free</strong><small>Safe for family</small></div>
+                </div>
+            </div>
+            <div style="height:120px;"></div>
+        </div>
+
+        <!-- CONTACT -->
+        <div id="contactView" class="view-page view-hidden">
+            <div class="contact-page">
+                <div class="contact-hero reveal">
+                    <h1>Get in Touch</h1>
+                    <p>We'd love to hear from you — questions, orders, wholesale enquiries or just saying hello 🙏</p>
+                </div>
+
+                <div class="contact-grid reveal">
+                    <div class="contact-card">
+                        <div class="contact-card-icon">📞</div>
+                        <h3>Call Us</h3>
+                        <p>Mon–Sat, 9AM to 7PM IST</p>
                         <a href="tel:+919810017422">+91 98100 17422</a>
                     </div>
-                    <div class="footer-contact-item">
-                        <span>✉️</span>
+                    <div class="contact-card">
+                        <div class="contact-card-icon">✉️</div>
+                        <h3>Email Us</h3>
+                        <p>We reply within 24 hours</p>
                         <a href="mailto:vehdic@gmail.com">vehdic@gmail.com</a>
                     </div>
-                    <div class="footer-contact-item">
-                        <span>📍</span>
-                        <span>India</span>
+                    <div class="contact-card">
+                        <div class="contact-card-icon">💬</div>
+                        <h3>WhatsApp</h3>
+                        <p>Quick support on WhatsApp</p>
+                        <a href="https://wa.me/919810017422" target="_blank">Chat on WhatsApp</a>
                     </div>
-                    <div class="footer-contact-item">
-                        <span>⏰</span>
-                        <span>Mon–Sat, 9AM–7PM</span>
+                    <div class="contact-card">
+                        <div class="contact-card-icon">📍</div>
+                        <h3>Location</h3>
+                        <p>We deliver Pan India</p>
+                        <a>Across India 🇮🇳</a>
                     </div>
                 </div>
-            </div>
-            <div class="footer-bottom">
-                <p class="footer-copy">© 2024 Vehdic. All rights reserved. Crafted with 🌿 for Ayurvedic wellness.</p>
-                <div class="footer-badges">
-                    <div class="footer-badge">🚚 Free ship ₹1500+</div>
-                    <div class="footer-badge">✅ 100% Natural</div>
-                    <div class="footer-badge">🐄 Gir Cow</div>
-                    <div class="footer-badge">🔒 Secure</div>
-                </div>
-            </div>
-        </footer>
-    </div>
 
-    <!-- ORDERS -->
-    <div id="ordersView" class="view-page view-hidden">
-        <div class="orders-page container">
-            <div class="orders-page-header"><h2>My Orders</h2><p>Your complete purchase history</p></div>
-            <!-- Guest orders prompt injected by JS or ordersContainer -->
-            <div id="ordersContainer"></div>
-        </div>
-    </div>
-
-    <!-- ABOUT US -->
-    <div id="aboutView" class="view-page view-hidden">
-        <section class="about-hero reveal">
-            <div class="about-hero-badge">🌿 Our Story</div>
-            <h1>Pure. Natural.<br>Ayurvedic.</h1>
-            <p>Vehdic was born from a deep reverence for ancient Vedic traditions. We believe that nature has always held the answers — we simply help you find them.</p>
-        </section>
-
-        <div class="why-grid reveal">
-            <div class="why-card">
-                <div class="why-icon">🐄</div>
-                <h3>Gir Cow Heritage</h3>
-                <p>Our products are crafted from A2 milk and by-products of authentic Gir cows — one of India's most sacred and nutrient-rich breeds.</p>
-            </div>
-            <div class="why-card">
-                <div class="why-icon">🫙</div>
-                <h3>Ancient Nasya Therapy</h3>
-                <p>Our flagship Gir Ahinsak Nasya follows authentic Ayurvedic protocols — nasal administration that purifies the mind, sharpens senses and boosts immunity.</p>
-            </div>
-            <div class="why-card">
-                <div class="why-icon">🌿</div>
-                <h3>Zero Chemicals</h3>
-                <p>Every product is completely free from synthetic chemicals, preservatives, artificial colours and fragrances. What you get is purely natural.</p>
-            </div>
-            <div class="why-card">
-                <div class="why-icon">🔥</div>
-                <h3>Sacred Puja Products</h3>
-                <p>Our Hawan Tikkis, Dhoop Batti and Sambrani Cups are crafted with pure cow dung and medicinal herbs — purifying your space the Vedic way.</p>
-            </div>
-            <div class="why-card">
-                <div class="why-icon">🚚</div>
-                <h3>Farm to Doorstep</h3>
-                <p>From Gir farms straight to your home. No middlemen, no compromises. Freshly prepared and delivered within 5 working days.</p>
-            </div>
-            <div class="why-card">
-                <div class="why-icon">❤️</div>
-                <h3>Made with Devotion</h3>
-                <p>Every product is prepared with utmost care and reverence — honouring the ancient traditions that have sustained wellness for thousands of years.</p>
-            </div>
-        </div>
-
-        <div class="about-story reveal" style="margin-bottom:0;">
-            <div class="about-story-text">
-                <h2>Why We Started Vehdic</h2>
-                <p>In a world flooded with synthetic products, we asked: <em>what would our ancestors use?</em> The answer was always rooted in nature — the cow, the herbs, the fire.</p>
-                <p>Vehdic is our commitment to preserving these ancient practices. Every product we make is a bridge between Vedic wisdom and modern life — making it simple, accessible and genuinely effective.</p>
-                <p>We source exclusively from Gir cow farms in Gujarat, work with Ayurvedic practitioners, and never compromise on purity. This is not just a business — it is seva (service) to the ancient knowledge that still heals.</p>
-            </div>
-            <div class="about-story-img">🫙</div>
-        </div>
-
-        <div class="trust-strip reveal" style="margin-top:32px;">
-            <div class="trust-item">
-                <span>✅</span>
-                <div class="trust-item-text"><strong>100% Natural</strong><small>No synthetics ever</small></div>
-            </div>
-            <div class="trust-item">
-                <span>🐄</span>
-                <div class="trust-item-text"><strong>Gir Cow</strong><small>A2 products only</small></div>
-            </div>
-            <div class="trust-item">
-                <span>🚚</span>
-                <div class="trust-item-text"><strong>Fast Delivery</strong><small>Within 5 days</small></div>
-            </div>
-            <div class="trust-item">
-                <span>🌿</span>
-                <div class="trust-item-text"><strong>Formaldehyde Free</strong><small>Safe for family</small></div>
-            </div>
-        </div>
-        <div style="height:120px;"></div>
-    </div>
-
-    <!-- CONTACT -->
-    <div id="contactView" class="view-page view-hidden">
-        <div class="contact-page">
-            <div class="contact-hero reveal">
-                <h1>Get in Touch</h1>
-                <p>We'd love to hear from you — questions, orders, wholesale enquiries or just saying hello 🙏</p>
-            </div>
-
-            <div class="contact-grid reveal">
-                <div class="contact-card">
-                    <div class="contact-card-icon">📞</div>
-                    <h3>Call Us</h3>
-                    <p>Mon–Sat, 9AM to 7PM IST</p>
-                    <a href="tel:+919810017422">+91 98100 17422</a>
-                </div>
-                <div class="contact-card">
-                    <div class="contact-card-icon">✉️</div>
-                    <h3>Email Us</h3>
-                    <p>We reply within 24 hours</p>
-                    <a href="mailto:vehdic@gmail.com">vehdic@gmail.com</a>
-                </div>
-                <div class="contact-card">
-                    <div class="contact-card-icon">💬</div>
-                    <h3>WhatsApp</h3>
-                    <p>Quick support on WhatsApp</p>
-                    <a href="https://wa.me/919810017422" target="_blank">Chat on WhatsApp</a>
-                </div>
-                <div class="contact-card">
-                    <div class="contact-card-icon">📍</div>
-                    <h3>Location</h3>
-                    <p>We deliver Pan India</p>
-                    <a>Across India 🇮🇳</a>
-                </div>
-            </div>
-
-            <div class="contact-form-card reveal">
-                <h2>Send us a Message</h2>
-                <div class="contact-field">
-                    <label>Your Name</label>
-                    <input type="text" id="ctName" placeholder="Full name">
-                </div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                <div class="contact-form-card reveal">
+                    <h2>Send us a Message</h2>
                     <div class="contact-field">
-                        <label>Email</label>
-                        <input type="email" id="ctEmail" placeholder="your@email.com">
+                        <label>Your Name</label>
+                        <input type="text" id="ctName" placeholder="Full name">
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                        <div class="contact-field">
+                            <label>Email</label>
+                            <input type="email" id="ctEmail" placeholder="your@email.com">
+                        </div>
+                        <div class="contact-field">
+                            <label>Phone</label>
+                            <input type="tel" id="ctPhone" placeholder="+91 00000 00000">
+                        </div>
                     </div>
                     <div class="contact-field">
-                        <label>Phone</label>
-                        <input type="tel" id="ctPhone" placeholder="+91 00000 00000">
-                    </div>
-                </div>
-                <div class="contact-field">
-                    <label>Subject</label>
-                    <select id="ctSubject">
-                        <option>Product Enquiry</option>
-                        <option>Order Issue</option>
-                        <option>Wholesale / Bulk Order</option>
-                        <option>Feedback</option>
-                        <option>Other</option>
-                    </select>
-                </div>
-                <div class="contact-field">
-                    <label>Message</label>
-                    <textarea id="ctMessage" placeholder="Tell us how we can help you…"></textarea>
-                </div>
-                <button class="contact-submit ios-tap" id="ctSubmitBtn">
-                    <svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    Send Message
-                </button>
-            </div>
-        </div>
-        <div style="height:120px;"></div>
-    </div>
-
-    <!-- SHOP -->
-    <div id="shopView" class="view-page view-hidden">
-        <div class="shop-page container">
-
-            <!-- Modern search header -->
-            <div class="shop-search-header">
-                <div class="shop-search-bar-wrap">
-                    <div class="shop-search-bar" id="shopSearchBar">
-                        <svg class="shop-search-icon" viewBox="0 0 24 24" fill="none" width="20" height="20"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                        <input type="text" id="shopSearchInput" placeholder="Search products, brands…" autocomplete="off" spellcheck="false">
-                        <button class="shop-search-clear" id="shopSearchClear" style="display:none">
-                            <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><circle cx="12" cy="12" r="9" fill="currentColor" fill-opacity="0.12"/><path d="M9 9l6 6M15 9l-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Filter chips -->
-                <div class="shop-filter-chips" id="shopFilterChips">
-                    <button class="chip chip-active" data-cat="">All</button>
-                    <!-- More chips injected by JS -->
-                </div>
-
-                <!-- Results count -->
-                <div class="shop-results-bar">
-                    <span id="shopResultsCount" class="results-count"></span>
-                    <div class="sort-wrap">
-                        <select id="shopSortSelect" class="shop-sort">
-                            <option value="">Sort: Default</option>
-                            <option value="price-asc">Price: Low to High</option>
-                            <option value="price-desc">Price: High to Low</option>
-                            <option value="name">Name A–Z</option>
-                            <option value="rating">Top Rated</option>
+                        <label>Subject</label>
+                        <select id="ctSubject">
+                            <option>Product Enquiry</option>
+                            <option>Order Issue</option>
+                            <option>Wholesale / Bulk Order</option>
+                            <option>Feedback</option>
+                            <option>Other</option>
                         </select>
                     </div>
+                    <div class="contact-field">
+                        <label>Message</label>
+                        <textarea id="ctMessage" placeholder="Tell us how we can help you…"></textarea>
+                    </div>
+                    <button class="contact-submit ios-tap" id="ctSubmitBtn">
+                        <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+                            <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        Send Message
+                    </button>
                 </div>
             </div>
+            <div style="height:120px;"></div>
+        </div>
 
-            <div class="products-grid" id="shopProductsGrid"></div>
+        <!-- SHOP -->
+        <div id="shopView" class="view-page view-hidden">
+            <div class="shop-page container">
+
+                <!-- Modern search header -->
+                <div class="shop-search-header">
+                    <div class="shop-search-bar-wrap">
+                        <div class="shop-search-bar" id="shopSearchBar">
+                            <svg class="shop-search-icon" viewBox="0 0 24 24" fill="none" width="20" height="20">
+                                <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" />
+                                <path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" />
+                            </svg>
+                            <input type="text" id="shopSearchInput" placeholder="Search products, brands…"
+                                autocomplete="off" spellcheck="false">
+                            <button class="shop-search-clear" id="shopSearchClear" style="display:none">
+                                <svg viewBox="0 0 24 24" fill="none" width="16" height="16">
+                                    <circle cx="12" cy="12" r="9" fill="currentColor" fill-opacity="0.12" />
+                                    <path d="M9 9l6 6M15 9l-6 6" stroke="currentColor" stroke-width="1.8"
+                                        stroke-linecap="round" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filter chips -->
+                    <div class="shop-filter-chips" id="shopFilterChips">
+                        <button class="chip chip-active" data-cat="">All</button>
+                        <!-- More chips injected by JS -->
+                    </div>
+
+                    <!-- Results count -->
+                    <div class="shop-results-bar">
+                        <span id="shopResultsCount" class="results-count"></span>
+                        <div class="sort-wrap">
+                            <select id="shopSortSelect" class="shop-sort">
+                                <option value="">Sort: Default</option>
+                                <option value="price-asc">Price: Low to High</option>
+                                <option value="price-desc">Price: High to Low</option>
+                                <option value="name">Name A–Z</option>
+                                <option value="rating">Top Rated</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="products-grid" id="shopProductsGrid"></div>
+            </div>
+        </div>
+
+        <!-- BOTTOM NAV — Modern pill design -->
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active ios-tap" data-label="Home">
+                <div class="nav-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
+                        <path d="M5 12H3l9-9 9 9h-2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M5 12v7a1 1 0 001 1h4v-4h4v4h4a1 1 0 001-1v-7" stroke="currentColor" stroke-width="1.9"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <span>Home</span>
+            </a>
+            <a href="#" class="nav-item ios-tap" data-label="Shop">
+                <div class="nav-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
+                        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="currentColor"
+                            stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="1.9"
+                            stroke-linecap="round" />
+                        <path d="M16 10a4 4 0 01-8 0" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <span>Shop</span>
+            </a>
+            <a href="#" class="nav-item ios-tap" data-label="Category">
+                <div class="nav-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
+                        <path d="M4 6h16M4 12h16M4 18h7" stroke="currentColor" stroke-width="1.9"
+                            stroke-linecap="round" />
+                        <circle cx="19" cy="18" r="3" stroke="currentColor" stroke-width="1.9" />
+                        <path d="M21.5 20.5l-2-2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" />
+                    </svg>
+                </div>
+                <span>Category</span>
+            </a>
+            <a href="#" class="nav-item ios-tap" data-label="Cart">
+                <div class="nav-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
+                        <path d="M2 3h2l.9 5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M7 13h11l1-7H6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <circle cx="9" cy="20" r="1.5" stroke="currentColor" stroke-width="1.9" />
+                        <circle cx="18" cy="20" r="1.5" stroke="currentColor" stroke-width="1.9" />
+                    </svg>
+                </div>
+                <span>Cart</span>
+            </a>
+            <a href="#" class="nav-item ios-tap" data-label="My Order">
+                <div class="nav-icon-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
+                        <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.9" />
+                        <path d="M8 9h8M8 13h5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" />
+                        <circle cx="17" cy="17" r="3" fill="currentColor" fill-opacity="0.15" stroke="currentColor"
+                            stroke-width="1.5" />
+                        <path d="M16 17l.8.8L18 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <span>My Order</span>
+            </a>
+        </nav>
+
+    </div><!-- /#appShell -->
+
+    <!-- ════════════════ OVERLAYS (outside appShell) ════════════════ -->
+
+    <!-- CATEGORY SHEET -->
+    <div class="cat-sheet-overlay" id="catSheetOverlay"></div>
+    <div class="cat-sheet" id="catSheet">
+        <div class="cat-sheet-handle"></div>
+        <div class="cat-sheet-header">
+            <h3>Shop by Category</h3><button class="cat-sheet-close ios-tap" id="catSheetClose"><svg viewBox="0 0 24 24"
+                    fill="none" width="20" height="20" stroke="currentColor" stroke-width="2.2">
+                    <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" />
+                </svg></button>
+        </div>
+        <div class="cat-sheet-grid">
+            <div class="cat-card cat-saffron ios-tap" data-cat="Health">
+                <div class="cat-card-text">
+                    <p>Ayurvedic</p>
+                    <h3>Health</h3>
+                    <h1>Nasya</h1>
+                </div>
+                <div class="cat-card-emoji">🫙</div>
+            </div>
+            <div class="cat-card cat-earthen ios-tap" data-cat="Puja">
+                <div class="cat-card-text">
+                    <p>Sacred</p>
+                    <h3>Puja</h3>
+                    <h1>Items</h1>
+                </div>
+                <div class="cat-card-emoji">🪔</div>
+            </div>
+            <div class="cat-card cat-forest cat-wide ios-tap" data-cat="Puja">
+                <div class="cat-card-text">
+                    <p>Traditional</p>
+                    <h3>Hawan</h3>
+                    <h1>Tikki</h1>
+                </div>
+                <div class="cat-card-emoji">🔥</div>
+            </div>
+            <div class="cat-card cat-clay cat-wide ios-tap" data-cat="Puja">
+                <div class="cat-card-text dark-text">
+                    <p>Aromatic</p>
+                    <h3>Dhoop</h3>
+                    <h1>Batti</h1>
+                </div>
+                <div class="cat-card-emoji">🌿</div>
+            </div>
+            <div class="cat-card cat-turmeric ios-tap" data-cat="Health">
+                <div class="cat-card-text">
+                    <p>Herbal</p>
+                    <h3>Gau</h3>
+                    <h1>Mutra</h1>
+                </div>
+                <div class="cat-card-emoji">🐄</div>
+            </div>
+            <div class="cat-card cat-maroon ios-tap" data-cat="Puja">
+                <div class="cat-card-text">
+                    <p>Premium</p>
+                    <h3>Sambrani</h3>
+                    <h1>Cup</h1>
+                </div>
+                <div class="cat-card-emoji">🪔</div>
+            </div>
         </div>
     </div>
 
-    <!-- BOTTOM NAV — Modern pill design -->
-    <nav class="bottom-nav">
-        <a href="#" class="nav-item active ios-tap" data-label="Home">
-            <div class="nav-icon-wrap">
+    <!-- PROFILE SHEET -->
+    <div class="profile-overlay" id="profileOverlay"></div>
+    <div class="profile-sheet" id="profileSheet">
+        <div class="cat-sheet-handle"></div>
+        <div id="profileViewMode">
+            <div class="profile-hero">
+                <div class="profile-avatar-large" id="profileAvatarLarge"><span id="profileInitials">?</span><button
+                        class="avatar-edit-btn ios-tap" id="avatarColorBtn"><svg viewBox="0 0 24 24" fill="none"
+                            width="14" height="14">
+                            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" />
+                            <path
+                                d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg></button></div>
+                <div class="profile-hero-text">
+                    <h2 id="profileDisplayName">—</h2>
+                    <p id="profileDisplayEmail"></p><span class="profile-member-badge">Member</span>
+                </div>
+            </div>
+            <div class="profile-info-cards">
+                <div class="profile-info-row">
+                    <div class="profile-info-item"><span class="info-label">Phone</span><span class="info-value"
+                            id="profilePhone">—</span></div>
+                    <div class="profile-info-item"><span class="info-label">Gender</span><span class="info-value"
+                            id="profileGender">—</span></div>
+                </div>
+                <div class="profile-info-item full-width"><span class="info-label">Address</span><span
+                        class="info-value" id="profileAddress">—</span></div>
+            </div>
+            <div class="profile-actions">
+                <button class="profile-action-btn edit-btn ios-tap" id="editProfileBtn"><svg viewBox="0 0 24 24"
+                        fill="none" width="18" height="18">
+                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" />
+                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" />
+                    </svg> Edit Profile</button>
+                <button class="profile-action-btn signout-btn ios-tap" id="signOutBtn"><svg viewBox="0 0 24 24"
+                        fill="none" width="18" height="18">
+                        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg> Sign Out</button>
+            </div>
+        </div>
+        <div id="profileEditMode" class="view-hidden">
+            <div class="edit-header"><button class="back-btn ios-tap" id="cancelEditBtn"><svg viewBox="0 0 24 24"
+                        fill="none" width="20" height="20">
+                        <path d="M19 12H5M12 5l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg></button>
+                <h3>Edit Profile</h3>
+            </div>
+            <div class="edit-fields">
+                <div class="auth-field"><label>Full Name</label><input type="text" id="editName"
+                        placeholder="Your full name"></div>
+                <div class="auth-field"><label>Phone</label><input type="tel" id="editPhone"
+                        placeholder="+91 00000 00000"></div>
+                <div class="auth-field"><label>Gender</label>
+                    <div class="gender-options"><label class="gender-opt ios-tap"><input type="radio" name="gender"
+                                value="Male"><span>Male</span></label><label class="gender-opt ios-tap"><input
+                                type="radio" name="gender" value="Female"><span>Female</span></label><label
+                            class="gender-opt ios-tap"><input type="radio" name="gender"
+                                value="Other"><span>Other</span></label></div>
+                </div>
+                <div class="auth-field"><label>Address</label><textarea id="editAddress"
+                        placeholder="Your delivery address" rows="2"></textarea></div>
+            </div>
+            <button class="auth-submit ios-tap" id="saveProfileBtn"><span>Save Changes</span></button>
+        </div>
+    </div>
+
+    <!-- CART SIDEBAR -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>Your Cart</h3><button class="close-cart ios-tap" id="closeCartBtn"><svg viewBox="0 0 24 24" fill="none"
+                    width="24" height="24" stroke="currentColor" stroke-width="2">
+                    <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" />
+                </svg></button>
+        </div>
+        <div class="cart-items" id="cartItemsContainer">
+            <p class="empty-cart-msg">Your cart is empty.</p>
+        </div>
+        <div class="cart-footer">
+            <div class="coupon-row" id="couponRow">
+                <div class="coupon-input-wrap"><svg viewBox="0 0 24 24" fill="none" width="16" height="16">
+                        <rect x="2" y="7" width="20" height="10" rx="2" stroke="currentColor" stroke-width="1.8" />
+                        <path d="M12 7v10M7 12h.01M17 12h.01" stroke="currentColor" stroke-width="1.8"
+                            stroke-linecap="round" />
+                    </svg><input type="text" id="couponInput" placeholder="Coupon code" autocomplete="off"></div>
+                <button class="coupon-apply-btn ios-tap" id="couponApplyBtn">Apply</button>
+            </div>
+            <div class="coupon-status" id="couponStatus"></div>
+            <div class="cart-breakdown">
+                <div class="breakdown-row"><span>Subtotal</span><span id="cartSubtotal">$0.00</span></div>
+                <div class="breakdown-row discount-row" id="discountRow" style="display:none"><span
+                        id="discountLabel">Discount</span><span id="cartDiscount" class="discount-val">−$0.00</span>
+                </div>
+                <div class="breakdown-row"><span>Shipping</span><span id="cartShipping">Free</span></div>
+            </div>
+            <div class="cart-total-row">
+                <div class="cart-total"><span>Total</span><span id="cartTotalPrice">$0.00</span></div>
+                <button class="btn-primary checkout-btn ios-tap" id="checkoutBtn">Place Order</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRODUCT DETAIL SHEET -->
+    <div class="pdp-overlay" id="pdpOverlay"></div>
+    <div class="pdp-sheet" id="pdpSheet">
+        <button class="pdp-close ios-tap" id="pdpClose"><svg viewBox="0 0 24 24" fill="none" width="18" height="18"
+                stroke="currentColor" stroke-width="2.2">
+                <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" />
+            </svg></button>
+        <div class="pdp-gallery">
+            <div class="pdp-main-img-wrap"><img id="pdpMainImg" src="" alt="" class="pdp-main-img"></div>
+            <div class="pdp-thumbnails" id="pdpThumbnails"></div>
+        </div>
+        <div class="pdp-content">
+            <div class="pdp-top-row">
+                <span class="pdp-badge" id="pdpBadge"></span>
+                <div class="pdp-rating"><span class="pdp-stars" id="pdpStars">★★★★★</span><span class="pdp-review-count"
+                        id="pdpReviewCount"></span></div>
+            </div>
+            <h1 class="pdp-title" id="pdpTitle">Product Name</h1>
+            <div class="pdp-price-row">
+                <span class="pdp-price" id="pdpPrice">$0.00</span>
+                <span class="pdp-original-price" id="pdpOrigPrice"></span>
+                <span class="pdp-discount-tag" id="pdpDiscountTag"></span>
+            </div>
+            <p class="pdp-desc" id="pdpDesc"></p>
+            <div class="pdp-highlights" id="pdpHighlights"></div>
+            <div class="pdp-qty-row">
+                <span class="pdp-qty-label">Quantity</span>
+                <div class="pdp-qty-ctrl">
+                    <button class="pdp-qty-btn ios-tap" id="pdpQtyMinus">−</button>
+                    <span id="pdpQtyNum">1</span>
+                    <button class="pdp-qty-btn ios-tap" id="pdpQtyPlus">+</button>
+                </div>
+            </div>
+            <button class="pdp-add-btn ios-tap" id="pdpAddBtn">
                 <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
-                    <path d="M5 12H3l9-9 9 9h-2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M5 12v7a1 1 0 001 1h4v-4h4v4h4a1 1 0 001-1v-7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M5 3h1.81l2.4 10.8c.16.71.8 1.2 1.53 1.2h8.52c.73 0 1.37-.49 1.53-1.2L23 5H6"
+                        stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                    <circle cx="10" cy="20" r="2" fill="currentColor" />
+                    <circle cx="18" cy="20" r="2" fill="currentColor" />
                 </svg>
-            </div>
-            <span>Home</span>
-        </a>
-        <a href="#" class="nav-item ios-tap" data-label="Shop">
-            <div class="nav-icon-wrap">
-                <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
-                    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
-                    <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
-                    <path d="M16 10a4 4 0 01-8 0" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </div>
-            <span>Shop</span>
-        </a>
-        <a href="#" class="nav-item ios-tap" data-label="Category">
-            <div class="nav-icon-wrap">
-                <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
-                    <path d="M4 6h16M4 12h16M4 18h7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
-                    <circle cx="19" cy="18" r="3" stroke="currentColor" stroke-width="1.9"/>
-                    <path d="M21.5 20.5l-2-2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
-                </svg>
-            </div>
-            <span>Category</span>
-        </a>
-        <a href="#" class="nav-item ios-tap" data-label="Cart">
-            <div class="nav-icon-wrap">
-                <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
-                    <path d="M2 3h2l.9 5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M7 13h11l1-7H6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
-                    <circle cx="9" cy="20" r="1.5" stroke="currentColor" stroke-width="1.9"/>
-                    <circle cx="18" cy="20" r="1.5" stroke="currentColor" stroke-width="1.9"/>
-                </svg>
-            </div>
-            <span>Cart</span>
-        </a>
-        <a href="#" class="nav-item ios-tap" data-label="My Order">
-            <div class="nav-icon-wrap">
-                <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
-                    <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.9"/>
-                    <path d="M8 9h8M8 13h5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
-                    <circle cx="17" cy="17" r="3" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1.5"/>
-                    <path d="M16 17l.8.8L18 16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </div>
-            <span>My Order</span>
-        </a>
-    </nav>
-
-</div><!-- /#appShell -->
-
-<!-- ════════════════ OVERLAYS (outside appShell) ════════════════ -->
-
-<!-- CATEGORY SHEET -->
-<div class="cat-sheet-overlay" id="catSheetOverlay"></div>
-<div class="cat-sheet" id="catSheet">
-    <div class="cat-sheet-handle"></div>
-    <div class="cat-sheet-header"><h3>Shop by Category</h3><button class="cat-sheet-close ios-tap" id="catSheetClose"><svg viewBox="0 0 24 24" fill="none" width="20" height="20" stroke="currentColor" stroke-width="2.2"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
-    <div class="cat-sheet-grid">
-        <div class="cat-card cat-saffron ios-tap" data-cat="Health"><div class="cat-card-text"><p>Ayurvedic</p><h3>Health</h3><h1>Nasya</h1></div><div class="cat-card-emoji">🫙</div></div>
-        <div class="cat-card cat-earthen ios-tap" data-cat="Puja"><div class="cat-card-text"><p>Sacred</p><h3>Puja</h3><h1>Items</h1></div><div class="cat-card-emoji">🪔</div></div>
-        <div class="cat-card cat-forest cat-wide ios-tap" data-cat="Puja"><div class="cat-card-text"><p>Traditional</p><h3>Hawan</h3><h1>Tikki</h1></div><div class="cat-card-emoji">🔥</div></div>
-        <div class="cat-card cat-clay cat-wide ios-tap" data-cat="Puja"><div class="cat-card-text dark-text"><p>Aromatic</p><h3>Dhoop</h3><h1>Batti</h1></div><div class="cat-card-emoji">🌿</div></div>
-        <div class="cat-card cat-turmeric ios-tap" data-cat="Health"><div class="cat-card-text"><p>Herbal</p><h3>Gau</h3><h1>Mutra</h1></div><div class="cat-card-emoji">🐄</div></div>
-        <div class="cat-card cat-maroon ios-tap" data-cat="Puja"><div class="cat-card-text"><p>Premium</p><h3>Sambrani</h3><h1>Cup</h1></div><div class="cat-card-emoji">🪔</div></div>
-    </div>
-</div>
-
-<!-- PROFILE SHEET -->
-<div class="profile-overlay" id="profileOverlay"></div>
-<div class="profile-sheet" id="profileSheet">
-    <div class="cat-sheet-handle"></div>
-    <div id="profileViewMode">
-        <div class="profile-hero">
-            <div class="profile-avatar-large" id="profileAvatarLarge"><span id="profileInitials">?</span><button class="avatar-edit-btn ios-tap" id="avatarColorBtn"><svg viewBox="0 0 24 24" fill="none" width="14" height="14"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
-            <div class="profile-hero-text"><h2 id="profileDisplayName">—</h2><p id="profileDisplayEmail"></p><span class="profile-member-badge">Member</span></div>
-        </div>
-        <div class="profile-info-cards">
-            <div class="profile-info-row">
-                <div class="profile-info-item"><span class="info-label">Phone</span><span class="info-value" id="profilePhone">—</span></div>
-                <div class="profile-info-item"><span class="info-label">Gender</span><span class="info-value" id="profileGender">—</span></div>
-            </div>
-            <div class="profile-info-item full-width"><span class="info-label">Address</span><span class="info-value" id="profileAddress">—</span></div>
-        </div>
-        <div class="profile-actions">
-            <button class="profile-action-btn edit-btn ios-tap" id="editProfileBtn"><svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg> Edit Profile</button>
-            <button class="profile-action-btn signout-btn ios-tap" id="signOutBtn"><svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Sign Out</button>
+                Add to Cart
+            </button>
         </div>
     </div>
-    <div id="profileEditMode" class="view-hidden">
-        <div class="edit-header"><button class="back-btn ios-tap" id="cancelEditBtn"><svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M19 12H5M12 5l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h3>Edit Profile</h3></div>
-        <div class="edit-fields">
-            <div class="auth-field"><label>Full Name</label><input type="text" id="editName" placeholder="Your full name"></div>
-            <div class="auth-field"><label>Phone</label><input type="tel" id="editPhone" placeholder="+91 00000 00000"></div>
-            <div class="auth-field"><label>Gender</label><div class="gender-options"><label class="gender-opt ios-tap"><input type="radio" name="gender" value="Male"><span>Male</span></label><label class="gender-opt ios-tap"><input type="radio" name="gender" value="Female"><span>Female</span></label><label class="gender-opt ios-tap"><input type="radio" name="gender" value="Other"><span>Other</span></label></div></div>
-            <div class="auth-field"><label>Address</label><textarea id="editAddress" placeholder="Your delivery address" rows="2"></textarea></div>
-        </div>
-        <button class="auth-submit ios-tap" id="saveProfileBtn"><span>Save Changes</span></button>
-    </div>
-</div>
 
-<!-- CART SIDEBAR -->
-<div class="cart-overlay" id="cartOverlay"></div>
-<div class="cart-sidebar" id="cartSidebar">
-    <div class="cart-header"><h3>Your Cart</h3><button class="close-cart ios-tap" id="closeCartBtn"><svg viewBox="0 0 24 24" fill="none" width="24" height="24" stroke="currentColor" stroke-width="2"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
-    <div class="cart-items" id="cartItemsContainer"><p class="empty-cart-msg">Your cart is empty.</p></div>
-    <div class="cart-footer">
-        <div class="coupon-row" id="couponRow">
-            <div class="coupon-input-wrap"><svg viewBox="0 0 24 24" fill="none" width="16" height="16"><rect x="2" y="7" width="20" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M12 7v10M7 12h.01M17 12h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><input type="text" id="couponInput" placeholder="Coupon code" autocomplete="off"></div>
-            <button class="coupon-apply-btn ios-tap" id="couponApplyBtn">Apply</button>
-        </div>
-        <div class="coupon-status" id="couponStatus"></div>
-        <div class="cart-breakdown">
-            <div class="breakdown-row"><span>Subtotal</span><span id="cartSubtotal">$0.00</span></div>
-            <div class="breakdown-row discount-row" id="discountRow" style="display:none"><span id="discountLabel">Discount</span><span id="cartDiscount" class="discount-val">−$0.00</span></div>
-            <div class="breakdown-row"><span>Shipping</span><span id="cartShipping">Free</span></div>
-        </div>
-        <div class="cart-total-row">
-            <div class="cart-total"><span>Total</span><span id="cartTotalPrice">$0.00</span></div>
-            <button class="btn-primary checkout-btn ios-tap" id="checkoutBtn">Place Order</button>
+    <!-- TOAST -->
+    <div class="ios-toast" id="iosToast"><svg fill="currentColor" viewBox="0 0 24 24">
+            <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+        </svg><span>Done!</span></div>
+
+    <!-- IOS ALERT -->
+    <div class="ios-overlay" id="iosAlertBox">
+        <div class="ios-alert">
+            <h3 id="iosAlertTitle">Alert</h3>
+            <p id="iosAlertMessage"></p>
+            <div class="ios-alert-buttons"><button class="ios-tap" id="iosAlertClose">OK</button></div>
         </div>
     </div>
-</div>
 
-<!-- PRODUCT DETAIL SHEET -->
-<div class="pdp-overlay" id="pdpOverlay"></div>
-<div class="pdp-sheet" id="pdpSheet">
-    <button class="pdp-close ios-tap" id="pdpClose"><svg viewBox="0 0 24 24" fill="none" width="18" height="18" stroke="currentColor" stroke-width="2.2"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-    <div class="pdp-gallery">
-        <div class="pdp-main-img-wrap"><img id="pdpMainImg" src="" alt="" class="pdp-main-img"></div>
-        <div class="pdp-thumbnails" id="pdpThumbnails"></div>
-    </div>
-    <div class="pdp-content">
-        <div class="pdp-top-row">
-            <span class="pdp-badge" id="pdpBadge"></span>
-            <div class="pdp-rating"><span class="pdp-stars" id="pdpStars">★★★★★</span><span class="pdp-review-count" id="pdpReviewCount"></span></div>
-        </div>
-        <h1 class="pdp-title" id="pdpTitle">Product Name</h1>
-        <div class="pdp-price-row">
-            <span class="pdp-price" id="pdpPrice">$0.00</span>
-            <span class="pdp-original-price" id="pdpOrigPrice"></span>
-            <span class="pdp-discount-tag" id="pdpDiscountTag"></span>
-        </div>
-        <p class="pdp-desc" id="pdpDesc"></p>
-        <div class="pdp-highlights" id="pdpHighlights"></div>
-        <div class="pdp-qty-row">
-            <span class="pdp-qty-label">Quantity</span>
-            <div class="pdp-qty-ctrl">
-                <button class="pdp-qty-btn ios-tap" id="pdpQtyMinus">−</button>
-                <span id="pdpQtyNum">1</span>
-                <button class="pdp-qty-btn ios-tap" id="pdpQtyPlus">+</button>
-            </div>
-        </div>
-        <button class="pdp-add-btn ios-tap" id="pdpAddBtn">
-            <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M5 3h1.81l2.4 10.8c.16.71.8 1.2 1.53 1.2h8.52c.73 0 1.37-.49 1.53-1.2L23 5H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20" r="2" fill="currentColor"/><circle cx="18" cy="20" r="2" fill="currentColor"/></svg>
-            Add to Cart
-        </button>
-    </div>
-</div>
-
-<!-- TOAST -->
-<div class="ios-toast" id="iosToast"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg><span>Done!</span></div>
-
-<!-- IOS ALERT -->
-<div class="ios-overlay" id="iosAlertBox"><div class="ios-alert"><h3 id="iosAlertTitle">Alert</h3><p id="iosAlertMessage"></p><div class="ios-alert-buttons"><button class="ios-tap" id="iosAlertClose">OK</button></div></div></div>
-
-<script type="module" src="script.js"></script>
-<script>
-// Register Service Worker for offline support + fast loads
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-            .then(r => console.log('[SW] Registered:', r.scope))
-            .catch(e => console.log('[SW] Failed:', e));
-    });
-}
-// Mark appShell as loaded after content renders
-window.addEventListener('load', () => {
-    document.getElementById('appShell')?.classList.add('loaded');
-});
-</script>
+    <script type="module" src="script.js"></script>
+    <script>
+        // Register Service Worker for offline support + fast loads
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(r => console.log('[SW] Registered:', r.scope))
+                    .catch(e => console.log('[SW] Failed:', e));
+            });
+        }
+        // Mark appShell as loaded after content renders
+        window.addEventListener('load', () => {
+            document.getElementById('appShell')?.classList.add('loaded');
+        });
+    </script>
 </body>
+
 </html>
