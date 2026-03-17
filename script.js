@@ -292,7 +292,7 @@ function setupInstallButton() {
                     document.getElementById('installExpandedState').style.display = 'none';
                     fill.style.width = '0%';
                     // Repeat animation every 12 seconds
-                    animTimer = setTimeout(runInstallAnimation, 4000);
+                    animTimer = setTimeout(runInstallAnimation, 2000);
                 }, 200);
             }
         }, 40); // 40ms * 50 steps = 2000ms total
@@ -469,39 +469,9 @@ function setupAppListeners() {
             if (t==='Shop')     { e.preventDefault(); switchView('shop'); setActiveNav('Shop'); }
             if (t==='My Order') { e.preventDefault(); switchView('orders'); setActiveNav('My Order'); }
             if (t==='Home')     { e.preventDefault(); switchView('home'); setActiveNav('Home'); }
-            if (t==='About us') { e.preventDefault(); switchView('about'); }
-            if (t==='Contact')  { e.preventDefault(); switchView('contact'); }
             if (t==='Profile')  { e.preventDefault(); handleProfileTap(); }
         });
     });
-
-    // Footer links
-    document.getElementById('footerHome')?.addEventListener('click',    () => { switchView('home');    window.scrollTo({top:0,behavior:'smooth'}); });
-    document.getElementById('footerShop')?.addEventListener('click',    () => switchView('shop'));
-    document.getElementById('footerAbout')?.addEventListener('click',   () => switchView('about'));
-    document.getElementById('footerContact')?.addEventListener('click', () => switchView('contact'));
-    document.getElementById('footerOrders')?.addEventListener('click',  () => switchView('orders'));
-
-    // Mobile dropdown About/Contact
-    document.querySelectorAll('.mobile-dropdown-menu a').forEach(a => {
-        a.addEventListener('click', e => {
-            e.preventDefault();
-            const t = a.textContent.trim();
-            if (t === 'About us') switchView('about');
-            if (t === 'Contact')  switchView('contact');
-            document.getElementById('mobileDropdown')?.classList.remove('show');
-        });
-    });
-
-    // Hero Shop now button
-    document.querySelector('.hero .btn-primary')?.addEventListener('click', () => switchView('shop'));
-    // Banner Shop now buttons
-    document.querySelectorAll('.sale-banner .btn-white').forEach(b => {
-        b.addEventListener('click', () => switchView('shop'));
-    });
-
-    // Contact form submit
-    document.getElementById('ctSubmitBtn')?.addEventListener('click', handleContactSubmit);
 
     // Category dropdown
     const nCBtn = document.getElementById('navCategoryBtn'), nCDrop = document.getElementById('navCategoryDropdown');
@@ -577,25 +547,18 @@ function handleProfileTap() {
 
 // ── VIEW SWITCHING ────────────────────────────────────────────────────────────
 function switchView(name, category='') {
-    pendingCat = category;
-    activeView = name;
-    const viewMap = {
-        home:    'homeContent',
-        shop:    'shopView',
-        orders:  'ordersView',
-        about:   'aboutView',
-        contact: 'contactView'
-    };
-    Object.entries(viewMap).forEach(([k, elId]) => {
-        const el = document.getElementById(elId);
-        if (!el) return;
-        if (k === name) { el.classList.remove('view-hidden'); el.classList.add('view-visible'); }
-        else            { el.classList.remove('view-visible'); el.classList.add('view-hidden'); }
+    pendingCat  = category;
+    activeView  = name;
+    ['home','shop','orders'].forEach(k => {
+        const el = document.getElementById({home:'homeContent',shop:'shopView',orders:'ordersView'}[k]);
+        if (k===name) { el.classList.remove('view-hidden'); el.classList.add('view-visible'); }
+        else          { el.classList.remove('view-visible'); el.classList.add('view-hidden'); }
     });
-    if (name === 'shop')   { const i = document.getElementById('shopSearchInput'); if(i){ i.value=''; document.getElementById('shopSearchClear').style.display='none'; } renderShopProducts(category); }
-    if (name === 'orders') renderOrdersView();
-    if (name !== 'orders' && _ordersUnsub) { _ordersUnsub(); _ordersUnsub = null; }
-    window.scrollTo({top:0, behavior:'smooth'});
+    if (name==='shop')   { const i=document.getElementById('shopSearchInput'); if(i){i.value=''; document.getElementById('shopSearchClear').style.display='none';} renderShopProducts(category); }
+    if (name==='orders') renderOrdersView();
+    // Stop orders listener when leaving orders view (saves bandwidth)
+    if (name!=='orders' && _ordersUnsub) { _ordersUnsub(); _ordersUnsub=null; }
+    window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function setActiveNav(label) {
@@ -938,7 +901,7 @@ async function loadOrders() {
         const f=document.createDocumentFragment();
         orders.forEach(o=>{
             const el=document.createElement('div'); el.className='order-card';
-            el.innerHTML=`<div class="order-header"><div><span class="order-id">#${o.id.slice(-6).toUpperCase()}</span><span class="order-date">${new Date(o.timestamp).toLocaleString()}</span></div><span class="order-status status-${o.status.toLowerCase()}">${o.status}</span></div><div class="order-items">${o.items.map(i=>`<div class="order-item-row"><span>${i.name} × ${i.qty||1}</span><span>₹${Math.round(parseFloat(i.price)*(i.qty||1)).toLocaleString("en-IN")}</span></div>`).join('')}</div><div class="order-total"><span>Total</span><strong>₹${o.totalAmount.toLocaleString("en-IN")}</strong></div>`;
+            el.innerHTML=`<div class="order-header"><div><span class="order-id">#${o.id.slice(-6).toUpperCase()}</span><span class="order-date">${new Date(o.timestamp).toLocaleString()}</span></div><span class="order-status status-${o.status.toLowerCase()}">${o.status}</span></div><div class="order-items">${o.items.map(i=>`<div class="order-item-row"><span>${i.name} × ${i.qty||1}</span><span>$${(parseFloat(i.price)*(i.qty||1)).toFixed(2)}</span></div>`).join('')}</div><div class="order-total"><span>Total</span><strong>₹${o.totalAmount.toLocaleString("en-IN")}</strong></div>`;
             f.appendChild(el);
         });
         con.innerHTML=''; con.appendChild(f);
