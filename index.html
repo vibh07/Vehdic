@@ -1112,7 +1112,71 @@
         window.addEventListener('load', () => {
             document.getElementById('appShell')?.classList.add('loaded');
         });
+
     </script>
+    <div class="checkout-overlay" id="checkoutOverlay"></div>
+    <div class="checkout-sheet" id="checkoutSheet">
+        <div class="cat-sheet-handle"></div>
+        <div class="checkout-header">
+            <h3>Delivery Details</h3>
+            <button class="checkout-close ios-tap" id="checkoutClose">
+                <svg viewBox="0 0 24 24" fill="none" width="20" height="20" stroke="currentColor" stroke-width="2.2">
+                    <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+        <div class="checkout-body">
+            <div class="auth-field">
+                <label>Full Name</label>
+                <input type="text" id="chkName" placeholder="Enter your full name">
+            </div>
+            <div class="auth-field">
+                <label>Phone Number</label>
+                <input type="tel" id="chkPhone" placeholder="+91 00000 00000">
+            </div>
+            <div class="auth-field" style="margin-bottom: 0;">
+                <label>Delivery Address</label>
+                <textarea id="chkAddress" placeholder="Enter complete address..." rows="2"></textarea>
+            </div>
+            
+            <div class="checkout-summary">
+                <h4>Order Overview</h4>
+                <div id="chkOrderItems" class="chk-items-list"></div>
+                <div class="chk-total-row">
+                    <span>Total to Pay</span>
+                    <strong id="chkTotalPay">₹0</strong>
+                </div>
+            </div>
+            <button class="btn-primary checkout-confirm-btn ios-tap" id="confirmOrderBtn">Confirm Order</button>
+        </div>
+    </div>
+    
+    <div class="success-overlay" id="successOverlay">
+        <div class="success-card">
+            <div class="success-icon-wrap">
+                <svg class="success-check" viewBox="0 0 52 52">
+                    <circle class="success-circle" cx="26" cy="26" r="25" fill="none"/>
+                    <path class="success-path" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                </svg>
+            </div>
+            <h2>Order Placed!</h2>
+            <p>Redirecting to your orders...</p>
+        </div>
+    </div>
+    <div class="order-details-overlay" id="orderDetailsOverlay"></div>
+    <div class="order-details-sheet" id="orderDetailsSheet">
+        <div class="checkout-header">
+            <h3>Order Summary</h3>
+            <button class="checkout-close ios-tap" id="orderDetailsClose">
+                <svg viewBox="0 0 24 24" fill="none" width="20" height="20" stroke="currentColor" stroke-width="2.2">
+                    <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+        <div class="order-details-body" id="orderDetailsBody">
+            </div>
+    </div>
 </body>
+
 
 </html>
