@@ -54,6 +54,7 @@ function loadProductsFromCache() {
 // ── STATE ────────────────────────────────────────────────────────────────────
 let currentUser   = null;
 let deferredInstallPrompt = null; // holds the PWA install event
+let userOrderHistory = [];
 let cart          = {};
 let allProducts   = [];
 let products      = [];
@@ -482,9 +483,13 @@ document.getElementById('menuContactBtn')?.addEventListener('click', (e) => {
     e.preventDefault();
     switchView('contact');
 });
+document.getElementById('orderDetailsOverlay')?.addEventListener('click', closeOrderDetails);
+    document.getElementById('orderDetailsClose')?.addEventListener('click', closeOrderDetails);
     // PWA Install button — animated download bar then trigger install
     setupInstallButton();
-
+document.getElementById('checkoutOverlay')?.addEventListener('click', closeCheckoutSheet);
+    document.getElementById('checkoutClose')?.addEventListener('click', closeCheckoutSheet);
+    document.getElementById('confirmOrderBtn')?.addEventListener('click', submitFinalOrder);
     // Desktop nav
     document.querySelectorAll('.nav-links a').forEach(a => {
         a.addEventListener('click', e => {
@@ -894,6 +899,7 @@ function renderCartBadge() {
 }
 
 // ── CHECKOUT ─────────────────────────────────────────────────────────────────
+// 1. Replace existing handleCheckout with this:
 async function handleCheckout() {
     if (isCheckingOut) return;
     if (!currentUser) {
@@ -902,20 +908,128 @@ async function handleCheckout() {
         showToast('Please sign in to place your order');
         return;
     }
-    const items=Object.values(cart);
-    if(!items.length){showAlert('Cart Empty','Add items first.');return;}
-    const btn=document.getElementById('checkoutBtn');
-    isCheckingOut=true; btn.innerHTML=`<span class="btn-spinner"></span> Processing…`; btn.style.opacity='0.75';
-    try{
-        const sub=items.reduce((s,i)=>s+parseFloat(i.price)*i.qty,0);
-        let disc=0; const shipFree=sub>=1500||(appliedCoupon?.type==='ship');
-        if(appliedCoupon){if(appliedCoupon.type==='percent')disc=sub*(appliedCoupon.value/100);else if(appliedCoupon.type==='fixed')disc=Math.min(appliedCoupon.value,sub);}
-        const ship=shipFree?0:99; const total=Math.max(0,sub-disc+ship);
-        await set(push(ref(db,`orders/${currentUser.uid}`)),{items,subtotal:parseFloat(sub.toFixed(2)),discount:parseFloat(disc.toFixed(2)),coupon:appliedCoupon?.code||null,shipping:ship,totalAmount:parseFloat(total.toFixed(2)),timestamp:Date.now(),status:'Pending'});
-        cart={}; appliedCoupon=null; saveCartToStorage(); renderCartUI(); renderCartBadge(); refreshGrid(); updateCouponStatus('');
-        showToast('Order placed! 🎉'); closeCart();
-    }catch{showAlert('Order Failed','Something went wrong. Try again.');}
-    finally{btn.textContent='Place Order';btn.style.opacity='1';isCheckingOut=false;}
+    const items = Object.values(cart);
+    if (!items.length) { showAlert('Cart Empty', 'Add items first.'); return; }
+    
+    // Direct DB me push karne ke bajaye, ab form open karenge
+    openCheckoutSheet();
+}
+
+// 2. Add these new functions right below handleCheckout:
+function openCheckoutSheet() {
+    closeCart();
+    
+    // Auto-fill profile details if available
+    const nameStr = document.getElementById('profileDisplayName')?.textContent;
+    const phoneStr = document.getElementById('profilePhone')?.textContent;
+    const addrStr = document.getElementById('profileAddress')?.textContent;
+    
+    document.getElementById('chkName').value = (nameStr && nameStr !== '—') ? nameStr : '';
+    document.getElementById('chkPhone').value = (phoneStr && phoneStr !== '—') ? phoneStr : '';
+    document.getElementById('chkAddress').value = (addrStr && addrStr !== '—') ? addrStr : '';
+
+    // Final Order Overview Build karna
+    const items = Object.values(cart);
+    let html = items.map(i => 
+        `<div class="chk-item-row"><span>${i.name} × ${i.qty}</span><span>₹${(parseFloat(i.price)*i.qty).toLocaleString("en-IN")}</span></div>`
+    ).join('');
+
+    const sub = items.reduce((s,i)=>s+parseFloat(i.price)*i.qty,0);
+    let disc = 0; const shipFree = sub >= 1500 || (appliedCoupon?.type === 'ship');
+    
+    if(appliedCoupon){
+        if(appliedCoupon.type==='percent') disc = sub*(appliedCoupon.value/100);
+        else if(appliedCoupon.type==='fixed') disc = Math.min(appliedCoupon.value,sub);
+    }
+    const ship = shipFree ? 0 : 99;
+    const total = Math.max(0, sub - disc + ship);
+    
+    // Add Subtotal, Discount, and Shipping breakdown
+    html += `<div class="chk-breakdown-divider"></div>`;
+    html += `<div class="chk-item-row chk-subtext"><span>Item Total</span><span>₹${Math.round(sub).toLocaleString("en-IN")}</span></div>`;
+    
+    if (disc > 0) {
+        let discLabel = appliedCoupon ? `Discount (${appliedCoupon.code})` : 'Discount';
+        html += `<div class="chk-item-row chk-subtext chk-discount"><span>${discLabel}</span><span>-₹${Math.round(disc).toLocaleString("en-IN")}</span></div>`;
+    }
+    html += `<div class="chk-item-row chk-subtext"><span>Delivery Fee</span><span>${ship === 0 ? 'Free' : `₹${ship}`}</span></div>`;
+
+    document.getElementById('chkOrderItems').innerHTML = html;
+    document.getElementById('chkTotalPay').textContent = `₹${Math.round(total).toLocaleString("en-IN")}`;
+
+    // 👇 YE DO LINES MISSING THI! Isse form popup open hoga 👇
+    document.getElementById('checkoutOverlay').classList.add('show');
+    document.getElementById('checkoutSheet').classList.add('show');
+}
+
+function closeCheckoutSheet() {
+    document.getElementById('checkoutOverlay').classList.remove('show');
+    document.getElementById('checkoutSheet').classList.remove('show');
+}
+
+async function submitFinalOrder() {
+    if (isCheckingOut) return;
+    const name = document.getElementById('chkName').value.trim();
+    const phone = document.getElementById('chkPhone').value.trim();
+    const address = document.getElementById('chkAddress').value.trim();
+
+    if (!name || !phone || !address) {
+        showToast("Please fill all delivery details");
+        return;
+    }
+
+    const items = Object.values(cart);
+    const btn = document.getElementById('confirmOrderBtn');
+    isCheckingOut = true; 
+    btn.innerHTML = `<span class="btn-spinner"></span> Processing…`; 
+    btn.style.opacity = '0.75';
+
+    try {
+        const sub = items.reduce((s,i)=>s+parseFloat(i.price)*i.qty,0);
+        let disc = 0; const shipFree = sub >= 1500 || (appliedCoupon?.type === 'ship');
+        if(appliedCoupon){
+            if(appliedCoupon.type==='percent') disc=sub*(appliedCoupon.value/100);
+            else if(appliedCoupon.type==='fixed') disc=Math.min(appliedCoupon.value,sub);
+        }
+        const ship = shipFree ? 0 : 99; 
+        const total = Math.max(0, sub - disc + ship);
+
+        // Save order with customer details
+        await set(push(ref(db, `orders/${currentUser.uid}`)), {
+            items,
+            subtotal: parseFloat(sub.toFixed(2)),
+            discount: parseFloat(disc.toFixed(2)),
+            coupon: appliedCoupon?.code || null,
+            shipping: ship,
+            totalAmount: parseFloat(total.toFixed(2)),
+            deliveryDetails: { name, phone, address }, // Details saved!
+            timestamp: Date.now(),
+            status: 'Pending'
+        });
+
+        cart = {}; appliedCoupon = null; saveCartToStorage(); 
+        renderCartUI(); renderCartBadge(); refreshGrid(); updateCouponStatus('');
+
+        closeCheckoutSheet();
+        
+        // Success Animation show karna
+        const successOverlay = document.getElementById('successOverlay');
+        successOverlay.classList.add('show');
+
+        // 2.5 seconds baad My Orders page par redirect
+        setTimeout(() => {
+            successOverlay.classList.remove('show');
+            switchView('orders');
+            setActiveBottomNav('My Order');
+        }, 2500);
+
+    } catch (e) {
+        showAlert('Order Failed', 'Something went wrong. Try again.');
+    } finally {
+        btn.textContent = 'Confirm Order';
+        btn.style.opacity = '1';
+        isCheckingOut = false;
+    }
 }
 
 // ── ORDERS ────────────────────────────────────────────────────────────────────
@@ -938,21 +1052,79 @@ function renderOrdersView() {
     loadOrders();
 }
 
+// Replace your existing loadOrders function with this one:
 async function loadOrders() {
     const con=document.getElementById('ordersContainer');
     con.innerHTML=`<div class="orders-loading"><div class="vehdic-loader"><span>V</span><span>e</span><span>h</span><span>d</span><span>i</span><span>c</span></div></div>`;
     try{
         const snap=await get(ref(db,`orders/${currentUser.uid}`));
         if(!snap.exists()){con.innerHTML='<div class="orders-empty"><p>No orders yet. Shop something! 🛍️</p></div>';return;}
+        
         const orders=Object.keys(snap.val()).map(k=>({id:k,...snap.val()[k]})).sort((a,b)=>b.timestamp-a.timestamp);
+        userOrderHistory = orders; // Save globally for details view
+        
         const f=document.createDocumentFragment();
         orders.forEach(o=>{
-            const el=document.createElement('div'); el.className='order-card';
-            el.innerHTML=`<div class="order-header"><div><span class="order-id">#${o.id.slice(-6).toUpperCase()}</span><span class="order-date">${new Date(o.timestamp).toLocaleString()}</span></div><span class="order-status status-${o.status.toLowerCase()}">${o.status}</span></div><div class="order-items">${o.items.map(i=>`<div class="order-item-row"><span>${i.name} × ${i.qty||1}</span><span>$${(parseFloat(i.price)*(i.qty||1)).toFixed(2)}</span></div>`).join('')}</div><div class="order-total"><span>Total</span><strong>₹${o.totalAmount.toLocaleString("en-IN")}</strong></div>`;
+            const el=document.createElement('div'); el.className='order-card ios-tap';
+            // Make card clickable
+            el.onclick = () => openOrderDetails(o.id);
+            el.innerHTML=`<div class="order-header"><div><span class="order-id">#${o.id.slice(-6).toUpperCase()}</span><span class="order-date">${new Date(o.timestamp).toLocaleString()}</span></div><span class="order-status status-${o.status.toLowerCase()}">${o.status}</span></div><div class="order-items">${o.items.map(i=>`<div class="order-item-row"><span>${i.name} × ${i.qty||1}</span><span>₹${(parseFloat(i.price)*(i.qty||1)).toLocaleString("en-IN")}</span></div>`).join('')}</div><div class="order-total" style="margin-top:8px; border-top:1px dashed rgba(0,0,0,0.1); padding-top:12px;"><span>View Details &nbsp;›</span><strong>₹${o.totalAmount.toLocaleString("en-IN")}</strong></div>`;
             f.appendChild(el);
         });
         con.innerHTML=''; con.appendChild(f);
     }catch{con.innerHTML='<p class="grid-empty-msg">Failed to load orders.</p>';}
+}
+
+// === NEW FUNCTIONS FOR ORDER DETAILS ===
+function openOrderDetails(orderId) {
+    const o = userOrderHistory.find(x => x.id === orderId);
+    if (!o) return;
+    
+    let html = `
+        <div class="od-status status-${o.status.toLowerCase()}">${o.status}</div>
+        <div class="od-section">
+            <h4>Order ID: #${o.id.slice(-6).toUpperCase()}</h4>
+            <p class="od-date">${new Date(o.timestamp).toLocaleString()}</p>
+        </div>
+        
+        <div class="od-section">
+            <h4>Delivery Address</h4>
+            <p style="font-weight:700; color:var(--text-dark);">${o.deliveryDetails?.name || 'N/A'}</p>
+            <p>${o.deliveryDetails?.phone || 'N/A'}</p>
+            <p>${o.deliveryDetails?.address || 'N/A'}</p>
+        </div>
+
+        <div class="od-section">
+            <h4>Items in your Order</h4>
+            <div class="chk-items-list">
+                ${o.items.map(i => `<div class="chk-item-row"><span>${i.name} × ${i.qty||1}</span><span>₹${(parseFloat(i.price)*(i.qty||1)).toLocaleString("en-IN")}</span></div>`).join('')}
+            </div>
+        </div>
+
+        <div class="od-section" style="border-bottom:none; margin-bottom:0; padding-bottom:0;">
+            <h4>Bill Details</h4>
+            <div class="chk-items-list">
+                <div class="chk-item-row chk-subtext"><span>Item Total</span><span>₹${(o.subtotal||0).toLocaleString("en-IN")}</span></div>
+                ${o.discount > 0 ? `<div class="chk-item-row chk-subtext chk-discount"><span>Item Discount ${o.coupon ? `(${o.coupon})` : ''}</span><span>-₹${(o.discount).toLocaleString("en-IN")}</span></div>` : ''}
+                <div class="chk-item-row chk-subtext"><span>Delivery Fee</span><span>${o.shipping === 0 ? 'Free' : `₹${o.shipping}`}</span></div>
+                <div class="chk-total-row" style="margin-bottom:0; padding-top:10px; margin-top:8px;">
+                    <span>Grand Total</span>
+                    <strong>₹${o.totalAmount.toLocaleString("en-IN")}</strong>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('orderDetailsBody').innerHTML = html;
+    document.getElementById('orderDetailsOverlay').classList.add('show');
+    document.getElementById('orderDetailsSheet').classList.add('show');
+    document.body.style.overflow = 'hidden'; // prevent background scrolling
+}
+
+function closeOrderDetails() {
+    document.getElementById('orderDetailsOverlay').classList.remove('show');
+    document.getElementById('orderDetailsSheet').classList.remove('show');
+    document.body.style.overflow = '';
 }
 
 // ── CATEGORY SHEET ────────────────────────────────────────────────────────────
