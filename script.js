@@ -494,7 +494,8 @@ document.getElementById('checkoutOverlay')?.addEventListener('click', closeCheck
     document.querySelectorAll('.nav-links a').forEach(a => {
         a.addEventListener('click', e => {
             const t = a.textContent.trim();
-            if (t==='Cart')     { e.preventDefault(); openCart(); }
+            // Yahan change kiya hai 👇
+            if (t.startsWith('Cart')) { e.preventDefault(); openCart(); }
             if (t==='Shop')     { e.preventDefault(); switchView('shop'); setActiveNav('Shop'); }
             if (t==='My Order') { e.preventDefault(); switchView('orders'); setActiveNav('My Order'); }
             if (t==='Home')     { e.preventDefault(); switchView('home'); setActiveNav('Home'); }
@@ -888,14 +889,24 @@ function updateCouponStatus(msg,type=''){const el=document.getElementById('coupo
 
 function renderCartBadge() {
     const q=Object.values(cart).reduce((s,i)=>s+i.qty,0);
+    
+    // 1. Mobile Bottom Nav Badge
     document.querySelectorAll('.bottom-nav .nav-item').forEach(n=>{
         if(n.querySelector('span')?.textContent.trim()!=='Cart') return;
         let badge=n.querySelector('.cart-badge');
         if(q>0){if(!badge){n.style.position='relative';n.insertAdjacentHTML('beforeend',`<span class="cart-badge">${q}</span>`);}else badge.textContent=q;}
         else if(badge) badge.remove();
     });
-    const mb=document.getElementById('mobileCartBadge');
-    if(mb){if(q>0){mb.textContent=q;mb.style.display='flex';}else mb.style.display='none';}
+    
+    // 2. Desktop/Laptop Nav Badge (NEW)
+    const deskCart = Array.from(document.querySelectorAll('.nav-links a')).find(a => a.textContent.trim().startsWith('Cart'));
+    if (deskCart) {
+        if (q > 0) {
+            deskCart.innerHTML = `Cart <span class="desk-cart-badge">${q}</span>`;
+        } else {
+            deskCart.innerHTML = `Cart`; // Remove badge if empty
+        }
+    }
 }
 
 // ── CHECKOUT ─────────────────────────────────────────────────────────────────
