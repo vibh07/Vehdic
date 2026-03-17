@@ -457,16 +457,30 @@ function setupAppListeners() {
         mmBtn.addEventListener('click', e => { e.stopPropagation(); mmDrop.classList.toggle('show'); });
         document.addEventListener('click', e => { if(!e.target.closest('.mobile-nav-icons')) mmDrop.classList.remove('show'); });
     }
-    document.getElementById('menuAboutBtn')?.addEventListener('click', (e) => {
+    // setupAppListeners() ke andar ye code dalein (Line ~435 ke aas paas)
+
+// Mobile Dropdown listeners
+document.getElementById('mobAboutBtn')?.addEventListener('click', (e) => {
     e.preventDefault();
     switchView('about');
-    document.getElementById('mobileDropdown').classList.remove('show'); // Close menu
+    document.getElementById('mobileDropdown').classList.remove('show'); 
+});
+
+document.getElementById('mobContactBtn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    switchView('contact');
+    document.getElementById('mobileDropdown').classList.remove('show');
+});
+
+// Laptop Navbar listeners (agar pehle se hain toh IDs check kar lein)
+document.getElementById('menuAboutBtn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    switchView('about');
 });
 
 document.getElementById('menuContactBtn')?.addEventListener('click', (e) => {
     e.preventDefault();
     switchView('contact');
-    document.getElementById('mobileDropdown').classList.remove('show'); // Close menu
 });
     // PWA Install button — animated download bar then trigger install
     setupInstallButton();
