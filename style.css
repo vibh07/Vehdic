@@ -66,7 +66,7 @@ body{background:var(--bg-main);color:var(--text-dark);overflow-x:hidden;backgrou
 /* ═══ BUTTONS ════════════════════════════════════════════════ */
 .btn-primary{background:linear-gradient(135deg,#b85c1a,#7a3510);color:#fff;border:none;padding:12px 30px;font-size:15px;font-weight:700;border-radius:30px;cursor:pointer;font-family:inherit;}
 .btn-white{background:#fff;color:var(--dark-red);border:none;padding:12px 30px;font-size:15px;font-weight:700;border-radius:30px;cursor:pointer;font-family:inherit;}
-.ios-tap{transition:transform .2s var(--spring),opacity .2s ease;cursor:pointer;}
+.ios-tap{transition:transform .2s var(--spring),opacity .2s ease;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 .ios-tap:active{transform:scale(.94);opacity:.8;}
 
 /* ═══ PROMO GRID ═════════════════════════════════════════════ */
@@ -147,7 +147,7 @@ body{background:var(--bg-main);color:var(--text-dark);overflow-x:hidden;backgrou
 @keyframes viewIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .view-visible{display:block;opacity:1;}
 .view-hidden{display:none;opacity:0;}
-#homeContent.view-visible,#shopView.view-visible,#ordersView.view-visible{animation:viewIn .28s var(--spring) both;}
+#homeContent.view-visible,#shopView.view-visible,#ordersView.view-visible,#aboutView.view-visible,#contactView.view-visible{animation:viewIn .28s var(--spring) both;}
 .app-shell-visible,.app-shell-hidden{} /* no transforms — preserves fixed children stacking */
 @keyframes scalePopup{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -217,7 +217,7 @@ body{background:var(--bg-main);color:var(--text-dark);overflow-x:hidden;backgrou
 .olp-create-btn{background:none;border:none;color:var(--card-green);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:12px;}
 
 /* ═══ SHOP — MODERN SEARCH HEADER ═══════════════════════════ */
-.shop-search-header{padding:24px 0 16px;position:sticky;top:68px;background:#ffffff00;z-index:10;}
+.shop-search-header{padding:24px 0 16px;position:sticky;top:68px;background:#f6f1ec;z-index:10;}
 
 .shop-search-bar-wrap{padding:0 0 14px;}
 .shop-search-bar{display:flex;align-items:center;gap:0;background:#f1f5f9;border-radius:16px;padding:0 16px;transition:all .3s var(--spring);border:2px solid transparent;min-height:52px;}
@@ -298,6 +298,10 @@ body{background:var(--bg-main);color:var(--text-dark);overflow-x:hidden;backgrou
         flex:1; min-width:0;
         transition:color .25s var(--spring);
         -webkit-tap-highlight-color:transparent;
+        cursor:pointer;
+        touch-action:manipulation;
+        user-select:none;
+        -webkit-user-select:none;
     }
     .nav-icon-wrap {
         width:38px; height:36px;
@@ -515,7 +519,7 @@ body{background:var(--bg-main);color:var(--text-dark);overflow-x:hidden;backgrou
 .pdp-qty-label{font-size:15px;font-weight:700;}
 .pdp-qty-ctrl{display:flex;align-items:center;gap:16px;}
 .pdp-qty-ctrl span{font-size:18px;font-weight:800;min-width:24px;text-align:center;}
-.pdp-qty-btn{width:36px;height:36px;border-radius:50%;background:#fff;border:1.5px solid rgba(0,0,0,.1);font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-dark);transition:all .2s var(--spring);}
+.pdp-qty-btn{touch-action:manipulation;cursor:pointer;width:36px;height:36px;border-radius:50%;background:#fff;border:1.5px solid rgba(0,0,0,.1);font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-dark);transition:all .2s var(--spring);}
 .pdp-qty-btn:active{transform:scale(.88);background:#f0f0f0;}
 .pdp-add-btn{width:100%;padding:15px 20px;background:var(--text-dark);color:#fff;border:none;border-radius:16px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:background .3s,transform .2s var(--spring);}
 .pdp-add-btn:active{transform:scale(.97);}
@@ -756,10 +760,10 @@ body{background:var(--bg-main);color:var(--text-dark);overflow-x:hidden;backgrou
 .cat-sheet, .profile-sheet, .pdp-sheet { will-change: transform; }
 .page-loader { will-change: opacity; }
 /* Image layout hints */
-.product-card-img-wrap { contain: layout style paint; }
+.product-card-img-wrap { contain: size; }
 /* Reduce paint areas */
-.bottom-nav { contain: layout style; }
-.navbar { contain: layout style; }
+/* bottom-nav contain removed — broke clicks */
+/* navbar contain removed */
 
 /* ═══ PWA INSTALL BUTTON ════════════════════════════════════ */
 .install-btn {
