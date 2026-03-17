@@ -457,7 +457,17 @@ function setupAppListeners() {
         mmBtn.addEventListener('click', e => { e.stopPropagation(); mmDrop.classList.toggle('show'); });
         document.addEventListener('click', e => { if(!e.target.closest('.mobile-nav-icons')) mmDrop.classList.remove('show'); });
     }
+    document.getElementById('menuAboutBtn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    switchView('about');
+    document.getElementById('mobileDropdown').classList.remove('show'); // Close menu
+});
 
+document.getElementById('menuContactBtn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    switchView('contact');
+    document.getElementById('mobileDropdown').classList.remove('show'); // Close menu
+});
     // PWA Install button — animated download bar then trigger install
     setupInstallButton();
 
@@ -549,16 +559,39 @@ function handleProfileTap() {
 function switchView(name, category='') {
     pendingCat  = category;
     activeView  = name;
-    ['home','shop','orders'].forEach(k => {
-        const el = document.getElementById({home:'homeContent',shop:'shopView',orders:'ordersView'}[k]);
-        if (k===name) { el.classList.remove('view-hidden'); el.classList.add('view-visible'); }
-        else          { el.classList.remove('view-visible'); el.classList.add('view-hidden'); }
+
+    // Map the names to the actual IDs in your HTML
+    const viewMap = {
+        home: 'homeContent',
+        shop: 'shopView',
+        orders: 'ordersView',
+        about: 'aboutView',
+        contact: 'contactView'
+    };
+
+    // Toggle visibility for ALL views
+    Object.keys(viewMap).forEach(key => {
+        const el = document.getElementById(viewMap[key]);
+        if (el) {
+            if (key === name) {
+                el.classList.remove('view-hidden');
+                el.classList.add('view-visible');
+            } else {
+                el.classList.remove('view-visible');
+                el.classList.add('view-hidden');
+            }
+        }
     });
-    if (name==='shop')   { const i=document.getElementById('shopSearchInput'); if(i){i.value=''; document.getElementById('shopSearchClear').style.display='none';} renderShopProducts(category); }
-    if (name==='orders') renderOrdersView();
-    // Stop orders listener when leaving orders view (saves bandwidth)
-    if (name!=='orders' && _ordersUnsub) { _ordersUnsub(); _ordersUnsub=null; }
-    window.scrollTo({top:0,behavior:'smooth'});
+
+    if (name === 'shop') { 
+        const i = document.getElementById('shopSearchInput'); 
+        if(i) { i.value = ''; document.getElementById('shopSearchClear').style.display = 'none'; } 
+        renderShopProducts(category); 
+    }
+    if (name === 'orders') renderOrdersView();
+    
+    // Smooth scroll to top when changing pages
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function setActiveNav(label) {
