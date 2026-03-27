@@ -1235,7 +1235,11 @@ body{background:var(--bg-main);color:var(--text-dark);overflow-x:hidden;backgrou
     /* Hide the mobile drag handle on desktop */
     .checkout-sheet .cat-sheet-handle { display: none; }
 }
-/* ═══ DESKTOP CART BADGE ═══ */
+/* ═══ FOOTER LEGAL LINKS ═══════════════════════════════════ */
+.footer-legal-links{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;margin:8px 0 12px;}
+.footer-legal-links a{color:var(--text-grey);font-size:12px;cursor:pointer;text-decoration:underline;text-underline-offset:2px;transition:color .2s;}
+.footer-legal-links a:hover{color:var(--primary);}
+
 .desk-cart-badge {
     background: linear-gradient(135deg, #e8821a, #b85c1a);
     color: white !important;
