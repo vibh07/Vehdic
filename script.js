@@ -1293,7 +1293,7 @@ const LEGAL = {
 <h4 style="margin:18px 0 8px;font-size:14px;">Your Rights</h4>
 <p>You may request deletion of your account and all personal data by emailing <strong>info@vehdic.com</strong>. Requests are processed within 30 days.</p>
 <h4 style="margin:18px 0 8px;font-size:14px;">Contact</h4>
-<p>Email: info@vehdic.com &nbsp;|&nbsp; Phone: +91 98100 17422</p>`
+<p>Email: info@vehdic.com &nbsp;|&nbsp; Phone: +91 8929083904</p>`
   },
   terms: {
     title: 'Terms & Conditions',
@@ -1328,7 +1328,7 @@ const LEGAL = {
 </ul>
 <p>We do <strong>not</strong> accept returns for opened products (due to the nature of Ayurvedic/wellness items), unless there is a verified quality defect.</p>
 <h4 style="margin:18px 0 8px;font-size:14px;">How to Return</h4>
-<p>Contact us within 7 days of delivery via email <strong>info@vehdic.com</strong> or WhatsApp <strong>+91 98100 17422</strong> with your Order ID and photos of the issue. We'll arrange reverse pickup or send a replacement.</p>
+<p>Contact us within 7 days of delivery via email <strong>info@vehdic.com</strong> or WhatsApp <strong>+91 8929083904</strong> with your Order ID and photos of the issue. We'll arrange reverse pickup or send a replacement.</p>
 <h4 style="margin:18px 0 8px;font-size:14px;">Refunds</h4>
 <p>Approved refunds are processed within <strong>7 business days</strong> after we receive the return. For prepaid orders, refunds go to the original payment source. For COD orders, refunds are made via bank transfer. Processing takes 5–10 business days to reflect in your account.</p>`
   }
