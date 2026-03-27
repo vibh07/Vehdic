@@ -169,6 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadCouponsFromDB();
     setupAuthListeners();
     setupAppListeners();
+    setupLegalLinks();
 });
 
 function loadSiteSettings() {
@@ -988,6 +989,11 @@ async function submitFinalOrder() {
         showToast("Please fill all delivery details");
         return;
     }
+    const cleanPhone = phone.replace(/[\s\-()]/g,'');
+    if (!/^(\+91|91|0)?[6-9]\d{9}$/.test(cleanPhone)) {
+        showToast("Please enter a valid 10-digit mobile number");
+        return;
+    }
 
     const items = Object.values(cart);
     const btn = document.getElementById('confirmOrderBtn');
@@ -1007,6 +1013,7 @@ async function submitFinalOrder() {
 
         // Save order with customer details
         await set(push(ref(db, `orders/${currentUser.uid}`)), {
+            uid: currentUser.uid,
             items,
             subtotal: parseFloat(sub.toFixed(2)),
             discount: parseFloat(disc.toFixed(2)),
@@ -1268,6 +1275,79 @@ function updatePDPCartBtn(){
     else{btn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M5 3h1.81l2.4 10.8c.16.71.8 1.2 1.53 1.2h8.52c.73 0 1.37-.49 1.53-1.2L23 5H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20" r="2" fill="currentColor"/><circle cx="18" cy="20" r="2" fill="currentColor"/></svg> Add to Cart`;btn.style.background='';}
 }
 function closePDP(){document.getElementById('pdpOverlay').classList.remove('show');document.getElementById('pdpSheet').classList.remove('show');document.body.style.overflow='';pdpProduct=null;}
+
+// ── LEGAL MODAL ───────────────────────────────────────────────────────────────
+const LEGAL = {
+  privacy: {
+    title: 'Privacy Policy',
+    html: `<p style="color:#888;font-size:12px;margin-bottom:16px">Last updated: January 2025</p>
+<p>Vehdic ("we", "our") is committed to protecting your personal information. This policy explains what we collect, how we use it, and your rights under the Information Technology Act, 2000 and the Digital Personal Data Protection Act, 2023.</p>
+<h4 style="margin:18px 0 8px;font-size:14px;">Information We Collect</h4>
+<p>We collect: name, email address, phone number, delivery address, and order history — only when you voluntarily provide it while registering or placing an order.</p>
+<h4 style="margin:18px 0 8px;font-size:14px;">How We Use It</h4>
+<p>Your information is used only to: process and deliver your orders, send order status updates, respond to your support queries, and improve our service. We never sell or share your data with third parties for marketing purposes.</p>
+<h4 style="margin:18px 0 8px;font-size:14px;">Data Storage & Security</h4>
+<p>All data is stored on Google Firebase (Asia Southeast servers). We use industry-standard encryption and authentication. Your order data is visible only to you and the Vehdic admin.</p>
+<h4 style="margin:18px 0 8px;font-size:14px;">Cookies & Local Storage</h4>
+<p>We use browser localStorage only to save your cart and session state. No third-party tracking cookies are placed.</p>
+<h4 style="margin:18px 0 8px;font-size:14px;">Your Rights</h4>
+<p>You may request deletion of your account and all personal data by emailing <strong>info@vehdic.com</strong>. Requests are processed within 30 days.</p>
+<h4 style="margin:18px 0 8px;font-size:14px;">Contact</h4>
+<p>Email: info@vehdic.com &nbsp;|&nbsp; Phone: +91 98100 17422</p>`
+  },
+  terms: {
+    title: 'Terms & Conditions',
+    html: `<p style="color:#888;font-size:12px;margin-bottom:16px">Last updated: January 2025</p>
+<p>By using vehdic.in or placing an order, you agree to these terms in full. If you disagree with any part, please do not use our website.</p>
+<h4 style="margin:18px 0 8px;font-size:14px;">Products & Descriptions</h4>
+<p>We accurately describe all products. Images are representative; actual packaging may vary slightly. All products are 100% natural and free from synthetic chemicals as stated.</p>
+<h4 style="margin:18px 0 8px;font-size:14px;">Orders & Pricing</h4>
+<p>All prices are in Indian Rupees (₹) inclusive of applicable taxes. Prices may change; you are billed at the price shown at time of purchase. We reserve the right to cancel orders due to stock issues, pricing errors, or fraud, with a full refund.</p>
+<h4 style="margin:18px 0 8px;font-size:14px;">Ayurvedic Disclaimer</h4>
+<p>Our products are traditional Ayurvedic preparations for general wellness. <strong>They are not medicines</strong> and are not intended to diagnose, treat, cure, or prevent any disease. Consult a qualified healthcare professional before use if you have any medical condition, are pregnant, or are on medication. Keep all products out of reach of children.</p>
+<h4 style="margin:18px 0 8px;font-size:14px;">Intellectual Property</h4>
+<p>All content on this website — text, images, brand name "Vehdic" — is our property and may not be reproduced without written permission.</p>
+<h4 style="margin:18px 0 8px;font-size:14px;">Limitation of Liability</h4>
+<p>Vehdic shall not be liable for any indirect or consequential loss arising from product use. Our maximum liability is limited to the amount paid for the specific product.</p>
+<h4 style="margin:18px 0 8px;font-size:14px;">Governing Law</h4>
+<p>These terms are governed by the laws of India. Disputes are subject to the jurisdiction of courts in India.</p>`
+  },
+  refund: {
+    title: 'Refund & Shipping Policy',
+    html: `<p style="color:#888;font-size:12px;margin-bottom:16px">Last updated: January 2025</p>
+<h4 style="margin:0 0 8px;font-size:14px;">Shipping</h4>
+<p><strong>Delivery time:</strong> 4–7 working days across India (metro cities may be sooner).</p>
+<p><strong>Charges:</strong> ₹99 flat for orders below ₹1,500. <strong>FREE shipping</strong> on orders of ₹1,500 and above.</p>
+<p>Orders are dispatched within 1–2 business days of confirmation. You will be notified via WhatsApp/call once your order is dispatched.</p>
+<h4 style="margin:18px 0 8px;font-size:14px;">Return Eligibility</h4>
+<p>We accept returns within <strong>7 days of delivery</strong> only if:</p>
+<ul style="margin:8px 0 8px 18px;line-height:2;">
+  <li>Product is damaged or defective on arrival</li>
+  <li>Wrong product was delivered</li>
+  <li>Product is <strong>unopened</strong> and in original condition</li>
+</ul>
+<p>We do <strong>not</strong> accept returns for opened products (due to the nature of Ayurvedic/wellness items), unless there is a verified quality defect.</p>
+<h4 style="margin:18px 0 8px;font-size:14px;">How to Return</h4>
+<p>Contact us within 7 days of delivery via email <strong>info@vehdic.com</strong> or WhatsApp <strong>+91 98100 17422</strong> with your Order ID and photos of the issue. We'll arrange reverse pickup or send a replacement.</p>
+<h4 style="margin:18px 0 8px;font-size:14px;">Refunds</h4>
+<p>Approved refunds are processed within <strong>7 business days</strong> after we receive the return. For prepaid orders, refunds go to the original payment source. For COD orders, refunds are made via bank transfer. Processing takes 5–10 business days to reflect in your account.</p>`
+  }
+};
+
+function openLegalModal(type) {
+    const c = LEGAL[type]; if (!c) return;
+    document.getElementById('legalModalTitle').textContent = c.title;
+    document.getElementById('legalModalBody').innerHTML = c.html;
+    document.getElementById('legalModal').classList.add('show');
+}
+
+function setupLegalLinks() {
+    document.getElementById('footerPrivacy')?.addEventListener('click', () => openLegalModal('privacy'));
+    document.getElementById('footerTerms')?.addEventListener('click',   () => openLegalModal('terms'));
+    document.getElementById('footerRefund')?.addEventListener('click',  () => openLegalModal('refund'));
+    document.getElementById('legalModalClose')?.addEventListener('click', () => document.getElementById('legalModal').classList.remove('show'));
+    document.getElementById('legalModal')?.addEventListener('click', e => { if(e.target.id==='legalModal') document.getElementById('legalModal').classList.remove('show'); });
+}
 
 // ── PAGE LOADER ────────────────────────────────────────────────────────────────
 function hidePageLoader(){const l=document.getElementById('pageLoader');if(!l)return;l.classList.add('fade-out');setTimeout(()=>l.classList.remove('show','fade-out'),500);}
