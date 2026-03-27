@@ -540,7 +540,7 @@ body{background:var(--bg-main);color:var(--text-dark);overflow-x:hidden;backgrou
 @media (min-width:769px){
     .pdp-sheet{max-width:540px;left:50%;right:auto;transform:translateX(-50%) translateY(100%);border-radius:28px 28px 0 0;}
     .pdp-sheet.show{transform:translateX(-50%) translateY(0);}
-    .shop-search-header{top:72px;}
+    .shop-search-header{top:59px;}
 }
 
 /* ═══ REDUCE MOTION ══════════════════════════════════════════ */
