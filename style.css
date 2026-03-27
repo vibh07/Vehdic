@@ -1203,7 +1203,7 @@ body{background:var(--bg-main);color:var(--text-dark);overflow-x:hidden;backgrou
 @media (min-width: 769px) {
     /* Checkout & Order Details ab bottom me nahi, screen ke center me aayenge */
     .checkout-sheet, .order-details-sheet { 
-        max-width: 480px; 
+        width: 70%; 
         top: 50%; 
         left: 50%; 
         right: auto;
