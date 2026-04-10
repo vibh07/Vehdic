@@ -1,5 +1,5 @@
 import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import { getDatabase, ref, get, set, push, child, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+import { getDatabase, ref, get, set, push, child, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword,
          signOut, GoogleAuthProvider, signInWithPopup, updateProfile, sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
@@ -563,7 +563,16 @@ document.getElementById('checkoutOverlay')?.addEventListener('click', closeCheck
     document.getElementById('pdpOverlay')?.addEventListener('click', closePDP);
     document.getElementById('pdpClose')?.addEventListener('click', closePDP);
     document.getElementById('pdpQtyMinus')?.addEventListener('click', () => { if(pdpQty>1){pdpQty--;document.getElementById('pdpQtyNum').textContent=pdpQty;} });
-    document.getElementById('pdpQtyPlus')?.addEventListener('click', () => { pdpQty++;document.getElementById('pdpQtyNum').textContent=pdpQty; });
+document.getElementById('pdpQtyPlus')?.addEventListener('click', () => { 
+    if(!pdpProduct) return;
+    const stock = pdpProduct.stock !== undefined ? pdpProduct.stock : 100;
+    if (pdpQty < stock) {
+        pdpQty++;
+        document.getElementById('pdpQtyNum').textContent = pdpQty;
+    } else {
+        showToast(`Only ${stock} available!`);
+    }
+});
     document.getElementById('pdpAddBtn')?.addEventListener('click', () => {
         if(!pdpProduct) return;
         for(let i=0;i<pdpQty;i++) addToCart(pdpProduct.id);
@@ -713,12 +722,17 @@ function buildCategoryUI() {
 function buildProductCard(p) {
     const ci = cart[p.id], inCart = ci && ci.qty>0;
     const pct = p.originalPrice ? Math.round((1-p.price/p.originalPrice)*100) : 0;
+    
+    // NEW STOCK LOGIC
+    const stock = p.stock !== undefined ? p.stock : 100;
+    const isOOS = stock <= 0;
+
     const div = document.createElement('div');
     div.className = 'product-card ios-tap';
     div.innerHTML = `
         <div class="product-card-img-wrap">
             <img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22200%22%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20fill%3D%22%23f5ede0%22%2F%3E%3Ctext%20x%3D%22100%22%20y%3D%22115%22%20font-size%3D%2280%22%20text-anchor%3D%22middle%22%3E%F0%9F%8C%BF%3C%2Ftext%3E%3C%2Fsvg%3E'">
-            ${pct>0 ? `<span class="product-sale-tag">-${pct}%</span>` : ''}
+            ${isOOS ? `<span class="product-sale-tag" style="background:#475569;">Out of Stock</span>` : (pct>0 ? `<span class="product-sale-tag">-${pct}%</span>` : '')}
         </div>
         ${(p.superSpecial||p.name.includes('Nasya')) ? `<span class="product-super-badge">⭐ Super Special</span>` : (p.category ? `<span class="product-badge">${p.category}</span>` : '')}
         <h3>${p.name}</h3>
@@ -727,9 +741,13 @@ function buildProductCard(p) {
             ${p.originalPrice ? `<p class="product-orig-price">₹${p.originalPrice.toLocaleString("en-IN")}</p>` : ''}
         </div>
         ${p.rating ? `<div class="product-rating"><span class="pstar">★</span> ${p.rating} <span class="prev">(${(p.reviews||0).toLocaleString()})</span></div>` : ''}
-        ${inCart
+        
+        ${isOOS ? 
+            `<button class="add-to-cart-btn" style="background:#94a3b8; cursor:not-allowed;" disabled>Out of Stock</button>` 
+        : (inCart
             ? `<div class="qty-controls"><button class="qty-btn minus ios-tap" data-id="${p.id}">−</button><span class="qty-num">${ci.qty}</span><button class="qty-btn plus ios-tap" data-id="${p.id}">+</button></div>`
-            : `<button class="add-to-cart-btn ios-tap" data-id="${p.id}">Add to Cart</button>`}`;
+            : `<button class="add-to-cart-btn ios-tap" data-id="${p.id}">Add to Cart</button>`)}
+    `;
     return div;
 }
 
@@ -801,15 +819,34 @@ function saveCartToStorage() {
     try { sessionStorage.setItem('vehdic_cart_current', data); } catch(e) {}
 }
 
+// REPLACE THESE TWO FUNCTIONS:
 function addToCart(pid) {
     const p = allProducts.find(x=>x.id===pid); if(!p) return;
+    const stock = p.stock !== undefined ? p.stock : 100;
+    
+    if(stock <= 0) { showToast('Out of stock!'); return; }
+    if(cart[pid] && cart[pid].qty >= stock) { showToast(`Only ${stock} units available!`); return; }
+
     if (cart[pid]) cart[pid].qty++; else cart[pid]={...p,qty:1};
+    if(typeof gtag === 'function') {
+        gtag('event', 'add_to_cart', {
+            currency: 'INR',
+            value: p.price,
+            items: [{ item_id: p.id, item_name: p.name, item_category: p.category || 'Shop', price: p.price, quantity: 1 }]
+        });
+    }
     saveCartToStorage(); showToast(`Added ${p.name}!`); renderCartBadge(); refreshGrid();
     if (document.getElementById('cartSidebar').classList.contains('show')) renderCartUI();
     if (pdpProduct?.id===pid) updatePDPCartBtn();
 }
+
 function changeQty(pid, d) {
     if (!cart[pid]) return;
+    const p = allProducts.find(x=>x.id===pid);
+    const stock = p ? (p.stock !== undefined ? p.stock : 100) : 100;
+    
+    if (d > 0 && cart[pid].qty >= stock) { showToast(`Only ${stock} units available!`); return; }
+
     cart[pid].qty+=d;
     if (cart[pid].qty<=0) delete cart[pid];
     saveCartToStorage(); renderCartBadge(); refreshGrid();
@@ -968,6 +1005,15 @@ function openCheckoutSheet() {
 
     document.getElementById('chkOrderItems').innerHTML = html;
     document.getElementById('chkTotalPay').textContent = `₹${Math.round(total).toLocaleString("en-IN")}`;
+    if(typeof gtag === 'function') {
+        const gaItems = items.map(i => ({ item_id: i.id, item_name: i.name, item_category: i.category || 'Shop', price: i.price, quantity: i.qty }));
+        gtag('event', 'begin_checkout', {
+            currency: 'INR',
+            value: total,
+            coupon: appliedCoupon?.code || '',
+            items: gaItems
+        });
+    }
 
     // 👇 YE DO LINES MISSING THI! Isse form popup open hoga 👇
     document.getElementById('checkoutOverlay').classList.add('show');
@@ -1002,6 +1048,22 @@ async function submitFinalOrder() {
     btn.style.opacity = '0.75';
 
     try {
+        // ==========================================
+        // 1. NEW LOGIC: VERIFY STOCK BEFORE CHECKOUT
+        // ==========================================
+        for (let item of items) {
+            const p = allProducts.find(x => x.id === item.id);
+            const currentStock = p?.stock !== undefined ? p.stock : 100;
+            if (item.qty > currentStock) {
+                showToast(`Sorry, ${item.name} only has ${currentStock} left in stock.`);
+                isCheckingOut = false;
+                btn.textContent = 'Confirm Order';
+                btn.style.opacity = '1';
+                return; // Stop checkout yahi par!
+            }
+        }
+
+        // Calculations
         const sub = items.reduce((s,i)=>s+parseFloat(i.price)*i.qty,0);
         let disc = 0; const shipFree = sub >= 1500 || (appliedCoupon?.type === 'ship');
         if(appliedCoupon){
@@ -1011,7 +1073,7 @@ async function submitFinalOrder() {
         const ship = shipFree ? 0 : 99; 
         const total = Math.max(0, sub - disc + ship);
 
-        // Save order with customer details
+        // Save order in Database
         await set(push(ref(db, `orders/${currentUser.uid}`)), {
             uid: currentUser.uid,
             items,
@@ -1024,7 +1086,33 @@ async function submitFinalOrder() {
             timestamp: Date.now(),
             status: 'Pending'
         });
+        if(typeof gtag === 'function') {
+            const gaItems = items.map(i => ({ item_id: i.id, item_name: i.name, item_category: i.category || 'Shop', price: i.price, quantity: i.qty }));
+            gtag('event', 'purchase', {
+                transaction_id: transactionId,
+                value: total,
+                currency: 'INR',
+                shipping: ship,
+                coupon: appliedCoupon?.code || '',
+                items: gaItems
+            });
+        }
+        // ==========================================
+        // 2. NEW LOGIC: DEDUCT STOCK FROM DATABASE
+        // ==========================================
+        const stockUpdates = {};
+        items.forEach(item => {
+            const p = allProducts.find(x => x.id === item.id);
+            if (p && p.stock !== undefined) {
+                let newStock = p.stock - item.qty;
+                stockUpdates[`products/${item.id}/stock`] = Math.max(0, newStock);
+            }
+        });
+        if (Object.keys(stockUpdates).length > 0) {
+            await update(ref(db), stockUpdates); // Firebase me ek sath stock minus
+        }
 
+        // Reset cart and UI
         cart = {}; appliedCoupon = null; saveCartToStorage(); 
         renderCartUI(); renderCartBadge(); refreshGrid(); updateCouponStatus('');
 
@@ -1247,6 +1335,13 @@ async function handleSignOut(){
 function openPDP(pid) {
     const p=allProducts.find(x=>x.id===pid); if(!p) return;
     pdpProduct=p; pdpQty=1;
+    if(typeof gtag === 'function') {
+        gtag('event', 'view_item', {
+            currency: 'INR',
+            value: p.price,
+            items: [{ item_id: p.id, item_name: p.name, item_category: p.category || 'Shop', price: p.price, quantity: 1 }]
+        });
+    }
     document.getElementById('pdpTitle').textContent=p.name;
     document.getElementById('pdpPrice').textContent=`₹${Math.round(p.price).toLocaleString("en-IN")}`;
     document.getElementById('pdpBadge').textContent=p.category||'';
@@ -1268,11 +1363,27 @@ function openPDP(pid) {
     document.getElementById('pdpSheet').classList.add('show');
     document.body.style.overflow='hidden';
 }
+
 function updatePDPCartBtn(){
     if(!pdpProduct) return;
-    const btn=document.getElementById('pdpAddBtn'),ci=cart[pdpProduct.id];
-    if(ci){btn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Add More (${ci.qty} in cart)`;btn.style.background='#10b981';}
-    else{btn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M5 3h1.81l2.4 10.8c.16.71.8 1.2 1.53 1.2h8.52c.73 0 1.37-.49 1.53-1.2L23 5H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20" r="2" fill="currentColor"/><circle cx="18" cy="20" r="2" fill="currentColor"/></svg> Add to Cart`;btn.style.background='';}
+    const btn=document.getElementById('pdpAddBtn'), ci=cart[pdpProduct.id];
+    const stock = pdpProduct.stock !== undefined ? pdpProduct.stock : 100;
+
+    if(stock <= 0) {
+        btn.innerHTML = `Out of Stock`;
+        btn.style.background = '#94a3b8';
+        btn.disabled = true;
+        return;
+    }
+    
+    btn.disabled = false;
+    if(ci){
+        btn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Add More (${ci.qty} in cart)`;
+        btn.style.background='#10b981';
+    } else {
+        btn.innerHTML=`<svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M5 3h1.81l2.4 10.8c.16.71.8 1.2 1.53 1.2h8.52c.73 0 1.37-.49 1.53-1.2L23 5H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20" r="2" fill="currentColor"/><circle cx="18" cy="20" r="2" fill="currentColor"/></svg> Add to Cart`;
+        btn.style.background='';
+    }
 }
 function closePDP(){document.getElementById('pdpOverlay').classList.remove('show');document.getElementById('pdpSheet').classList.remove('show');document.body.style.overflow='';pdpProduct=null;}
 
