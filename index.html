@@ -30,7 +30,10 @@
     <meta name="apple-mobile-web-app-title" content="Vehdic">
     <title>Vehdic</title>
     <!-- PWA Manifest -->
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="/manifest.json">
+    <!-- Apple PWA support -->
+    <link rel="apple-touch-icon" href="/icon.png">
+    <meta name="mobile-web-app-capable" content="yes">
     <!-- Preconnect to external domains BEFORE loading them -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -361,8 +364,16 @@
                 <a href="#">My Order</a>
                 <a href="javascript:void(0)" id="menuAboutBtn" class="ios-tap">About us</a>
                 <a href="javascript:void(0)" id="menuContactBtn" class="ios-tap">Contact</a>
-                <a href="#">Cart</a>
+                <a href="#" id="navCartLink">Cart</a>
                 <a href="#" id="navProfileLink">Profile</a>
+                <!-- Desktop Install Button -->
+                <button id="desktopInstallBtn" class="desktop-install-btn ios-tap" title="Install App" style="display:none">
+                    <svg viewBox="0 0 24 24" fill="none" width="15" height="15">
+                        <path d="M12 3v11M8 10l4 4 4-4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M3 17v1a3 3 0 003 3h12a3 3 0 003-3v-1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Install App
+                </button>
             </nav>
             <div class="mobile-nav-icons">
                 <!-- PWA Install Button — animated download -->
@@ -861,7 +872,7 @@
                 </div>
                 <span>Category</span>
             </a>
-            <a href="#" class="nav-item ios-tap" data-label="Cart">
+            <a href="#" class="nav-item ios-tap" id="mobileCartBtn" data-label="Cart">
                 <div class="nav-icon-wrap">
                     <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
                         <path d="M2 3h2l.9 5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
@@ -1039,6 +1050,8 @@
             <p class="empty-cart-msg">Your cart is empty.</p>
         </div>
         <div class="cart-footer">
+            <!-- FREE SHIPPING BANNER — always visible above footer -->
+            <div id="cartShipBanner" class="cart-ship-banner-wrap" style="display:none"></div>
             <div class="coupon-row" id="couponRow">
                 <div class="coupon-input-wrap"><svg viewBox="0 0 24 24" fill="none" width="16" height="16">
                         <rect x="2" y="7" width="20" height="10" rx="2" stroke="currentColor" stroke-width="1.8" />
@@ -1122,6 +1135,23 @@
         </div>
     </div>
 
+    <!-- PWA INSTALL BANNER — smart bottom banner -->
+    <div id="pwaInstallBanner" class="pwa-install-banner" style="display:none">
+        <div class="pwa-banner-inner">
+            <div class="pwa-banner-left">
+                <div class="pwa-banner-icon">🌿</div>
+                <div class="pwa-banner-text">
+                    <strong>Install Vehdic App</strong>
+                    <span>Faster, offline-ready, home screen shortcut</span>
+                </div>
+            </div>
+            <div class="pwa-banner-actions">
+                <button class="pwa-install-now-btn ios-tap" id="pwaBannerInstallBtn">Install</button>
+                <button class="pwa-dismiss-btn ios-tap" id="pwaBannerDismissBtn">✕</button>
+            </div>
+        </div>
+    </div>
+
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module" src="script.js"></script>
     <script>
         // Register Service Worker for offline support + fast loads
@@ -1176,6 +1206,7 @@
     </div>
     
     <div class="success-overlay" id="successOverlay">
+        <div class="success-confetti" id="successConfetti"></div>
         <div class="success-card">
             <div class="success-icon-wrap">
                 <svg class="success-check" viewBox="0 0 52 52">
@@ -1183,8 +1214,13 @@
                     <path class="success-path" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
                 </svg>
             </div>
-            <h2>Order Placed!</h2>
-            <p>Redirecting to your orders...</p>
+            <h2>Order Placed! 🎉</h2>
+            <div class="success-order-id" id="successOrderId">VEHDIC ORDER</div>
+            <p>Your Ayurvedic essentials are on their way. Delivered with love & purity.</p>
+            <div class="success-redirect-bar" id="successRedirectBar">
+                <div class="success-redirect-fill" id="successRedirectFill"></div>
+            </div>
+            <div class="success-redirect-label">Taking you to My Orders…</div>
         </div>
     </div>
     <!-- LEGAL MODAL -->
@@ -1212,6 +1248,4 @@
             </div>
     </div>
 </body>
-
-
 </html>
