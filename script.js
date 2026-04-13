@@ -241,90 +241,121 @@ function closeAuthModal() {
 
 // ── PWA INSTALL BUTTON ───────────────────────────────────────────────────────
 function setupInstallButton() {
-    const btn = document.getElementById('installBtn');
-    if (!btn) return;
+    const mobileBtn  = document.getElementById('installBtn');
+    const desktopBtn = document.getElementById('desktopInstallBtn');
+    const banner     = document.getElementById('pwaInstallBanner');
 
-    // Capture the beforeinstallprompt event — this is what enables the install
-    window.addEventListener('beforeinstallprompt', e => {
-        e.preventDefault();
-        deferredInstallPrompt = e;
-        btn.style.display = 'flex'; // show button only when installable
-    });
-
-    // If already installed as PWA — show checkmark, hide button
-    window.addEventListener('appinstalled', () => {
-        deferredInstallPrompt = null;
-        btn.classList.remove('expanded');
-        btn.classList.add('installed');
-        document.getElementById('installIconState').innerHTML = `
-            <svg class="check-icon" viewBox="0 0 24 24" fill="none" width="20" height="20">
-                <path d="M20 6L9 17l-5-5" stroke="#4a7c59" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>`;
-        showToast('App installed! ✅');
-    });
-
-    // Check if already running as installed PWA
+    // Already installed as PWA — hide everything
     if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
-        btn.style.display = 'none'; // already installed, hide button
+        if (mobileBtn)  mobileBtn.style.display  = 'none';
+        if (desktopBtn) desktopBtn.style.display  = 'none';
+        if (banner)     banner.style.display      = 'none';
         return;
     }
 
-    // Auto-animate: expand after 2s to draw attention
-    let animTimer;
-    function runInstallAnimation() {
-        // Expand the button
-        btn.classList.add('expanded');
-        document.getElementById('installIconState').style.display = 'none';
-        document.getElementById('installExpandedState').style.display = 'flex';
+    // Show desktop install button immediately (always visible on desktop)
+    if (desktopBtn) desktopBtn.style.display = 'flex';
+    if (mobileBtn)  mobileBtn.style.display  = 'flex';
 
-        // Animate progress bar from 0 to 100%
-        const fill = document.getElementById('installProgressFill');
-        if (!fill) return;
-        fill.style.width = '0%';
-        let pct = 0;
-        const interval = setInterval(() => {
-            pct += 2;
-            fill.style.width = pct + '%';
-            if (pct >= 100) {
-                clearInterval(interval);
-                // Collapse back to icon after 200ms
-                setTimeout(() => {
-                    btn.classList.remove('expanded');
-                    document.getElementById('installIconState').style.display = 'flex';
-                    document.getElementById('installExpandedState').style.display = 'none';
-                    fill.style.width = '0%';
-                    // Repeat animation every 12 seconds
-                    animTimer = setTimeout(runInstallAnimation, 2000);
-                }, 200);
-            }
-        }, 40); // 40ms * 50 steps = 2000ms total
+    // Show smart banner after 4s on first visit
+    if (banner && !sessionStorage.getItem('pwa_banner_dismissed')) {
+        setTimeout(() => {
+            banner.style.display = 'flex';
+            setTimeout(() => banner.classList.add('show'), 50);
+        }, 4000);
     }
 
-    // Start first animation after 2 seconds
-    animTimer = setTimeout(runInstallAnimation, 2000);
+    // ── Capture beforeinstallprompt (Chrome/Edge native) ────
+    window.addEventListener('beforeinstallprompt', e => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        console.log('[PWA] beforeinstallprompt captured ✓');
+    });
 
-    // On tap — trigger actual PWA install
-    btn.addEventListener('click', async () => {
-        clearTimeout(animTimer);
+    // ── App installed ────────────────────────────────────────
+    window.addEventListener('appinstalled', () => {
+        deferredInstallPrompt = null;
+        if (mobileBtn)  mobileBtn.style.display  = 'none';
+        if (desktopBtn) desktopBtn.style.display  = 'none';
+        hideBanner();
+        showToast('Vehdic App installed! ✅');
+    });
+
+    // ── Install trigger ──────────────────────────────────────
+    async function triggerInstall() {
         if (deferredInstallPrompt) {
-            // Show the native install prompt
+            // Native Chrome/Edge install dialog
             deferredInstallPrompt.prompt();
             const { outcome } = await deferredInstallPrompt.userChoice;
             if (outcome === 'accepted') {
                 deferredInstallPrompt = null;
+                hideBanner();
                 showToast('Installing Vehdic App… 🚀');
             } else {
-                // User dismissed — show toast and retry animation later
-                showToast('Tap again anytime to install!');
-                animTimer = setTimeout(runInstallAnimation, 15000);
+                showToast('Tap the install button anytime!');
             }
         } else {
-            // Fallback for browsers that don't support beforeinstallprompt (Safari)
-            showAlert(
-                'Install Vehdic App 📱',
-                '<b>On iPhone/iPad:</b><br>1. Tap the <b>Share</b> button (box with arrow)<br>2. Scroll down and tap <b>"Add to Home Screen"</b><br><br><b>On Android:</b><br>Tap the browser menu → "Add to Home Screen"'
-            );
+            // Fallback — show manual instructions
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isMac = /Mac/.test(navigator.userAgent);
+            if (isIOS) {
+                showAlert('Install on iPhone/iPad 📱',
+                    '1. Tap the <b>Share</b> button (⬆ box with arrow) at the bottom<br>2. Scroll down and tap <b>"Add to Home Screen"</b><br>3. Tap <b>Add</b> — done!');
+            } else if (isMac) {
+                showAlert('Install on Mac 💻',
+                    'In Chrome/Edge: Look for the <b>install icon (⬇)</b> in the address bar on the right side and click it.<br><br>In Safari: Click <b>File → Add to Dock</b>');
+            } else {
+                showAlert('Install Vehdic App 📲',
+                    'In Chrome/Edge: Click the <b>install icon (⬇)</b> in the address bar<br><br>In Samsung Browser: Tap menu → <b>"Add page to"</b> → <b>Home screen</b>');
+            }
         }
+    }
+
+    function hideBanner() {
+        if (!banner) return;
+        banner.classList.remove('show');
+        setTimeout(() => { banner.style.display = 'none'; }, 400);
+    }
+
+    // ── Mobile button ────────────────────────────────────────
+    if (mobileBtn) {
+        let animTimer;
+        function runInstallAnimation() {
+            mobileBtn.classList.add('expanded');
+            const iconState = document.getElementById('installIconState');
+            const expandedState = document.getElementById('installExpandedState');
+            if (iconState) iconState.style.display = 'none';
+            if (expandedState) expandedState.style.display = 'flex';
+            const fill = document.getElementById('installProgressFill');
+            if (!fill) return;
+            fill.style.width = '0%';
+            let pct = 0;
+            const interval = setInterval(() => {
+                pct += 2; fill.style.width = pct + '%';
+                if (pct >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        mobileBtn.classList.remove('expanded');
+                        if (iconState) iconState.style.display = 'flex';
+                        if (expandedState) expandedState.style.display = 'none';
+                        fill.style.width = '0%';
+                        animTimer = setTimeout(runInstallAnimation, 15000);
+                    }, 300);
+                }
+            }, 40);
+        }
+        animTimer = setTimeout(runInstallAnimation, 3000);
+        mobileBtn.addEventListener('click', () => { clearTimeout(animTimer); triggerInstall(); });
+    }
+
+    // ── Desktop button ───────────────────────────────────────
+    desktopBtn?.addEventListener('click', () => triggerInstall());
+
+    // ── Banner buttons ───────────────────────────────────────
+    document.getElementById('pwaBannerInstallBtn')?.addEventListener('click', () => { triggerInstall(); hideBanner(); });
+    document.getElementById('pwaBannerDismissBtn')?.addEventListener('click', () => {
+        sessionStorage.setItem('pwa_banner_dismissed', '1');
+        hideBanner();
     });
 }
 
@@ -573,9 +604,13 @@ document.getElementById('pdpQtyPlus')?.addEventListener('click', () => {
         showToast(`Only ${stock} available!`);
     }
 });
-    document.getElementById('pdpAddBtn')?.addEventListener('click', () => {
+    document.getElementById('pdpAddBtn')?.addEventListener('click', (e) => {
         if(!pdpProduct) return;
-        for(let i=0;i<pdpQty;i++) addToCart(pdpProduct.id);
+        const btn = document.getElementById('pdpAddBtn');
+        const r   = btn.getBoundingClientRect();
+        const sx  = r.left + r.width  / 2;
+        const sy  = r.top  + r.height / 2;
+        for(let i=0;i<pdpQty;i++) addToCart(pdpProduct.id, sx, sy);
         closePDP();
     });
 }
@@ -798,7 +833,18 @@ function attachGridListeners(grid) {
         const plus  = e.target.closest('.qty-btn.plus');
         const minus = e.target.closest('.qty-btn.minus');
         const card  = e.target.closest('.product-card');
-        if (add)   { addToCart(add.dataset.id); return; }
+
+        if (add) {
+            // Capture image rect RIGHT NOW before any re-render
+            const cardEl = add.closest('.product-card');
+            const cardImg = cardEl?.querySelector('img');
+            const refEl   = cardImg || add;
+            const rect    = refEl.getBoundingClientRect();
+            const snapX   = rect.left + rect.width  / 2;
+            const snapY   = rect.top  + rect.height / 2;
+            addToCart(add.dataset.id, snapX, snapY);
+            return;
+        }
         if (plus)  { changeQty(plus.dataset.id,+1); return; }
         if (minus) { changeQty(minus.dataset.id,-1); return; }
         if (card)  { const pid=card.querySelector('[data-id]')?.dataset.id; if(pid) openPDP(pid); }
@@ -820,7 +866,7 @@ function saveCartToStorage() {
 }
 
 // REPLACE THESE TWO FUNCTIONS:
-function addToCart(pid) {
+function addToCart(pid, snapX, snapY) {
     const p = allProducts.find(x=>x.id===pid); if(!p) return;
     const stock = p.stock !== undefined ? p.stock : 100;
     
@@ -835,10 +881,172 @@ function addToCart(pid) {
             items: [{ item_id: p.id, item_name: p.name, item_category: p.category || 'Shop', price: p.price, quantity: 1 }]
         });
     }
-    saveCartToStorage(); showToast(`Added ${p.name}!`); renderCartBadge(); refreshGrid();
+    saveCartToStorage(); renderCartBadge(); refreshGrid();
     if (document.getElementById('cartSidebar').classList.contains('show')) renderCartUI();
     if (pdpProduct?.id===pid) updatePDPCartBtn();
+
+    // Fire animation — coordinates already captured before re-render
+    if (snapX !== undefined && snapY !== undefined) {
+        flyToCart(p, snapX, snapY);
+    }
 }
+
+function flyToCart(p, startX, startY) {
+    // ── Find the VISIBLE cart target by ID ───────────────────
+    // Mobile: #mobileCartBtn (bottom nav), Desktop: #navCartLink (navbar)
+    // Check which one has actual rendered size (not display:none)
+    const mobileCart  = document.getElementById('mobileCartBtn');
+    const desktopCart = document.getElementById('navCartLink');
+
+    let cartTarget = null;
+    let endX, endY;
+
+    const mRect = mobileCart?.getBoundingClientRect();
+    const dRect = desktopCart?.getBoundingClientRect();
+
+    if (mRect && mRect.width > 0 && mRect.height > 0) {
+        // Mobile / tablet — bottom nav is visible
+        cartTarget = mobileCart;
+        endX = mRect.left + mRect.width  / 2;
+        endY = mRect.top  + mRect.height / 2;
+    } else if (dRect && dRect.width > 0 && dRect.height > 0) {
+        // Desktop — navbar cart link is visible
+        cartTarget = desktopCart;
+        endX = dRect.left + dRect.width  / 2;
+        endY = dRect.top  + dRect.height / 2;
+    } else {
+        // Fallback: top-right area
+        endX = window.innerWidth - 80;
+        endY = 40;
+    }
+
+    // ── BUBBLE ───────────────────────────────────────────────
+    const SIZE = 56;
+    const fly  = document.createElement('div');
+    fly.style.cssText = `
+        position:fixed;top:0;left:0;
+        width:${SIZE}px;height:${SIZE}px;
+        border-radius:50%;overflow:hidden;
+        z-index:999999;pointer-events:none;
+        box-shadow:0 6px 18px rgba(0,0,0,.28),0 0 0 2px rgba(184,92,26,.35);
+        will-change:transform,opacity;
+        transform:translate(${startX-SIZE/2}px,${startY-SIZE/2}px) scale(1);
+        opacity:1;
+    `;
+    const img = document.createElement('img');
+    img.src = p.img || '';
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+    fly.appendChild(img);
+    document.body.appendChild(fly);
+
+    // ── QUADRATIC BEZIER parabola ────────────────────────────
+    const cpX = (startX + endX) / 2;
+    const cpY = Math.min(startY, endY) - Math.max(100, Math.abs(endX - startX) * 0.4);
+    const DURATION = 650;
+    let t0 = null;
+
+    function ease(t) { return t<.5 ? 2*t*t : -1+(4-2*t)*t; }
+
+    function frame(ts) {
+        if (!t0) t0 = ts;
+        const raw = Math.min((ts-t0)/DURATION, 1);
+        const t   = ease(raw);
+
+        const x = (1-t)*(1-t)*startX + 2*(1-t)*t*cpX + t*t*endX;
+        const y = (1-t)*(1-t)*startY + 2*(1-t)*t*cpY + t*t*endY;
+        const sc = raw<.5
+            ? 1 + .12*Math.sin(Math.PI*raw)
+            : (1 + .12*Math.sin(Math.PI*raw)) * (1-(raw-.5)*2);
+        const op = raw<.6 ? 1 : 1-(raw-.6)/.4;
+
+        fly.style.transform = `translate(${x-SIZE/2}px,${y-SIZE/2}px) scale(${Math.max(sc,.01)})`;
+        fly.style.opacity   = Math.max(op, 0);
+
+        if (raw < 1) { requestAnimationFrame(frame); return; }
+
+        fly.remove();
+
+        // Badge bounce
+        const badge = document.querySelector('#mobileCartBtn .cart-badge')
+                   || document.querySelector('.desk-cart-badge')
+                   || document.querySelector('.cart-badge');
+        if (badge) {
+            badge.style.transition = 'transform .3s cubic-bezier(.175,.885,.32,1.275)';
+            badge.style.transform  = 'scale(1.9)';
+            setTimeout(() => { badge.style.transform = ''; }, 320);
+        }
+        // Target icon pop
+        if (cartTarget) {
+            cartTarget.style.transition = 'transform .15s ease';
+            cartTarget.style.transform  = 'scale(1.25)';
+            setTimeout(() => { cartTarget.style.transform = ''; }, 200);
+        }
+    }
+
+    requestAnimationFrame(frame);
+    showToast('✨ Added to Cart!');
+}
+
+    // ── BUBBLE ───────────────────────────────────────────────
+    const SIZE = 56;
+    const fly  = document.createElement('div');
+    fly.style.cssText = `
+        position:fixed;top:0;left:0;
+        width:${SIZE}px;height:${SIZE}px;
+        border-radius:50%;overflow:hidden;
+        z-index:999999;pointer-events:none;
+        box-shadow:0 6px 18px rgba(0,0,0,.28),0 0 0 2px rgba(184,92,26,.35);
+        will-change:transform,opacity;
+        transform:translate(${startX-SIZE/2}px,${startY-SIZE/2}px) scale(1);
+        opacity:1;
+    `;
+    const img = document.createElement('img');
+    img.src = p.img || '';
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+    fly.appendChild(img);
+    document.body.appendChild(fly);
+
+    // ── QUADRATIC BEZIER parabola ────────────────────────────
+    const cpX = (startX + endX) / 2;
+    const cpY = Math.min(startY, endY) - Math.max(100, Math.abs(endX - startX) * 0.4);
+    const DURATION = 650;
+    let t0 = null;
+
+    function ease(t) { return t<.5 ? 2*t*t : -1+(4-2*t)*t; }
+
+    function frame(ts) {
+        if (!t0) t0 = ts;
+        const raw = Math.min((ts-t0)/DURATION, 1);
+        const t   = ease(raw);
+
+        const x = (1-t)*(1-t)*startX + 2*(1-t)*t*cpX + t*t*endX;
+        const y = (1-t)*(1-t)*startY + 2*(1-t)*t*cpY + t*t*endY;
+        const sc = raw<.5
+            ? 1 + .12*Math.sin(Math.PI*raw)
+            : (1 + .12*Math.sin(Math.PI*raw)) * (1-(raw-.5)*2);
+        const op = raw<.6 ? 1 : 1-(raw-.6)/.4;
+
+        fly.style.transform = `translate(${x-SIZE/2}px,${y-SIZE/2}px) scale(${Math.max(sc,.01)})`;
+        fly.style.opacity   = Math.max(op, 0);
+
+        if (raw < 1) { requestAnimationFrame(frame); return; }
+
+        fly.remove();
+        const badge = document.querySelector('.cart-badge') || document.querySelector('.desk-cart-badge');
+        if (badge) {
+            badge.style.transition = 'transform .3s cubic-bezier(.175,.885,.32,1.275)';
+            badge.style.transform  = 'scale(1.9)';
+            setTimeout(() => { badge.style.transform = ''; }, 320);
+        }
+        if (cartTarget) {
+            cartTarget.style.transition = 'transform .15s ease';
+            cartTarget.style.transform  = 'scale(1.25)';
+            setTimeout(() => { cartTarget.style.transform = ''; }, 200);
+        }
+    }
+
+    requestAnimationFrame(frame);
+    showToast('✨ Added to Cart!');
 
 function changeQty(pid, d) {
     if (!cart[pid]) return;
@@ -859,9 +1067,45 @@ function refreshGrid() {
 function openCart()  { document.getElementById('cartOverlay').classList.add('show'); document.getElementById('cartSidebar').classList.add('show'); renderCartUI(); }
 function closeCart() { document.getElementById('cartOverlay').classList.remove('show'); document.getElementById('cartSidebar').classList.remove('show'); }
 
+function renderCartShipBanner(sub) {
+    const bannerWrap = document.getElementById('cartShipBanner');
+    if (!bannerWrap) return;
+
+    const FREE_THRESHOLD = 500;
+    const remaining = Math.max(0, FREE_THRESHOLD - sub);
+    const pct       = Math.min(100, Math.round((sub / FREE_THRESHOLD) * 100));
+    const unlocked  = sub >= FREE_THRESHOLD;
+
+    bannerWrap.style.display = '';
+    bannerWrap.innerHTML = `
+        <div class="csb-inner ${unlocked ? 'csb-unlocked' : ''}">
+            <div class="csb-row">
+                <div class="csb-icon">${unlocked ? '🎉' : '🚚'}</div>
+                <div class="csb-body">
+                    <div class="csb-msg">
+                        ${unlocked
+                            ? `<strong>Free Shipping Unlocked!</strong> Your order ships for free 🙌`
+                            : `Add <strong>₹${Math.round(remaining).toLocaleString('en-IN')}</strong> more for <strong>Free Shipping</strong>`
+                        }
+                    </div>
+                    <div class="csb-track">
+                        <div class="csb-fill" style="width:${pct}%"></div>
+                        <div class="csb-glow" style="left:${pct}%"></div>
+                    </div>
+                </div>
+                <div class="csb-tag ${unlocked ? 'csb-tag-free' : ''}">
+                    ${unlocked ? 'FREE' : '₹500+'}
+                </div>
+            </div>
+        </div>`;
+}
+
 function renderCartUI() {
     const con = document.getElementById('cartItemsContainer');
     const items = Object.values(cart);
+
+    const sub = items.reduce((s,i) => s + parseFloat(i.price)*i.qty, 0);
+
     if (!items.length) {
         con.innerHTML=`
             <div class="cart-empty-state">
@@ -878,19 +1122,27 @@ function renderCartUI() {
             switchView('shop');
             setActiveBottomNav('Shop');
         });
+        document.getElementById('cartShipBanner') && (document.getElementById('cartShipBanner').style.display = 'none');
         updateCartTotals(0);
         return;
     }
-    let sub=0; const f=document.createDocumentFragment();
+
+    // Render items
+    let totalSub = 0;
+    const f = document.createDocumentFragment();
     items.forEach(item => {
-        const s=parseFloat(item.price)*item.qty; sub+=s;
-        const el=document.createElement('div'); el.className='cart-item';
-        el.innerHTML=`<img class="cart-item-img" src="${item.img||''}" alt="${item.name}"><div class="cart-item-info"><h4>${item.name}</h4><p class="cart-item-price">₹${item.price.toLocaleString("en-IN")} each</p><p class="cart-item-sub">Subtotal: <strong>₹${Math.round(s).toLocaleString("en-IN")}</strong></p></div><div class="cart-item-controls"><button class="cart-qty-btn minus ios-tap" data-id="${item.id}">−</button><span>${item.qty}</span><button class="cart-qty-btn plus ios-tap" data-id="${item.id}">+</button></div>`;
+        const s = parseFloat(item.price)*item.qty; totalSub += s;
+        const el = document.createElement('div'); el.className = 'cart-item';
+        el.innerHTML = `<img class="cart-item-img" src="${item.img||''}" alt="${item.name}"><div class="cart-item-info"><h4>${item.name}</h4><p class="cart-item-price">₹${item.price.toLocaleString("en-IN")} each</p><p class="cart-item-sub">Subtotal: <strong>₹${Math.round(s).toLocaleString("en-IN")}</strong></p></div><div class="cart-item-controls"><button class="cart-qty-btn minus ios-tap" data-id="${item.id}">−</button><span>${item.qty}</span><button class="cart-qty-btn plus ios-tap" data-id="${item.id}">+</button></div>`;
         f.appendChild(el);
     });
-    con.innerHTML=''; con.appendChild(f);
-    con.querySelectorAll('.cart-qty-btn').forEach(b=>b.addEventListener('click',()=>changeQty(b.dataset.id,b.classList.contains('plus')?1:-1)));
-    updateCartTotals(sub);
+    con.innerHTML = '';
+    con.appendChild(f);
+    con.querySelectorAll('.cart-qty-btn').forEach(b => b.addEventListener('click', () => changeQty(b.dataset.id, b.classList.contains('plus') ? 1 : -1)));
+
+    // Render shipping banner in dedicated slot
+    renderCartShipBanner(totalSub);
+    updateCartTotals(totalSub);
 }
 
 function updateCartTotals(sub) {
@@ -898,7 +1150,7 @@ function updateCartTotals(sub) {
     const discRow=document.getElementById('discountRow'), discEl=document.getElementById('cartDiscount');
     const discLabel=document.getElementById('discountLabel'), shipEl=document.getElementById('cartShipping');
     if(subtotalEl) subtotalEl.textContent=`₹${Math.round(sub).toLocaleString("en-IN")}`;
-    let disc=0, shipFree=sub>=1500;
+    let disc=0, shipFree=sub>=500;
     if(appliedCoupon){
         if(appliedCoupon.type==='percent') disc=sub*(appliedCoupon.value/100);
         else if(appliedCoupon.type==='fixed') disc=Math.min(appliedCoupon.value,sub);
@@ -984,7 +1236,7 @@ function openCheckoutSheet() {
     ).join('');
 
     const sub = items.reduce((s,i)=>s+parseFloat(i.price)*i.qty,0);
-    let disc = 0; const shipFree = sub >= 1500 || (appliedCoupon?.type === 'ship');
+    let disc = 0; const shipFree = sub >= 500 || (appliedCoupon?.type === 'ship');
     
     if(appliedCoupon){
         if(appliedCoupon.type==='percent') disc = sub*(appliedCoupon.value/100);
@@ -1065,7 +1317,7 @@ async function submitFinalOrder() {
 
         // Calculations
         const sub = items.reduce((s,i)=>s+parseFloat(i.price)*i.qty,0);
-        let disc = 0; const shipFree = sub >= 1500 || (appliedCoupon?.type === 'ship');
+        let disc = 0; const shipFree = sub >= 500 || (appliedCoupon?.type === 'ship');
         if(appliedCoupon){
             if(appliedCoupon.type==='percent') disc=sub*(appliedCoupon.value/100);
             else if(appliedCoupon.type==='fixed') disc=Math.min(appliedCoupon.value,sub);
@@ -1089,7 +1341,7 @@ async function submitFinalOrder() {
         if(typeof gtag === 'function') {
             const gaItems = items.map(i => ({ item_id: i.id, item_name: i.name, item_category: i.category || 'Shop', price: i.price, quantity: i.qty }));
             gtag('event', 'purchase', {
-                transaction_id: transactionId,
+                transaction_id: `VHD_${Date.now()}`,
                 value: total,
                 currency: 'INR',
                 shipping: ship,
@@ -1118,16 +1370,54 @@ async function submitFinalOrder() {
 
         closeCheckoutSheet();
         
-        // Success Animation show karna
+        // ── EPIC SUCCESS ANIMATION ──────────────────────────
         const successOverlay = document.getElementById('successOverlay');
+        const confettiEl     = document.getElementById('successConfetti');
+        const redirectBar    = document.getElementById('successRedirectBar');
+        const redirectFill   = document.getElementById('successRedirectFill');
+        const orderIdEl      = document.getElementById('successOrderId');
+
+        // Set order label
+        if (orderIdEl) orderIdEl.textContent = `Order Confirmed ✦ ${new Date().toLocaleDateString('en-IN', {day:'numeric',month:'short'})}`;
+
+        // Confetti dots
+        if (confettiEl) {
+            confettiEl.innerHTML = '';
+            const colors = ['#b85c1a','#e8821a','#4a7c59','#fdc62e','#f5ede0','#d4a96a'];
+            for (let i = 0; i < 30; i++) {
+                const dot = document.createElement('div');
+                dot.className = 's-dot';
+                dot.style.cssText = `
+                    left: ${Math.random()*100}%;
+                    top: ${-10 - Math.random()*20}px;
+                    background: ${colors[Math.floor(Math.random()*colors.length)]};
+                    width: ${5 + Math.random()*8}px;
+                    height: ${5 + Math.random()*8}px;
+                    border-radius: ${Math.random() > 0.5 ? '50%' : '3px'};
+                    animation-delay: ${Math.random()*1.5}s;
+                    animation-duration: ${1.8 + Math.random()*1.2}s;
+                `;
+                confettiEl.appendChild(dot);
+            }
+        }
+
         successOverlay.classList.add('show');
 
-        // 2.5 seconds baad My Orders page par redirect
+        // Start redirect progress bar
+        setTimeout(() => {
+            if (redirectBar) redirectBar.classList.add('go');
+            if (redirectFill) redirectFill.style.width = '100%';
+        }, 1600);
+
+        // 3.5 seconds then redirect
         setTimeout(() => {
             successOverlay.classList.remove('show');
-            switchView('orders');
-            setActiveBottomNav('My Order');
-        }, 2500);
+            if (confettiEl) confettiEl.innerHTML = '';
+            setTimeout(() => {
+                switchView('orders');
+                setActiveBottomNav('My Order');
+            }, 350);
+        }, 3600);
 
     } catch (e) {
         showAlert('Order Failed', 'Something went wrong. Try again.');
