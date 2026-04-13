@@ -1300,9 +1300,7 @@ async function submitFinalOrder() {
     btn.style.opacity = '0.75';
 
     try {
-        // ==========================================
-        // 1. NEW LOGIC: VERIFY STOCK BEFORE CHECKOUT
-        // ==========================================
+        // 1. VERIFY STOCK BEFORE CHECKOUT
         for (let item of items) {
             const p = allProducts.find(x => x.id === item.id);
             const currentStock = p?.stock !== undefined ? p.stock : 100;
@@ -1311,7 +1309,7 @@ async function submitFinalOrder() {
                 isCheckingOut = false;
                 btn.textContent = 'Confirm Order';
                 btn.style.opacity = '1';
-                return; // Stop checkout yahi par!
+                return; // Stop checkout 
             }
         }
 
@@ -1325,7 +1323,7 @@ async function submitFinalOrder() {
         const ship = shipFree ? 0 : 99; 
         const total = Math.max(0, sub - disc + ship);
 
-        // Save order in Database
+        // 2. SAVE ORDER IN DATABASE (Ensures order is always placed)
         await set(push(ref(db, `orders/${currentUser.uid}`)), {
             uid: currentUser.uid,
             items,
@@ -1334,10 +1332,12 @@ async function submitFinalOrder() {
             coupon: appliedCoupon?.code || null,
             shipping: ship,
             totalAmount: parseFloat(total.toFixed(2)),
-            deliveryDetails: { name, phone, address }, // Details saved!
+            deliveryDetails: { name, phone, address },
             timestamp: Date.now(),
             status: 'Pending'
         });
+
+        // Analytics
         if(typeof gtag === 'function') {
             const gaItems = items.map(i => ({ item_id: i.id, item_name: i.name, item_category: i.category || 'Shop', price: i.price, quantity: i.qty }));
             gtag('event', 'purchase', {
@@ -1349,19 +1349,23 @@ async function submitFinalOrder() {
                 items: gaItems
             });
         }
-        // ==========================================
-        // 2. NEW LOGIC: DEDUCT STOCK FROM DATABASE
-        // ==========================================
-        const stockUpdates = {};
-        items.forEach(item => {
-            const p = allProducts.find(x => x.id === item.id);
-            if (p && p.stock !== undefined) {
-                let newStock = p.stock - item.qty;
-                stockUpdates[`products/${item.id}/stock`] = Math.max(0, newStock);
+
+        // 3. DEDUCT STOCK (Wrapped in its own Try/Catch)
+        // Agar Firebase rules stock update block karenge, tab bhi Order place ho jayega.
+        try {
+            const stockUpdates = {};
+            items.forEach(item => {
+                const p = allProducts.find(x => x.id === item.id);
+                if (p && p.stock !== undefined) {
+                    let newStock = p.stock - item.qty;
+                    stockUpdates[`products/${item.id}/stock`] = Math.max(0, newStock);
+                }
+            });
+            if (Object.keys(stockUpdates).length > 0) {
+                await update(ref(db), stockUpdates);
             }
-        });
-        if (Object.keys(stockUpdates).length > 0) {
-            await update(ref(db), stockUpdates); // Firebase me ek sath stock minus
+        } catch (stockErr) {
+            console.warn("Stock Update Blocked by Firebase Rules, but Order was placed successfully.", stockErr);
         }
 
         // Reset cart and UI
@@ -1370,17 +1374,15 @@ async function submitFinalOrder() {
 
         closeCheckoutSheet();
         
-        // ── EPIC SUCCESS ANIMATION ──────────────────────────
+        // 4. EPIC SUCCESS ANIMATION
         const successOverlay = document.getElementById('successOverlay');
         const confettiEl     = document.getElementById('successConfetti');
         const redirectBar    = document.getElementById('successRedirectBar');
         const redirectFill   = document.getElementById('successRedirectFill');
         const orderIdEl      = document.getElementById('successOrderId');
 
-        // Set order label
         if (orderIdEl) orderIdEl.textContent = `Order Confirmed ✦ ${new Date().toLocaleDateString('en-IN', {day:'numeric',month:'short'})}`;
 
-        // Confetti dots
         if (confettiEl) {
             confettiEl.innerHTML = '';
             const colors = ['#b85c1a','#e8821a','#4a7c59','#fdc62e','#f5ede0','#d4a96a'];
@@ -1403,13 +1405,11 @@ async function submitFinalOrder() {
 
         successOverlay.classList.add('show');
 
-        // Start redirect progress bar
         setTimeout(() => {
             if (redirectBar) redirectBar.classList.add('go');
             if (redirectFill) redirectFill.style.width = '100%';
         }, 1600);
 
-        // 3.5 seconds then redirect
         setTimeout(() => {
             successOverlay.classList.remove('show');
             if (confettiEl) confettiEl.innerHTML = '';
@@ -1420,7 +1420,8 @@ async function submitFinalOrder() {
         }, 3600);
 
     } catch (e) {
-        showAlert('Order Failed', 'Something went wrong. Try again.');
+        console.error("ORDER PLACEMENT ERROR:", e); // Error detail console me aayegi
+        showAlert('Order Failed', e.message || 'Something went wrong. Try again.');
     } finally {
         btn.textContent = 'Confirm Order';
         btn.style.opacity = '1';
