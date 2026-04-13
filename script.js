@@ -1279,17 +1279,21 @@ function closeCheckoutSheet() {
 
 async function submitFinalOrder() {
     if (isCheckingOut) return;
+    
     const name = document.getElementById('chkName').value.trim();
     const phone = document.getElementById('chkPhone').value.trim();
     const address = document.getElementById('chkAddress').value.trim();
 
+    // 1. Mobile-friendly basic validation
     if (!name || !phone || !address) {
-        showToast("Please fill all delivery details");
+        showToast("Please fill all details (Name, Phone, Address)");
         return;
     }
-    const cleanPhone = phone.replace(/[\s\-()]/g,'');
-    if (!/^(\+91|91|0)?[6-9]\d{9}$/.test(cleanPhone)) {
-        showToast("Please enter a valid 10-digit mobile number");
+    
+    // Remove spaces and special chars to check length
+    const cleanPhone = phone.replace(/[^0-9]/g, ''); 
+    if (cleanPhone.length < 10) {
+        showToast("Please enter a valid 10-digit phone number");
         return;
     }
 
@@ -1300,7 +1304,7 @@ async function submitFinalOrder() {
     btn.style.opacity = '0.75';
 
     try {
-        // 1. VERIFY STOCK BEFORE CHECKOUT
+        // 2. STOCK CHECK
         for (let item of items) {
             const p = allProducts.find(x => x.id === item.id);
             const currentStock = p?.stock !== undefined ? p.stock : 100;
@@ -1309,11 +1313,11 @@ async function submitFinalOrder() {
                 isCheckingOut = false;
                 btn.textContent = 'Confirm Order';
                 btn.style.opacity = '1';
-                return; // Stop checkout 
+                return; 
             }
         }
 
-        // Calculations
+        // 3. MATH CALCULATIONS
         const sub = items.reduce((s,i)=>s+parseFloat(i.price)*i.qty,0);
         let disc = 0; const shipFree = sub >= 500 || (appliedCoupon?.type === 'ship');
         if(appliedCoupon){
@@ -1323,7 +1327,7 @@ async function submitFinalOrder() {
         const ship = shipFree ? 0 : 99; 
         const total = Math.max(0, sub - disc + ship);
 
-        // 2. SAVE ORDER IN DATABASE (Ensures order is always placed)
+        // 4. FIREBASE SAVE ORDER
         await set(push(ref(db, `orders/${currentUser.uid}`)), {
             uid: currentUser.uid,
             items,
@@ -1337,21 +1341,7 @@ async function submitFinalOrder() {
             status: 'Pending'
         });
 
-        // Analytics
-        if(typeof gtag === 'function') {
-            const gaItems = items.map(i => ({ item_id: i.id, item_name: i.name, item_category: i.category || 'Shop', price: i.price, quantity: i.qty }));
-            gtag('event', 'purchase', {
-                transaction_id: `VHD_${Date.now()}`,
-                value: total,
-                currency: 'INR',
-                shipping: ship,
-                coupon: appliedCoupon?.code || '',
-                items: gaItems
-            });
-        }
-
-        // 3. DEDUCT STOCK (Wrapped in its own Try/Catch)
-        // Agar Firebase rules stock update block karenge, tab bhi Order place ho jayega.
+        // 5. UPDATE STOCK (Ignore error if Firebase rules block it)
         try {
             const stockUpdates = {};
             items.forEach(item => {
@@ -1364,17 +1354,14 @@ async function submitFinalOrder() {
             if (Object.keys(stockUpdates).length > 0) {
                 await update(ref(db), stockUpdates);
             }
-        } catch (stockErr) {
-            console.warn("Stock Update Blocked by Firebase Rules, but Order was placed successfully.", stockErr);
-        }
+        } catch (e) { console.warn("Stock auto-deduct skipped."); }
 
-        // Reset cart and UI
+        // 6. CLEAR CART & CLOSE SHEET
         cart = {}; appliedCoupon = null; saveCartToStorage(); 
         renderCartUI(); renderCartBadge(); refreshGrid(); updateCouponStatus('');
-
         closeCheckoutSheet();
         
-        // 4. EPIC SUCCESS ANIMATION
+        // 7. SUCCESS ANIMATION
         const successOverlay = document.getElementById('successOverlay');
         const confettiEl     = document.getElementById('successConfetti');
         const redirectBar    = document.getElementById('successRedirectBar');
@@ -1404,7 +1391,6 @@ async function submitFinalOrder() {
         }
 
         successOverlay.classList.add('show');
-
         setTimeout(() => {
             if (redirectBar) redirectBar.classList.add('go');
             if (redirectFill) redirectFill.style.width = '100%';
@@ -1420,8 +1406,10 @@ async function submitFinalOrder() {
         }, 3600);
 
     } catch (e) {
-        console.error("ORDER PLACEMENT ERROR:", e); // Error detail console me aayegi
-        showAlert('Order Failed', e.message || 'Something went wrong. Try again.');
+        // Native alert just in case CSS fails, so you definitely see the error
+        console.error("ORDER ERROR:", e);
+        alert("Failed to place order: " + e.message);
+        showAlert('Order Failed', e.message);
     } finally {
         btn.textContent = 'Confirm Order';
         btn.style.opacity = '1';
