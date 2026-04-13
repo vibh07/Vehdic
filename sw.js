@@ -1,11 +1,37 @@
-// ── VEHDIC SERVICE WORKER — Cache First, Network Fallback ────────────────────
-const CACHE = 'vehdic-v1';
+importScripts('https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.8.1/firebase-messaging-compat.js');
+
+firebase.initializeApp({
+  apiKey: "AIzaSyCr4X0JCSg3GOLTbltdWihl5a4GZs6ipq8",
+  projectId: "vehdic",
+  messagingSenderId: "544387227261",
+  appId: "1:544387227261:web:0ab1783048eb866ce55b14"
+});
+
+const messaging = firebase.messaging();
+
+messaging.onBackgroundMessage((payload) => {
+  const notificationTitle = payload.notification.title;
+  const notificationOptions = {
+    body: payload.notification.body,
+    icon: './logo.png', // Apna logo path daalo
+    badge: './logo.png',
+    vibrate:[200, 100, 200]
+  };
+
+  self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+// TUMHARA BAAKI KA SW.JS CODE NICHE RAHEGA...
+// // ── VEHDIC SERVICE WORKER — Cache First, Network Fallback ────────────────────
+const CACHE = 'vehdic-v2';
 const CORE = [
   './',
   './index.html',
   './script.js',
   './style.css',
   './manifest.json',
+  './icon.png',
 ];
 
 // On install — cache all core assets immediately
